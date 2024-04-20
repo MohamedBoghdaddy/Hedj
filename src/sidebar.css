@@ -1,0 +1,39 @@
+.menul{
+    display: flex;
+    flex-direction: column;
+    gap: 2.3rem;
+    height: 94vh;
+}
+.logo{
+    text-align: center;
+    padding: 20px ;
+    color: brown;
+    align-items: center;
+    display: flex;
+    gap: 20px;
+}
+.icon{
+    font-size: 1.4rem;
+}
+.menulist{
+    display: flex;
+    flex-direction: column;
+    gap: 45px;
+    /* background-color: burlywood; */
+}
+.item{
+display: flex;
+align-items: center;
+gap: 30px;
+font-size: 1.3rem;
+font-weight: 700;
+padding: 10px;
+transition: 0.5s ease-in-out;
+border-radius: 20px;
+text-decoration: none;
+color: darkblue;
+}
+.item:hover{
+    background:#27374d ;
+    color: whitesmoke;
+}
