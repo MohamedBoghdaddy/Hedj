@@ -1,0 +1,45 @@
+.menulist {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    background-color: #766759;
+    height: 65px;
+    padding: 0 20px;
+    overflow-x: auto; /* Added overflow-x property */
+    scroll-behavior: smooth; /* Added scroll-behavior property */
+  }
+  
+  .logo {
+    text-align: center;
+    padding: 0;
+    color: #D6CEC1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 30px;
+    margin-right: 50px;
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    transition: 0.5s ease-in-out;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #D6CEC1;
+  }
+  
+  .item:hover {
+    background: #323C43;
+    color: whitesmoke;
+  }
+
+ 

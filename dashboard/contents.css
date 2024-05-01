@@ -1,0 +1,127 @@
+.content {
+    width: calc(100% - 35vh); 
+    margin-left: 35vh; 
+}
+
+.contenth {
+    align-items: center;
+    justify-content: space-between;
+    display: flex;
+    margin-top: 30px;
+}
+
+.htitle {
+    color: #323c43;
+}
+
+.activity {
+    align-items: center;
+    gap: 20px;
+    display: flex;
+}
+
+.searchbox {
+    display: flex;
+    background: #766759;
+    padding: 10px 13px;
+    border-radius: 20px;
+    align-items: center;
+}
+
+.text {
+    color: #d6cec1;
+}
+
+.searchbox input {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 7px;
+    color: #d6cec1;
+}
+
+.iconn {
+    color: #d6cec1;
+    font-size: 25px;
+    transition: 0.5s ease-in-out;
+}
+
+.notify {
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    background: #766759;
+    color: #d6cec1;
+    font-size: 25px;
+    margin-right: 150px;
+}
+
+.icon:hover,
+.notify:hover {
+    transform: scale(1.04);
+    cursor: pointer;
+}
+
+/* //////////////////////////////CARDS//////////////////////////////////CARDS/////////////////////////////CARDS////////////////////////// */
+
+.containerofcards {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 3.5rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.thecard {
+    flex: 1;
+    background: #766759;
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 5px 25px black;
+    gap: 20px;
+    transition: 0.5s ease-in-out;
+}
+
+.thecard:hover {
+    transform: scale(1.04);
+    cursor: pointer;
+}
+
+.cardicon {
+    color: #323c43;
+    font-size: 2.75rem;
+    padding: 20px;
+    background: #eceae6;
+    display: flex;
+    align-items: center;
+    border-radius: 20px;
+    justify-content: center;
+}
+
+.cardtitle {
+    color: #323c43;
+    padding: 10px 0;
+    background: #eceae6;
+    text-align: center;
+    font-size: 1.3rem;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.cardnum {
+    color: #d6cec1;
+    font-size: 30px;
+}
+@media only screen and (max-width: 768px) {
+    .searchbox {
+        margin-left: 20px;
+    }
+    .contenth{
+       margin-left: 3rem;
+    }
+}

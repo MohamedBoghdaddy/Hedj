@@ -1,0 +1,38 @@
+.listheader{
+    display: flex;
+    margin-top: 3rem;
+    margin-left: 1.7rem;
+    margin-bottom: 1.7rem;
+justify-content: space-between;
+}
+.listheader h2{
+    color: black;
+}
+.listcontainer{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.list1{
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.5s ease-in-out;
+}
+.details{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: black;
+}
+.details img{
+    width: 50px;
+    background: white;
+    border-radius: 50%;
+}
+.list1 :hover{
+    background: #323C43;
+    border-radius: 50px;
+    color: aliceblue;
+}
