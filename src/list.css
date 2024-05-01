@@ -1,8 +1,0 @@
-.listheader{
-    display: flex;
-    margin: 4rem 0;
-    justify-content: space-between;
-}
-.listheader h2{
-    color: rgb(238, 94, 94);
-}
