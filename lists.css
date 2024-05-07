@@ -1,0 +1,130 @@
+.employeeslist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.listheader {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3rem;
+    margin-left: 1.7rem;
+    margin-bottom: 1.7rem;
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.add {
+    background-color: green;
+    color: whitesmoke;
+    font-size: 20px;
+    border-radius: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.listcontainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.list11,
+.list12 {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.5s ease-in-out;
+}
+
+.details {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: black;
+}
+
+.details img {
+    width: 50px;
+    background: white;
+    border-radius: 50%;
+}
+
+.list11:hover {
+    background: #323c43;
+    color: aliceblue;
+    border-radius: 25px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.actions button {
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.actions button.update {
+    background-color: blue;
+    color: white;
+    margin-right: 10px;
+}
+
+.actions button.delete {
+    background-color: red;
+    color: white;
+}
+.list111, .list122{
+
+ display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.5s ease-in-out;
+}
+
+
+@media only screen and (max-width: 576px) {
+    .list111,.list122{
+        width:30vw;
+        padding: 5px; 
+        justify-content: center; 
+    }
+    .list11,
+    .list12 {
+        width: 10vw; 
+        padding: 5px; 
+        justify-content: center; 
+    }
+
+    .details img {
+        width: 25px;
+    }
+
+    .actions button {
+        font-size: 9px; 
+    }
+    .list11:hover {
+        background: #323c43;
+        color: aliceblue;
+        border-radius: 25px;
+        width: 60%;
+    }
+    .add{
+        font-size: 5px;
+    }
+    .listheader h3{
+        font-size: 1px;
+    }
+}
