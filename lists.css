@@ -58,11 +58,7 @@
     border-radius: 50%;
 }
 
-.list11:hover {
-    background: #323c43;
-    color: aliceblue;
-    border-radius: 25px;
-}
+
 
 .actions {
     display: flex;
@@ -97,23 +93,51 @@
 
 @media only screen and (max-width: 576px) {
     .list111,.list122{
-        width:30vw;
+        width:20vh;
         padding: 5px; 
         justify-content: center; 
+        margin-left: 30px;
     }
+    .list122{
+        margin-left: 20px;
+        gap: 10px;
+    }
+   
     .list11,
     .list12 {
         width: 10vw; 
         padding: 5px; 
         justify-content: center; 
+        margin-left: 50px;
+    }
+    .list12{
+        gap: 15px;
+    }
+    .listheader{
+      left: 0;
+      gap:18px;
     }
 
     .details img {
-        width: 25px;
+        width: 40px;
+    }
+    .details{
+        font-size: 0.8rem;
     }
 
     .actions button {
-        font-size: 9px; 
+        font-size: 8px; 
+    }
+    .pos{
+        font-size: 0.85rem;
+    }
+    .email{
+        font-size: 0.86rem;
+    }
+    .actions{
+        gap: 1px;
+        font-size: 0.6rem;
+        
     }
     .list11:hover {
         background: #323c43;
@@ -122,9 +146,8 @@
         width: 60%;
     }
     .add{
-        font-size: 5px;
+        font-size: 8px;
+        margin-right: 1400px;
     }
-    .listheader h3{
-        font-size: 1px;
-    }
+   
 }

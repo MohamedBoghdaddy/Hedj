@@ -1,6 +1,6 @@
 .content {
     width: 100%;
-    margin-left: 30vh;
+    margin-left: 35vh;
 }
 
 .contenth {
@@ -36,7 +36,7 @@
     border: none;
     outline: none;
     background: transparent;
-    padding: 7px;
+    padding:10px;
     color: #d6cec1;
     font-size: 0.6rem; /* Adjust font size for smaller screens */
 }
@@ -121,7 +121,7 @@
         flex-wrap: wrap;
         display: flex;
         flex-wrap: wrap-reverse;
-        width: 200px;
+        width: 170px;
     }
 
     .thecard {
@@ -135,31 +135,35 @@
 
     .searchbox {
         width: 100px;
-        padding: 8px 0px;
+        padding: 4px 0px;
         margin-left: 10px;
     }
 
     .searchbox input {
-        font-size: 0.6rem;
+        font-size: 0.3rem;
     }
 
     .iconn {
-        font-size: 0.6rem;
+        font-size: 0.4rem;
     }
 
     .contenth {
-        margin-top: 10px;
+        margin-top: 30px;
     }
 
     .htitle {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
+
+       
     }
 
     .content {
         width: calc(50% - 100vh);
-        /* margin-left: 40vh; */
+        margin-left: 25vh;
         margin-top: 65px;
+       
     }
+   
 
     body {
         overflow-y: auto;
@@ -167,7 +171,7 @@
     }
 
     .notify {
-        margin-right: 1500px;
+        margin-right: 1900px;
         font-size: 15px;
         padding: 9px;
     }
