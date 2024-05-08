@@ -1,0 +1,160 @@
+/* Global Styles */
+body {
+  background-color: #ECEAE6; /* Main background color */
+  color: #323C43; /* Text color */
+  font-family: 'Arial', sans-serif; /* Default font family */
+}
+
+a {
+  text-decoration: none; /* No underline for links */
+  color: inherit; /* Link color same as text */
+}
+
+/* Container Styles */
+.Container {
+  padding: 20px; /* Padding around container */
+  margin: 0 auto; /* Center container */
+  max-width: 1200px; /* Max width for responsiveness */
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: #766759; /* Navbar background color */
+  padding: 10px 20px; /* Padding */
+  border-bottom: 2px solid #D6CEC1; /* Border at the bottom */
+}
+
+.navbar a {
+  color: #ECEAE6; /* Navbar link color */
+  margin-right: 15px; /* Space between links */
+}
+
+.navbar a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+/* Button Styles */
+button {
+  background-color: #766759; /* Button background */
+  color: #ECEAE6; /* Button text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Padding */
+  cursor: pointer; /* Pointer on hover */
+}
+
+button:hover {
+  background-color: #D6CEC1; /* Change color on hover */
+}
+
+/* Products.css */
+.container {
+  background-color: #ECEAE6; /* Primary background color */
+  padding: 20px; /* Padding for the container */
+  border-radius: 8px; /* Rounded corners for a softer look */
+}
+
+.first, .second {
+  display: flex; /* Arrange items in a row */
+  justify-content: space-between; /* Evenly space out the items */
+  padding: 10px; /* Padding for internal spacing */
+}
+
+.first {
+  border-bottom: 1px solid #323C43; /* Divider line */
+}
+
+.second {
+  margin-top: 20px; /* Add spacing between sections */
+}
+
+li {
+  list-style: none; /* Remove default list style */
+  color: #323C43; /* Primary text color */
+  font-weight: bold; /* Emphasize text */
+}
+
+.nav-link {
+  text-decoration: none; /* Remove underline from links */
+  color: #323C43; /* Text color for links */
+}
+
+.nav-link:hover {
+  color: #766759; /* Change color on hover */
+}
+
+
+
+/* Card Styles */
+/* General card styles for various card-based components */
+.card {
+  background-color: #ECEAE6; /* Primary background color */
+  border: 1px solid #323C43; /* Border with primary text color */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+.card-title, .card-text {
+  color: #323C43; /* Primary text color */
+}
+
+.card .image {
+  border-radius: 10px 10px 0 0; /* Rounded corners for image top */
+}
+
+.button {
+  background-color: #766759; /* Button background color */
+  color: #ECEAE6; /* Button text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for buttons */
+  cursor: pointer; /* Cursor changes to pointer on hover */
+}
+
+.button:hover {
+  background-color: #323C43; /* Hover effect color */
+  color: #ECEAE6; /* Hover effect text color */
+}
+
+
+/* List Styles */
+ul {
+  list-style-type: none; /* No bullets */
+}
+
+ul li {
+  background-color: #D6CEC1; /* Background color for list items */
+  padding: 10px; /* Padding for list items */
+  margin: 5px 0; /* Space between list items */
+  border-radius: 5px; /* Rounded corners */
+}
+
+ul li button {
+  background-color: transparent; /* Transparent button in list */
+  color: #323C43; /* Button text color */
+  border: 1px solid #766759; /* Border for the button */
+}
+
+ul li button:hover {
+  background-color: #766759; /* Change color on hover */
+  color: #ECEAE6; /* Change text color on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .Container {
+    padding: 10px; /* Less padding for smaller screens */
+  }
+
+  .navbar {
+    padding: 5px 10px; /* Adjust padding */
+  }
+
+  .card {
+    padding: 15px; /* Less padding for cards */
+  }
+
+  button {
+    padding: 8px 12px; /* Adjust padding for smaller screens */
+  }
+}
