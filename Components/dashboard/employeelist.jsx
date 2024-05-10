@@ -76,8 +76,8 @@ const EmployeeList = () => {
                         <div className="details">
                             <h3>{employee.name}</h3>
                         </div>
-                        <span>{employee.email}</span>
-                        <span>{employee.position}</span>
+                        <span className="email">{employee.email}</span>
+                        <span className="pos">{employee.position}</span>
                         <div className="actions">
                             <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
                             <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
