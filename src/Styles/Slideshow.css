@@ -1,0 +1,39 @@
+/* Carousel Container */
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
+body {
+  /* Updated background color */
+  overflow-y: auto; /* Enable vertical scroll if needed */
+  overflow-x: hidden; /* Hide horizontal scroll bar */
+}
+.carousel {
+  position: relative;
+  width: 80%; /* Example: 80% of parent container */
+  /* max-width: 600px; Maximum width */
+  margin: 0 auto; /* Center the carousel */
+}
+
+.carousel img {
+  width: 100%; /* Adjusted width */
+  height: auto; /* Maintain aspect ratio */
+}
+
+
+/* Carousel Captions */
+.carousel-caption h3 {
+  font-family: "Beverly";
+}
+.carousel-caption p {
+  font-family: "Aeonik Thin";
+}
+/* Optional: Carousel Transition */
+.carousel .carousel-item {
+  transition: transform 0.5s ease-in-out; /* Smooth transition effect */
+}

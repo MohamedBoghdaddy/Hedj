@@ -1,0 +1,157 @@
+/* Home.css */
+
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
+body {
+  /* Updated background color */
+  overflow-y: auto; /* Enable vertical scroll if needed */
+  overflow-x: hidden; /* Hide horizontal scroll bar */
+}
+/* Full page styling for a consistent layout */
+.full-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #eceae6; /* Light grayish background color */
+  color: #323c43; /* Dark text color */
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Hero section with background styling */
+.hero-section {
+  background: #eceae6;
+  /* Gradient background for the hero section */
+  color: #eceae6; /* Light text color for contrast */
+  padding: 50px;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-section h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  font-family: "Beverly";
+  color: #040606; /* Dark text color */
+}
+
+.hero-section p {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+  font-family: "Aeonik Thin";
+  color: #102534; /* Dark text color */
+}
+
+/* Storytelling section with a full-width background */
+.storytelling-section {
+  background-color: #eceae6; /* Light brownish shade for storytelling */
+  padding: 40px; /* Padding for consistent spacing */
+  width: 100%; /* Full width */
+  gap: 30px;
+  margin-left: 0; /* Override default margin */
+  margin-right: 100; /* Override default margin */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+.storytelling-section .row {
+  margin: 0; /* Ensure the row doesn't have default margins */
+}
+
+.storytelling-section h2 {
+  color: #323c43; /* Dark text color */
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-family: "Beverly";
+}
+
+.storytelling-section p {
+  font-size: 1.1em;
+  line-height: 1.5em;
+  font-family: "Aeonik Thin";
+  color: #323c43;
+}
+
+/* CTA section with buttons */
+.Section2 {
+  display: flex; /* Use flex layout */
+  justify-content: center; /* Center the buttons */
+  gap: 300px; /* 30px space between buttons */
+  margin-top: 25px;
+}
+
+/* Styling for buttons in the CTA section */
+.Section2 Button {
+  background-color: #eceae6; /* Background color */
+  color: #323c43; /* Text color */
+  border: 2px solid #323c43; /* Border style */
+  padding: 10px 20px; /* Padding for consistent spacing */
+  font-size: 1em; /* Font size */
+  transition:
+    background 0.3s,
+    color 0.3s; /* Smooth transitions */
+  gap: 300px;
+  margin-top: 25px;
+}
+
+.Section2 Button:hover {
+  background-color: #323c43; /* Dark background on hover */
+  color: #eceae6; /* Light text on hover */
+}
+
+/* Virtual showroom section */
+.virtual-showroom {
+  padding: 40px;
+}
+
+.virtual-showroom h2 {
+  color: #323c43;
+  font-family: "Beverly";
+}
+
+.virtual-showroom p {
+  font-family: "Aeonik Thin"; /* Provide a fallback font */
+  font-size: 1.1em;
+  line-height: 1.5em;
+}
+
+/* Contact information and store locator section */
+.contact-info {
+  background-color: #eceae6;
+  padding: 40px;
+  text-align: center;
+}
+
+.contact-info h2 {
+  color: #323c43;
+  font-family: "Beverly";
+}
+
+.contact-info p {
+  font-size: 1.1em;
+  line-height: 1.5em;
+  font-family: "Aeonik Thin";
+}
+
+.contact-info button {
+  background-color: #eceae6; /* Same button styling as CTA section */
+  color: #323c43;
+  border: 2px solid #323c43;
+  padding: 10px 20px;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+
+.contact-info button:hover {
+  background-color: #323c43;
+  color: #eceae6;
+}

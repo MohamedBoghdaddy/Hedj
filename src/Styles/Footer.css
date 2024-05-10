@@ -1,0 +1,50 @@
+.footer-wrapper {
+  background-color: #f9f9f9;
+  padding: 20px;
+  max-width: 1800px; /* Maximum width */
+  margin: auto;
+  position: fixed; /* Ensure the footer stays in place */
+  bottom: 0; /* Attach the footer to the bottom */
+  left: 0; /* Align the footer to the left edge of the viewport */
+  right: 0; /* Align the footer to the right edge of the viewport */
+  z-index: 1000; /* Keep it on top of other content */
+}
+
+.footer-wrapper a {
+  color: #333;
+  text-decoration: none;
+}
+
+.footer-wrapper a:hover {
+  text-decoration: underline;
+}
+
+.company-section {
+  flex: 2; /* Occupy more space for the company section */
+}
+
+.links-section {
+  flex: 1; /* Less space for the links section */
+}
+
+.links-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.links-section ul li {
+  display: block; /* Vertical layout */
+}
+
+.contact-section {
+  text-align: center; /* Center align the contact section */
+}
+
+.copyright-row {
+  padding: 10px 0;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.footer-wrapper p {
+  margin: 0;
+}
