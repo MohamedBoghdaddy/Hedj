@@ -1,6 +1,6 @@
 import React from "react";
 import "../../Styles/list.css";
-import employeeimage from '../../assets/Images/simple.jpg';
+import employeeimage from '../../Assets/Images/simple.jpg';
 
 
 const customers=[

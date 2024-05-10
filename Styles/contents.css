@@ -1,13 +1,13 @@
 .content {
-    width: 100%;
-    margin-left: 35vh;
+    width: 77%;
+    margin-left: 45vh;
+    margin-top: 70px;
 }
 
 .contenth {
     align-items: center;
     justify-content: space-between;
     display: flex;
-    margin-top: 70px;
 }
 
 .htitle {
@@ -148,7 +148,7 @@
     }
 
     .contenth {
-        margin-top: 30px;
+        margin-top: 50px;
     }
 
     .htitle {

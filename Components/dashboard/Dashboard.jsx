@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BsCart3, BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
 import { FaShoppingCart } from 'react-icons/fa';
-import '../../Styles/Dashboard.css';
+import '../../Styles/dashboard.css';
 
 function Sidebar() {
   const [showItems, setShowItems] = useState(false);

@@ -25,7 +25,8 @@ body {
     height: 65px;
     padding: 0 20px;
     overflow-x: auto; /* Added overflow-x property */
-    scroll-behavior: smooth; /* Added scroll-behavior property */
+    scroll-behavior: smooth; 
+   
   }
   
   .logo {

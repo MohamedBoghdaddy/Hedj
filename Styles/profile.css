@@ -39,7 +39,7 @@
 .userprofile {
     height: 100vh;
     position: fixed;
-    margin-top: 0.9rem;
+    margin-top: 4rem;
     background: #323c43;
     width: 35vh;
     padding: 10px;
@@ -74,7 +74,7 @@
     .userprofile {
         position: fixed;
         display: flex;
-        top: 65px; 
+        top: 8px; 
         left: 0;
         bottom: 0;
         width: 20vh; 
