@@ -1,10 +1,9 @@
 import React from "react";
-import Conheader from "../dashboard/conheader";
+import Conheader from "./conheader";
 import "../../Styles/contents.css";
-import Card from "../dashboard/card";
-import Employeelist from "../dashboard/employeelist";
-import Customerslist from "../dashboard/customerslist";
-import AppointmentList from "../dashboard/AppointmentList";
+import Card from "./card";
+import Employeelist from "./employeelist";
+import Customerslist from "./customerslist";
 
 
 
@@ -14,7 +13,6 @@ const contents = ()=>{
     <Card />
     <Employeelist/>
     <Customerslist/>
-    <AppointmentList/>
    
   </div>;
 };

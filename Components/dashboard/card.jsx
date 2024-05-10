@@ -4,7 +4,6 @@ import{BiMoney} from 'react-icons/bi';
 import { AiOutlineDollarCircle, AiOutlineEye } from 'react-icons/ai';
 
 const cards1=[
-   
     {name:"Comments",number:"3000",icon:<FaComment />},
     {name:"Earnings",number:"50000$",icon:<BiMoney/>},
     {name:"Sales",number:"100$",icon:<AiOutlineDollarCircle/>},

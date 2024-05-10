@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../Styles/list.css";
+import "../../Styles/lists.css";
 
 const EmployeeList = () => {
     const [employees, setEmployees] = useState(() => {
@@ -76,8 +76,8 @@ const EmployeeList = () => {
                         <div className="details">
                             <h3>{employee.name}</h3>
                         </div>
-                        <span className="email">{employee.email}</span>
-                        <span className="pos">{employee.position}</span>
+                        <span>{employee.email}</span>
+                        <span>{employee.position}</span>
                         <div className="actions">
                             <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
                             <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>

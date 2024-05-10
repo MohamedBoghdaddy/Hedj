@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "../../Styles/Home.css";
 import maram from "../../Assets/Images/maram.jpg"; // Your company logo
 import maram2 from "../../Assets/Images/maram2.jpg"; // Your company logo
+import vr from "../../Assets/Images/VR.png"; // Your company logo
 
 const Home = () => {
   return (
@@ -52,7 +53,7 @@ const Home = () => {
       </Container>
 
       {/* Calls to Action */}
-      <Container className="cta-section text-center">
+      <Container className="Section2">
         <Row>
           <Col md={6}>
             <img
@@ -61,20 +62,52 @@ const Home = () => {
               style={{ width: "400px", height: "auto" }}
             />
           </Col>
-          <Col md={6}>
-  <Button variant="dark" as={Link} to="/collections">
-          View Collections
-        </Button>
-        <Button variant="dark" as={Link} to="/contact">
-          Contact Us
-        </Button>
-      
+          <Col md={6} className="d-flex justify-content-center">
+            {" "}
+            {/* Use flexbox and center */}
+            <Button
+              variant="dark"
+              as={Link}
+              to="/collections"
+              style={{
+                color: "#fff",
+                padding: "10px 20px",
+                border: "1px solid #333",
+                borderRadius: "5px",
+                margin: "10px",
+                transition: "0.3s",
+              }}
+            >
+              View Collections
+            </Button>
+            <Button
+              variant="dark"
+              as={Link}
+              to="/contact"
+              style={{
+                color: "#fff",
+                padding: "10px 20px",
+                border: "1px solid #333",
+                borderRadius: "5px",
+                margin: "10px",
+                transition: "0.3s",
+              }}
+            >
+              Contact Us
+            </Button>
           </Col>
         </Row>
-        </Container>
+      </Container>
       {/* Virtual Showroom or AR Integration */}
       <Container className="virtual-showroom">
-        <Row>
+          <Col md={8}>
+            <img
+              src={vr}
+              alt="vr"
+              style={{ width: "400px", height: "auto" }}
+            />
+          </Col>
+          <Row>
           <Col>
             <h2>Experience Our Virtual Showroom</h2>
             <p>
@@ -85,6 +118,7 @@ const Home = () => {
               Visit Virtual Showroom
             </Button>
           </Col>
+        
         </Row>
       </Container>
 
