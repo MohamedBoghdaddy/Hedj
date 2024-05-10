@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Row, Col, Button, Image } from "react-bootstrap";
+import { Container, Row, Col, Button} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "../../Styles/Home.css";
 import maram from "../../Assets/Images/maram.jpg"; // Your company logo

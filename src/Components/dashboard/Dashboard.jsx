@@ -8,12 +8,9 @@ import {
   BsMenuButtonWideFill,
   BsFillGearFill,
 } from "react-icons/bs";
-import { NavLink, Outlet } from "react-router-dom"; // Include NavLink for internal routing
+import { Outlet } from "react-router-dom"; // Include NavLink for internal routing
 
-import { FaShoppingCart } from "react-icons/fa";
 import "../../Styles/dashboard.css";
-import Profile from "./profile"; // Import Profile component
-import Contents from "./contents"; // Import Contents component
 import { Link } from "react-router-dom";
 
 function Dashboard() {

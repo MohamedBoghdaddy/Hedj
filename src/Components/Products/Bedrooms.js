@@ -6,7 +6,6 @@ import AddToFavorites from "./Favorites";
 import Grey from "../../Assets/Images/70.jpg";
 import modern from "../../Assets/Images/73.jpg";
 import double from "../../Assets/Images/74.jpg";
-import Cart from "./cart";
 import "../../Styles/Products.css";
 
 function Bedrooms({ addToCart }) {
