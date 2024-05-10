@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/Hedj/static/css/main.6662ab65.css",
+    "main.js": "/Hedj/static/js/main.beffdd0c.js",
+    "static/js/453.a890f012.chunk.js": "/Hedj/static/js/453.a890f012.chunk.js",
+    "static/media/7.jpg": "/Hedj/static/media/7.d90af917432088fb89d3.jpg",
+    "static/media/23.jpg": "/Hedj/static/media/23.798baa9725d625af037b.jpg",
+    "static/media/81.jpg": "/Hedj/static/media/81.de85eddf4117dcdca24f.jpg",
+    "static/media/74.jpg": "/Hedj/static/media/74.bd342ea3d4dafd74801a.jpg",
+    "static/media/73.jpg": "/Hedj/static/media/73.cddde11ca6991035fc52.jpg",
+    "static/media/91.jpg": "/Hedj/static/media/91.b71be835731ae7c01a7f.jpg",
+    "static/media/70.jpg": "/Hedj/static/media/70.28d710b4ce7cf7574644.jpg",
+    "static/media/VR.png": "/Hedj/static/media/VR.d9875a50c5d005a2aa22.png",
+    "static/media/90.jpg": "/Hedj/static/media/90.2f16f422857c131587f7.jpg",
+    "static/media/89.jpg": "/Hedj/static/media/89.a958ba8e4286f2ba9010.jpg",
+    "static/media/maram2.jpg": "/Hedj/static/media/maram2.2ee8298c9ba73064d010.jpg",
+    "static/media/Aeonik-Thin.otf": "/Hedj/static/media/Aeonik-Thin.5f053c6b6c30034467b1.otf",
+    "static/media/maram.jpg": "/Hedj/static/media/maram.9915bb82bd7539351fc0.jpg",
+    "static/media/Beverly.otf": "/Hedj/static/media/Beverly.be4abf25b0a091dbd612.otf",
+    "static/media/simple.jpg.jpg": "/Hedj/static/media/simple.jpg.4ed492ec0262ba7ffb56.jpg",
+    "index.html": "/Hedj/index.html",
+    "main.6662ab65.css.map": "/Hedj/static/css/main.6662ab65.css.map",
+    "main.beffdd0c.js.map": "/Hedj/static/js/main.beffdd0c.js.map",
+    "453.a890f012.chunk.js.map": "/Hedj/static/js/453.a890f012.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6662ab65.css",
+    "static/js/main.beffdd0c.js"
+  ]
+}
