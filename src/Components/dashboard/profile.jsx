@@ -1,7 +1,7 @@
 import React from "react";
 import Profileheader from "./profileheader";
 import "../../Styles/profile.css";
-import userimage from "../../Assets/Images/simple.jpg.jpg";
+import userimage from "../../Assets/Images/simple.jpg";
 const profile = () => {
   return (
     <div className="profile">
