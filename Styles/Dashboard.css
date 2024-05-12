@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
+body {
+  /* Updated background color */
+  overflow-y: auto; /* Enable vertical scroll if needed */
+}
+
+
 .menulist {
     position: fixed;
     top: 0;
@@ -10,9 +25,8 @@
     height: 65px;
     padding: 0 20px;
     overflow-x: auto; /* Added overflow-x property */
-    overflow-y: hidden;
-    scroll-behavior: smooth; /* Added scroll-behavior property */
-    z-index: 2;
+    scroll-behavior: smooth; 
+   
   }
   
   .logo {
