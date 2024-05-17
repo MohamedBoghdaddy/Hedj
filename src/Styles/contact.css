@@ -7,78 +7,66 @@
   font-family: "Aeonik Thin";
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
-body {
-  /* Updated background color */
-  overflow-y: auto; /* Enable vertical scroll if needed */
-}
 
 .container {
+  width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: 100vh;
+  justify-content: center;
 }
-
-.form-container {
-  width: 600px;
-  margin: 0 auto;
-  color: aliceblue;
-  background: #242526;
-  display: flex;
-  flex-direction: column;
-  padding: 25px 25px;
-  border-radius: 20px;
-  box-shadow:
-    0 0 128px 0 rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgb(0, 0, 0, 0.5);
-  opacity: 0.9;
-}
-
-.form-container:hover {
-  opacity: 1;
-}
-
 h1 {
-  text-align: center;
-  margin-bottom: 30px;
-  font-size: 36px;
-  color: aliceblue;
+  font-family: "Beverly";
 }
-
-h1:hover {
-  opacity: 1;
-}
-
-form {
+.form-container {
+  width: 900px;
+  height: 500px;
   display: flex;
-  flex-direction: column;
-  opacity: 0.9;
+  flex-direction: row;
+  background-color: #766759;
+  border-radius: 10px;
+  box-shadow:
+    0px 3px 3px -2px rgb(0 0 0 / 20%),
+    0px 3px 4px 0px rgb(0 0 0 / 14%),
+    0px 1px 8px 0px rgb(0 0 0 / 12%);
+
+  font-family: "Aeonik Thin";
 }
 
-form:hover {
-  opacity: 1;
+.input {
+  outline: none;
+  border: none;
+  width: 370px;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #d6cec1;
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.error_msg {
+  width: 370px;
+  padding: 15px;
+  margin: 5px 0;
+  font-size: 14px;
+  background-color: #f34646;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
 }
 
 label {
-  margin-bottom: 10px;
   font-size: 18px;
-  opacity: 0.9;
 }
 
-input,
-textarea {
-  height: 40px;
-  width: 100%;
-  font-size: 16px;
-  padding: 0 10px;
-  border: 1px solid aliceblue;
-  outline: none;
-  margin-top: 5px;
-  border-radius: 25px;
-  opacity: 0.9;
+.field input {
+  display: flex;
+  align-items: center;
 }
 
-input:hover,
-textarea:hover {
-  opacity: 1;
+/* Responsive styles for smaller screens */
+@media only screen and (max-width: 760px) {
+  .form-container {
+    flex-direction: column; /* Stack the sections for smaller screens */
+    height: auto; /* Allow the height to adjust */
+  }
 }

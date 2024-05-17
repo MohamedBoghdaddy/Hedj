@@ -8,13 +8,11 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-
-
 /* Global Styles */
 body {
-  background-color: #ECEAE6; /* Main background color */
-  color: #323C43; /* Text color */
-  font-family: 'Arial', sans-serif; /* Default font family */
+  background-color: #eceae6; /* Main background color */
+  color: #323c43; /* Text color */
+  font-family: "Arial", sans-serif; /* Default font family */
 }
 
 a {
@@ -24,20 +22,27 @@ a {
 
 /* Container Styles */
 .Container {
+  display: flex;
+  flex-direction: row;
   padding: 20px; /* Padding around container */
   margin: 0 auto; /* Center container */
   max-width: 1200px; /* Max width for responsiveness */
 }
-
+.row1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 100px;
+}
 /* Navbar Styles */
 .navbar {
   background-color: #766759; /* Navbar background color */
   padding: 10px 20px; /* Padding */
-  border-bottom: 2px solid #D6CEC1; /* Border at the bottom */
+  border-bottom: 2px solid #d6cec1; /* Border at the bottom */
 }
 
 .navbar a {
-  color: #ECEAE6; /* Navbar link color */
+  color: #eceae6; /* Navbar link color */
   margin-right: 15px; /* Space between links */
 }
 
@@ -48,32 +53,35 @@ a {
 /* Button Styles */
 button {
   background-color: #766759; /* Button background */
-  color: #ECEAE6; /* Button text color */
+  color: #eceae6; /* Button text color */
   border: none; /* No border */
   border-radius: 5px; /* Rounded corners */
   padding: 10px 15px; /* Padding */
   cursor: pointer; /* Pointer on hover */
+  gap: 30px;
+  margin-right: 30px;
 }
 
 button:hover {
-  background-color: #D6CEC1; /* Change color on hover */
+  background-color: #d6cec1; /* Change color on hover */
 }
 
 /* Products.css */
 .container {
-  background-color: #ECEAE6; /* Primary background color */
+  background-color: #eceae6; /* Primary background color */
   padding: 20px; /* Padding for the container */
   border-radius: 8px; /* Rounded corners for a softer look */
 }
 
-.first, .second {
+.first,
+.second {
   display: flex; /* Arrange items in a row */
   justify-content: space-between; /* Evenly space out the items */
   padding: 10px; /* Padding for internal spacing */
 }
 
 .first {
-  border-bottom: 1px solid #323C43; /* Divider line */
+  border-bottom: 1px solid #323c43; /* Divider line */
 }
 
 .second {
@@ -82,52 +90,52 @@ button:hover {
 
 li {
   list-style: none; /* Remove default list style */
-  color: #323C43; /* Primary text color */
+  color: #323c43; /* Primary text color */
   font-weight: bold; /* Emphasize text */
 }
 
 .nav-link {
   text-decoration: none; /* Remove underline from links */
-  color: #323C43; /* Text color for links */
+  color: #323c43; /* Text color for links */
 }
 
 .nav-link:hover {
   color: #766759; /* Change color on hover */
 }
 
-
-
 /* Card Styles */
 /* General card styles for various card-based components */
 .card {
-  background-color: #ECEAE6; /* Primary background color */
-  border: 1px solid #323C43; /* Border with primary text color */
+  background-color: #eceae6; /* Primary background color */
+  border: 1px solid #323c43; /* Border with primary text color */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1); /* Light shadow */
 }
 
-.card-title, .card-text {
-  color: #323C43; /* Primary text color */
+.card-title,
+.card-text {
+  color: #323c43; /* Primary text color */
 }
 
 .card .image {
   border-radius: 10px 10px 0 0; /* Rounded corners for image top */
+  max-width: fit-content;
 }
 
 .button {
   background-color: #766759; /* Button background color */
-  color: #ECEAE6; /* Button text color */
+  color: #eceae6; /* Button text color */
   border: none; /* No border */
   border-radius: 5px; /* Rounded corners */
   padding: 10px 20px; /* Padding for buttons */
   cursor: pointer; /* Cursor changes to pointer on hover */
+  gap: 50px;
 }
 
 .button:hover {
-  background-color: #323C43; /* Hover effect color */
-  color: #ECEAE6; /* Hover effect text color */
+  background-color: #323c43; /* Hover effect color */
+  color: #eceae6; /* Hover effect text color */
 }
-
 
 /* List Styles */
 ul {
@@ -135,7 +143,7 @@ ul {
 }
 
 ul li {
-  background-color: #D6CEC1; /* Background color for list items */
+  background-color: #d6cec1; /* Background color for list items */
   padding: 10px; /* Padding for list items */
   margin: 5px 0; /* Space between list items */
   border-radius: 5px; /* Rounded corners */
@@ -143,13 +151,13 @@ ul li {
 
 ul li button {
   background-color: transparent; /* Transparent button in list */
-  color: #323C43; /* Button text color */
+  color: #323c43; /* Button text color */
   border: 1px solid #766759; /* Border for the button */
 }
 
 ul li button:hover {
   background-color: #766759; /* Change color on hover */
-  color: #ECEAE6; /* Change text color on hover */
+  color: #eceae6; /* Change text color on hover */
 }
 
 /* Responsive Design */

@@ -118,7 +118,7 @@ body {
 }
 
 .virtual-showroom p {
-  font-family: "Aeonik Thin"; /* Provide a fallback font */
+  font-family: "Aeonik Thin"; 
   font-size: 1.1em;
   line-height: 1.5em;
 }

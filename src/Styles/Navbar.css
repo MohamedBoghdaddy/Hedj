@@ -19,7 +19,7 @@ body {
   top: 0; /* Position at the top of the viewport */
   width: 100%; /* Ensure it spans the full width */
   height: 60px; /* Adjust the height to a smaller size */
-  background-color: #eceae6; /* Light background color */
+  background-color: #ebddc1; /* Light background color */
   color: #323c43; /* Dark text color */
   padding: 0 20px; /* Adjust padding */
   z-index: 1000; /* Ensure it stays above other content */
