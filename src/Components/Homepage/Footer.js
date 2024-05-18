@@ -2,11 +2,10 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebookF,
-  faTwitter,
   faLinkedin,
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
-import { Link } from "react-scroll";
+import { Link } from "react-router-dom";
 import "../../Styles/Footer.css"; // Import the CSS file
 import "../../App.css";
 
@@ -18,45 +17,45 @@ function Footer() {
           <h4>Info</h4>
           <ul className="links">
             <li key="about">
-              <a href="#">About Us</a>
+              <Link to="../Homepage/Home.js">About Us</Link>
             </li>
             <li key="Products">
-              <a href="#">Products</a>
+              <Link to="../Products/Products.js">Products</Link>
             </li>
             <li key="contact">
-              <a href="#">Contact</a>
+              <Link to="../Contact/contact.js">Contact</Link>
             </li>
             <li key="Favorites">
-              <a href="#">Favorites</a>
+              <Link to="../Products/Favorites.js">Favorites</Link>
             </li>
             <li key="Dashboard">
-              <a href="#">Dashboard</a>
+              <Link to="../dashboard/Dashboard.jsx">Dashboard</Link>
             </li>
           </ul>
         </div>
-        <div className="footer-col">
+        {/* <div className="footer-col">
           <h4>Legal</h4>
           <ul className="links">
             <li key="customer-agreement">
-              <a href="#">Customer Agreement</a>
+              <Link to="/customer-agreement">Customer Agreement</Link>
             </li>
             <li key="privacy-policy">
-              <a href="#">Privacy Policy</a>
+              <Link to="/privacy-policy">Privacy Policy</Link>
             </li>
             <li key="gdpr">
-              <a href="#">GDPR</a>
+              <Link to="/gdpr">GDPR</Link>
             </li>
             <li key="security">
-              <a href="#">Security</a>
+              <Link to="/security">Security</Link>
             </li>
             <li key="testimonials">
-              <a href="#">Testimonials</a>
+              <Link to="/testimonials">Testimonials</Link>
             </li>
             <li key="media-kit">
-              <a href="#">Media Kit</a>
+              <Link to="/media-kit">Media Kit</Link>
             </li>
           </ul>
-        </div>
+        </div> */}
         <div className="footer-col">
           <h4>Hedj</h4>
           <p>
