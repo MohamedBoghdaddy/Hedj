@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import "../../Styles/contact.css";
-import axios from "axios";
-import { Link } from "react-router-dom";
+
 
 const validateEmail = (email) => email.includes("@");
 
