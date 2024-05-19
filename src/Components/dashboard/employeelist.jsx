@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../Styles/list.css";
-
+import "../../Styles/lists.css"
 const EmployeeList = () => {
     const [employees, setEmployees] = useState(() => {
         const savedEmployees = localStorage.getItem('employees');

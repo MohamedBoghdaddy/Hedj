@@ -4,7 +4,7 @@ import NavBar from "./Components/Homepage/NavBar";
 import Home from "./Components/Homepage/Home";
 import Slideshow from "./Components/Homepage/Slideshow";
 import Footer from "./Components/Homepage/Footer";
-import Dashboard from "./Components/dashboard/Dashboard";
+// import Dashboard from "./Components/dashboard/Dashboard";
 import Profile from "./Components/dashboard/profile";
 import Contents from "./Components/dashboard/contents";
 import AppointmentList from "./Components/dashboard/AppointmentList";
@@ -52,12 +52,12 @@ const App = () => {
         <Route
           path="/dashboard"
           element={
-            <WithoutNavBar>
-              <Dashboard />
+            <WithNavBar>
+              {/* <Dashboard /> */}
               <Profile />
               <Contents />
               <AppointmentList />
-            </WithoutNavBar>
+            </WithNavBar>
           }
         />
         <Route
