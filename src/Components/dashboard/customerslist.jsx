@@ -1,65 +1,45 @@
 import React from "react";
-import "../../Styles/lists.css";
-import employeeimage from "../../Assets/Images/simple.jpg";
+import "../../Styles/list.css";
+import employeeimage from '../../Assets/Images/simple.jpg';
 
 const customers = [
-  {
-    image: employeeimage,
-    name: "Tommy Peter",
-    email: "Tommypeter24@gmail.com",
-    timetogoout: "10 min",
-  },
-  {
-    image: employeeimage,
-    name: "Tommy Peter",
-    email: "Tommypeter24@gmail.com",
-    timetogoout: "30 min",
-  },
-  {
-    image: employeeimage,
-    name: "Tommy Peter",
-    email: "Tommypeter24@gmail.com",
-    timetogoout: "20 min",
-  },
-  {
-    image: employeeimage,
-    name: "Tommy Peter",
-    email: "Tommypeter24@gmail.com",
-    timetogoout: "24 min",
-  },
+    { image: employeeimage, name: "Tommy", email: "Tommypeter24@gmail.com", timetogoout: "10 min" },
+    { image: employeeimage, name: "Tommy", email: "Tommypeter24@gmail.com", timetogoout: "30 min" },
+    { image: employeeimage, name: "Tommy P", email: "Tommypeter24@gmail.com", timetogoout: "20 min" },
+    { image: employeeimage, name: "Tommy", email: "Tommypeter24@gmail.com", timetogoout: "24 min" }
 ];
 
-const customerslist = () => {
-  return (
-    <div className="customerslist" id="cust">
-      <div className="listheader">
-        <h3>Customers</h3>
-      </div>
-      <div className="listcontainer">
-        <div className="list12">
-          <div className="detailss">
-            <h3>Name</h3>
-          </div>
-          <div className="detailss">
-            <h3>Email</h3>
-          </div>
-          <div className="detailss">
-            <h3>Time to go out</h3>
-          </div>
-        </div>
-        {customers.map((person, index) => (
-          <div className="list11" key={index}>
-            <div className="details">
-              <img src={person.image} alt={person.name} />
-              <h3>{person.name}</h3>
+const CustomersList = () => {
+    return (
+        <div className="customersList">
+            <div className="listheader">
+                <h3>Customers</h3>
             </div>
-            <span>{person.email}</span>
-            <span>{person.timetogoout}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+            <table className="listcontainercus">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Time to go out</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {customers.map((person, index) => (
+                        <tr key={index}>
+                            <td>
+                                <div className="details">
+                                    <img src={person.image} alt={person.name} />
+                                    <h3 className="nameee">{person.name}</h3>
+                                </div>
+                            </td>
+                            <td className="emailemp">{person.email}</td>
+                            <td>{person.timetogoout}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
-export default customerslist;
+export default CustomersList;
