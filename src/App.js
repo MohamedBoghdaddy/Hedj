@@ -34,7 +34,6 @@ const App = () => {
     </>
   );
 
-  const WithoutNavBar = ({ children }) => <>{children}</>;
 
   return (
     <BrowserRouter>
