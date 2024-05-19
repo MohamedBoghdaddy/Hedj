@@ -1,15 +1,6 @@
-@font-face {
-  font-family: "Beverly";
-  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
-}
+/* Existing styles */
 
-@font-face {
-  font-family: "Aeonik Thin";
-  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
-}
-
-
-.employeeslist {
+.employeesList {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,12 +15,6 @@
     width: 100%;
 }
 
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
 .add {
     background-color: green;
     color: whitesmoke;
@@ -39,41 +24,76 @@
     cursor: pointer;
 }
 
-.listcontainer {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.listcontainercus {
     width: 100%;
-    flex-wrap: wrap;
+    margin-top: 1rem;
 }
 
-.list11,
-.list12 {
-    display: flex;
-    padding: 10px;
-    align-items: center;
-    justify-content: space-between;
-    transition: 0.5s ease-in-out;
+.listcontainercus table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.details {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    color: black;
+.listcontainercus th,
+.listcontainercus td {
+    border: 1px solid black;
+    padding: 8px;
 }
 
-.details img {
-    width: 50px;
-    background: white;
-    border-radius: 50%;
+.listcontainercus th {
+    background-color: #f2f2f2;
 }
 
+.listcontainer {
+    width: 100%;
+    margin-top: 1rem;
+}
 
+.listcontainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.listcontainer th,
+.listcontainer td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+.listcontainer th {
+    background-color: #f2f2f2;
+}
+.listcontainercus {
+    margin-left: 0; /* Move table to the left */
+}
+
+.listcontainerapp {
+    margin-left: 0; /* Move table to the left */
+}
+
+.listcontaineremp {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.listcontaineremp table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.listcontaineremp th,
+.listcontaineremp td {
+    border: 1px solid black;
+    padding: 8px;
+}
+
+.listcontaineremp th {
+    background-color: #f2f2f2;
+}
 
 .actions {
     display: flex;
-    gap: 10px;
+    gap: 50px;
 }
 
 .actions button {
@@ -92,73 +112,131 @@
     background-color: red;
     color: white;
 }
-.list111, .list122{
 
- display: flex;
-    padding: 10px;
+.details {
+    display: flex;
     align-items: center;
-    justify-content: space-between;
-    transition: 0.5s ease-in-out;
+    gap: 10px;
 }
 
+.details img {
+    width: 60px; /* Decrease the width of the image */
+    height: auto; /* Maintain aspect ratio */
+}
 
-@media only screen and (max-width: 576px) {
-    .list111,.list122{
-        width:20vh;
-        padding: 5px; 
-        justify-content: center; 
-        margin-left: 30px;
+.form {
+    width: 300px;
+}
+
+/* Styles for email wrapping */
+.emailemp {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    max-width: 150px; /* Adjust the width as necessary */
+}
+
+.nameee {
+    font-size: 20px; /* Adjust the size as needed */
+    margin: 0; /* Remove any default margin if necessary */
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .listheader {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 1rem;
+        margin-right: 1rem;
     }
-    .list122{
-        margin-left: 20px;
-        gap: 10px;
+
+    .add {
+        font-size: 16px;
+        padding: 8px;
+        border-radius: 15px;
     }
-   
-    .list11,
-    .list12 {
-        width: 10vw; 
-        padding: 5px; 
-        justify-content: center; 
-        margin-left: 50px;
+
+    .listcontainercus {
+        margin-top: 0.5rem;
+        margin-left: 0; /* Move table to the left */
     }
-    .list12{
+
+    .listcontainercus table {
+        font-size: 12px;
+    }
+
+    .listcontainercus th,
+    .listcontainercus td {
+        padding: 4px;
+    }
+
+    .listcontainer {
+        margin-top: 0.5rem;
+        margin-left: 0; /* Move table to the left */
+    }
+
+    .nameee {
+        font-size: 18px; /* Adjust the size as needed */
+        margin: 0; /* Remove any default margin if necessary */
+    }
+
+    .listcontainer table {
+        font-size: 12px;
+    }
+
+    .listcontainer th,
+    .listcontainer td {
+        padding: 11px;
+    }
+
+    .listcontaineremp {
+        margin-top: 0.5rem;
+        margin-left: 0; /* Move table to the left */
+    }
+
+    .listcontaineremp table {
+        font-size: 14px;
+    }
+
+    .listcontaineremp th,
+    .listcontaineremp td {
+        padding: 11px;
+        /* font-size: 19px; */
+    }
+
+    .actions {
         gap: 15px;
     }
-    .listheader{
-      left: 0;
-      gap:18px;
+
+    .actions button {
+        padding: 4px 8px;
     }
 
     .details img {
         width: 40px;
     }
-    .details{
-        font-size: 0.8rem;
+
+    .form {
+        width: 250px;
+        margin-left: 0; /* Align form to the left */
     }
 
-    .actions button {
-        font-size: 8px; 
+    .formapp {
+        width: 250px;
+        margin-left: 10px;
     }
-    .pos{
-        font-size: 0.85rem;
+
+    .add {
+        font-size: 10px;
     }
-    .email{
-        font-size: 0.86rem;
+
+    .listcontaineremp {
+        margin-left: 0; /* Move table to the left */
     }
-    .actions{
-        gap: 1px;
-        font-size: 0.6rem;
-        
+    .listcontainer {
+        margin-left: 0; /* Move table to the left */
     }
-    .list11:hover {
-        background: #323c43;
-        color: aliceblue;
-        border-radius: 25px;
-        width: 60%;
+    .listcontainercus {
+        margin-left: 0; /* Move table to the left */
     }
-    .add{
-        font-size: 8px;
-        margin-right: 1400px;
-    }
-   
 }
