@@ -17,45 +17,42 @@ function Footer() {
           <h4>Info</h4>
           <ul className="links">
             <li key="about">
-              <Link to="../Homepage/Home.js">About Us</Link>
+              <Link to="../Home">About Us</Link>
             </li>
             <li key="Products">
-              <Link to="../Products/Products.js">Products</Link>
+              <Link to="../Products">Products</Link>
             </li>
             <li key="contact">
-              <Link to="../Contact/contact.js">Contact</Link>
+              <Link to="../contact">Contact</Link>
             </li>
             <li key="Favorites">
-              <Link to="../Products/Favorites.js">Favorites</Link>
+              <Link to="../Favorites">Favorites</Link>
             </li>
             <li key="Dashboard">
-              <Link to="../dashboard/Dashboard.jsx">Dashboard</Link>
+              <Link to="../dashboard/">Dashboard</Link>
             </li>
           </ul>
         </div>
-        {/* <div className="footer-col">
-          <h4>Legal</h4>
+        <div className="footer-col">
+          <h4>More</h4>
           <ul className="links">
-            <li key="customer-agreement">
-              <Link to="/customer-agreement">Customer Agreement</Link>
+            <li key="Login">
+              <Link to="../Login">Login</Link>
             </li>
-            <li key="privacy-policy">
-              <Link to="/privacy-policy">Privacy Policy</Link>
+            <li key="Signup">
+              <Link to="../Signup">Sign-up</Link>
             </li>
-            <li key="gdpr">
-              <Link to="/gdpr">GDPR</Link>
+            <li key="cart">
+              <Link to="../cart">Cart</Link>
             </li>
-            <li key="security">
-              <Link to="/security">Security</Link>
+            <li key="Locations">
+              <Link to="#Find Store">Location</Link>
             </li>
             <li key="testimonials">
               <Link to="/testimonials">Testimonials</Link>
             </li>
-            <li key="media-kit">
-              <Link to="/media-kit">Media Kit</Link>
-            </li>
           </ul>
-        </div> */}
+        </div>
         <div className="footer-col">
           <h4>Hedj</h4>
           <p>
