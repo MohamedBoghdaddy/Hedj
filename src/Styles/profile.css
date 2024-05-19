@@ -1,23 +1,9 @@
-@font-face {
-  font-family: "Beverly";
-  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "Aeonik Thin";
-  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
-}
-
-
-
 .profile {
     display: flex;
     flex: 1;
-    margin-left: 3px;
-    
-}
-
-.proheader {
+  }
+  
+  .proheader {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,9 +16,9 @@
     height: 65px;
     padding: 0 20px;
     z-index: 1;
-}
-
-.edit {
+  }
+  
+  .edit {
     background: #766759;
     padding: 12px;
     border-radius: 20px;
@@ -40,72 +26,125 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.icon {
+  }
+  
+  .icon {
     font-size: 20px;
     transition: 0.5s ease-in-out;
     cursor: pointer;
-}
-
-.userprofile {
+  }
+  
+  .userprofile {
     height: 100vh;
     position: fixed;
-    margin-top: 0.9rem;
+    top: 0;
+    left: 0;
     background: #323c43;
     width: 35vh;
     padding: 10px;
     display: flex;
     flex-direction: column;
-    margin-right: 75px; 
-    left: 0;
-    overflow-y:visible;
-}
-
-.userdetails {
+    transition: width 0.3s ease;
+    overflow-y: auto;
+    margin-top: 60px;
+  }
+  
+  .userprofile.collapsed {
+    width: 8vh;
+  }
+  
+  .toggle-button {
+    margin: 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #d6cec1;
+    font-size: 20px; /* Increased font size */
+    align-self: flex-end;
+  }
+  
+  .userdetails {
     width: 100%;
-    height: 250px;
+    height: 200px;
     align-items: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-.userdetails img {
+    transition: opacity 0.3s ease, width 0.3s ease;
+  }
+  
+  .userdetails img {
+    margin-top: 70px;
     padding-bottom: 10px;
     border-radius: 50%;
     width: 150px;
-}
-
-.userdetails h3 {
+  }
+  
+  .userdetails h3 {
     color: #eceae6;
-}
-
-
-@media only screen and (max-width: 868px) {
-    .userprofile {
-        position: fixed;
-        display: flex;
-        top: 65px; 
-        left: 0;
-        bottom: 0;
-        width: 20vh; 
-        z-index: 0; 
-        margin-right: 0.3rem;
-    }
-    .userdetails img{
-        width:50px;
-    }
-    .userdetails h3{
-        font-size: 10px;
-    }
-    .proheader{
-        font-size: 8px;
-    }
-    .icon{
-        font-size: 15px;
-
-    }
-}
+    font-size: 20px;
+  }
+  
+  .userprofile.collapsed .userdetails {
+    opacity: 0;
+    width: 0;
+  }
+  
+  .menulist {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 10px 15px;
+    transition: 0.5s ease-in-out;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #D6CEC1;
+  }
+  
+  .item:hover {
+    background: #766759;
+    color: whitesmoke;
     
+  }
+  
+  @media only screen and (max-width: 868px) {
+    .userprofile {
+      position: fixed;
+      display: flex;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 20vh;
+      z-index: 0;
+      margin-right: 0.1rem;
+    }
+  
+    .userdetails img {
+      width: 110px;
+    }
+  
+    .userdetails h3 {
+      font-size: 19px;
+    }
+  
+    .proheader {
+      font-size: 6px;
+    }
+  
+    .icon {
+      font-size: 0.8rem;
+    }
+    .item{
+      font-size: 0.95rem;
+      gap: 0.5rem;
 
+    }
+  }
