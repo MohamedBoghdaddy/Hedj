@@ -1,4 +1,4 @@
-.container {
+.main-Container {
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -6,7 +6,8 @@
   justify-content: center;
 }
 
-.form-container {
+.frame-Container {
+  max-width: 900px; /* Changed width to max-width */
   display: flex;
   flex-direction: row;
   background-color: #766759;
@@ -15,8 +16,6 @@
     0px 3px 3px -2px rgb(0 0 0 / 20%),
     0px 3px 4px 0px rgb(0 0 0 / 14%),
     0px 1px 8px 0px rgb(0 0 0 / 12%);
-  max-width: 900px; /* Changed width to max-width */
-  height: 1000px;
 }
 
 .left {

@@ -34,8 +34,8 @@ const Contact = () => {
   };
 
   return (
-    <div className="container">
-      <div className="form-container">
+    <div className="main-container">
+      <div className="frame-container">
         <h1>Contact Us</h1>
         <form ref={form} onSubmit={sendEmail}>
           <div className="field input">

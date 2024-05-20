@@ -8,18 +8,22 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-.container {
+.main-container {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 200px;
 }
+
 h1 {
   font-family: "Beverly";
+  text-align: center;
 }
-.form-container {
-  width: 900px;
-  height: 500px;
+
+.frame-container {
+  width: 600px;
+  height: 300px;
   display: flex;
   flex-direction: row;
   background-color: #766759;
@@ -28,25 +32,23 @@ h1 {
     0px 3px 3px -2px rgb(0 0 0 / 20%),
     0px 3px 4px 0px rgb(0 0 0 / 14%),
     0px 1px 8px 0px rgb(0 0 0 / 12%);
-
-  font-family: "Aeonik Thin";
 }
 
 .input {
   outline: none;
   border: none;
-  width: 370px;
-  padding: 15px;
+  width: 100%;
+  padding: 12px;
   border-radius: 10px;
   background-color: #d6cec1;
-  margin: 5px 0;
+  margin: 10px 0;
   font-size: 14px;
 }
 
 .error_msg {
-  width: 370px;
-  padding: 15px;
-  margin: 5px 0;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
   font-size: 14px;
   background-color: #f34646;
   color: white;
@@ -56,6 +58,7 @@ h1 {
 
 label {
   font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .field input {
@@ -63,10 +66,26 @@ label {
   align-items: center;
 }
 
+button {
+  background-color: #4a4a4a;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #333;
+}
+
 /* Responsive styles for smaller screens */
 @media only screen and (max-width: 760px) {
   .form-container {
-    flex-direction: column; /* Stack the sections for smaller screens */
-    height: auto; /* Allow the height to adjust */
+    width: 90%;
+    padding: 15px;
   }
 }

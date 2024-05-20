@@ -8,7 +8,6 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-
 .container {
   width: 100%;
   min-height: 100vh;
@@ -18,15 +17,16 @@
 }
 
 .form-container {
-  width: 900px;
-  height: 500px;
+  width: 600px;
+  height: 300px;
   display: flex;
   flex-direction: row;
   background-color: #766759;
   border-radius: 10px;
-  box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%),
-              0px 3px 4px 0px rgb(0 0 0 / 14%),
-              0px 1px 8px 0px rgb(0 0 0 / 12%);
+  box-shadow:
+    0px 3px 3px -2px rgb(0 0 0 / 20%),
+    0px 3px 4px 0px rgb(0 0 0 / 14%),
+    0px 1px 8px 0px rgb(0 0 0 / 12%);
 }
 
 .left {
@@ -68,12 +68,13 @@
   width: 370px;
   padding: 15px;
   border-radius: 10px;
-  background-color: #D6CEC1;
+  background-color: #d6cec1;
   margin: 5px 0;
   font-size: 14px;
 }
 
-.white_btn, .green_btn {
+.white_btn,
+.green_btn {
   border: none;
   outline: none;
   padding: 12px 0;
