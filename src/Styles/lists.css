@@ -63,6 +63,7 @@
 .listcontainer th {
     background-color: #f2f2f2;
 }
+
 .listcontainercus {
     margin-left: 0; /* Move table to the left */
 }
@@ -93,7 +94,7 @@
 
 .actions {
     display: flex;
-    gap: 50px;
+    gap: 10px; /* Adjust gap as necessary */
 }
 
 .actions button {
@@ -105,7 +106,6 @@
 .actions button.update {
     background-color: blue;
     color: white;
-    margin-right: 10px;
 }
 
 .actions button.delete {

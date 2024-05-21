@@ -2,10 +2,12 @@ import React, { useState, useRef } from "react";
 import Profileheader from '../dashboard/profileheader';
 import "../../Styles/profile.css";
 import userimage from '../../Assets/Images/simple.jpg';
-import {  BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
+import { BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
+import EmployeeList from '../employee/EmployeeList'; // Import the EmployeeList component
 
 const Profile = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isEmployeeListVisible, setIsEmployeeListVisible] = useState(false); // State variable to track employee list visibility
   const sidebarRef = useRef(null);
 
   const handleMouseEnter = () => {
@@ -14,6 +16,11 @@ const Profile = () => {
 
   const handleMouseLeave = () => {
     setIsCollapsed(true);
+  };
+
+  // Function to toggle the visibility of the employee list
+  const toggleEmployeeList = () => {
+    setIsEmployeeListVisible(prevState => !prevState);
   };
 
   return (
@@ -33,6 +40,14 @@ const Profile = () => {
           {isCollapsed ? '>' : '<'}
         </button>
         <div className="menulist">
+          {/* Modify the button to toggle employee list visibility */}
+          <button className="item" onClick={toggleEmployeeList}>
+            <BsPeopleFill className="icon" />
+            {!isCollapsed && 'Employees'}
+          </button>
+          {/* Render EmployeeList component based on visibility state */}
+          {isEmployeeListVisible && <EmployeeList />}
+          {/* Other menu items */}
           <a href="#dash" className="item">
             <BsGrid1X2Fill className="icon" />
             {!isCollapsed && 'Dashboard'}
@@ -48,10 +63,6 @@ const Profile = () => {
           <a href="#cust" className="item">
             <BsPeopleFill className="icon" />
             {!isCollapsed && 'Customers'}
-          </a>
-          <a href="#emplo" className="item">
-            <BsPeopleFill className="icon" />
-            {!isCollapsed && 'Employees'}
           </a>
           <a href="##" className="item">
             <BsMenuButtonWideFill className="icon" />
