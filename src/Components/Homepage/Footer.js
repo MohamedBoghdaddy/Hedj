@@ -5,8 +5,9 @@ import {
   faLinkedin,
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
-import { Link } from "react-router-dom";
-import "../../Styles/Footer.css"; // Import the CSS file
+import { Link as RouterLink } from "react-router-dom";
+import { Link as ScrollLink } from "react-scroll";
+import "../../Styles/Footer.css";
 import "../../App.css";
 
 function Footer() {
@@ -17,19 +18,21 @@ function Footer() {
           <h4>Info</h4>
           <ul className="links">
             <li key="about">
-              <Link to="../Home">About Us</Link>
+              <ScrollLink to="About us" smooth={true} duration={500}>
+                About us
+              </ScrollLink>{" "}
             </li>
             <li key="Products">
-              <Link to="../Products">Products</Link>
+              <RouterLink to="/products">Products</RouterLink>
             </li>
             <li key="contact">
-              <Link to="../contact">Contact</Link>
+              <RouterLink to="/contact">Contact</RouterLink>
             </li>
             <li key="Favorites">
-              <Link to="../Favorites">Favorites</Link>
+              <RouterLink to="/favorites">Favorites</RouterLink>
             </li>
             <li key="Dashboard">
-              <Link to="../dashboard/">Dashboard</Link>
+              <RouterLink to="/dashboard">Dashboard</RouterLink>
             </li>
           </ul>
         </div>
@@ -37,19 +40,21 @@ function Footer() {
           <h4>More</h4>
           <ul className="links">
             <li key="Login">
-              <Link to="../Login">Login</Link>
+              <RouterLink to="/login">Login</RouterLink>
             </li>
             <li key="Signup">
-              <Link to="../Signup">Sign-up</Link>
+              <RouterLink to="/signup">Sign-up</RouterLink>
             </li>
             <li key="cart">
-              <Link to="../cart">Cart</Link>
+              <RouterLink to="/cart">Cart</RouterLink>
             </li>
             <li key="Locations">
-              <Link to="#Find Store">Location</Link>
+              <ScrollLink to="find-store" smooth={true} duration={500}>
+                Location
+              </ScrollLink>
             </li>
             <li key="testimonials">
-              <Link to="/testimonials">Testimonials</Link>
+              <RouterLink to="/testimonials">Testimonials</RouterLink>
             </li>
           </ul>
         </div>
@@ -62,10 +67,6 @@ function Footer() {
             trends, we have something for every taste. Explore our collection
             today and transform your space.
           </p>
-          {/* <form action="#">
-            <input type="text" placeholder="Your email" required />
-            <button type="submit">SUBSCRIBE</button>
-          </form> */}
           <div className="icons">
             <a href="https://www.facebook.com/hedj.eg">
               <FontAwesomeIcon icon={faFacebookF} />
