@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "../../Styles/lists.css"
+import "../../Styles/lists.css";
+import { BsPeopleFill } from "react-icons/bs";
+
 const EmployeeList = () => {
     const [employees, setEmployees] = useState(() => {
         const savedEmployees = localStorage.getItem('employees');
@@ -12,7 +14,8 @@ const EmployeeList = () => {
 
     const [showAddForm, setShowAddForm] = useState(false);
     const [showUpdateForm, setShowUpdateForm] = useState({ index: null, show: false });
-    
+    const [showEmployeeList, setShowEmployeeList] = useState(false);
+
     // State variables for form validation
     const [nameError, setNameError] = useState('');
     const [emailError, setEmailError] = useState('');
@@ -77,7 +80,9 @@ const EmployeeList = () => {
         <div className="employeesList">
             <div className="listheader">
                 <h3>Employees</h3>
-                <button className="add" onClick={() => handleAdd()}>+ Add</button>
+                <button className="add" onClick={() => setShowEmployeeList(!showEmployeeList)}>
+                    {showEmployeeList ? "Hide Employees" : "Show Employees"}
+                </button>
             </div>
             {showAddForm && (
                 <EmployeeForm 
@@ -98,29 +103,31 @@ const EmployeeList = () => {
                     positionError={positionError}
                 />
             )}
-            <table className="listcontaineremp">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Position</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map((employee, index) => (
-                        <tr key={index}>
-                            <td>{employee.name}</td>
-                            <td className="emailemp">{employee.email}</td>
-                            <td>{employee.position}</td>
-                            <td>
-                                <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
-                                <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
-                            </td>
+            {showEmployeeList && (
+                <table className="listcontaineremp">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Position</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {employees.map((employee, index) => (
+                            <tr key={index}>
+                                <td>{employee.name}</td>
+                                <td className="emailemp">{employee.email}</td>
+                                <td>{employee.position}</td>
+                                <td>
+                                    <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
+                                    <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };
