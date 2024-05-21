@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../Styles/lists.css"
+
 const AppointmentList = () => {
     const [appointments, setAppointments] = useState(() => {
         const savedAppointments = localStorage.getItem('appointments');
@@ -43,7 +44,7 @@ const AppointmentList = () => {
         <div className="appointmentsList">
             <div className="listheader">
                 <h3>Appointments</h3>
-                <button className="add" onClick={() => handleAdd()}>+ Add</button>
+                <button className="add" onClick={handleAdd}>+ Add</button>
             </div>
             {showAddForm && (
                 <AppointmentForm onSubmit={handleAddSubmit} onCancel={() => setShowAddForm(false)} />
@@ -70,7 +71,7 @@ const AppointmentList = () => {
                             <td>{appointment.title}</td>
                             <td>{appointment.date}</td>
                             <td>{appointment.time}</td>
-                            <td>
+                            <td className="actions">
                                 <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
                                 <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
                             </td>
