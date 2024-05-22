@@ -3,7 +3,7 @@ import Profileheader from '../dashboard/profileheader';
 import "../../Styles/profile.css";
 import userimage from '../../Assets/Images/simple.jpg';
 import { BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
-import EmployeeList from '../employee/EmployeeList'; // Import the EmployeeList component
+import EmployeeList from '../dashboard/employeelist'; // Import the EmployeeList component
 
 const Profile = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
