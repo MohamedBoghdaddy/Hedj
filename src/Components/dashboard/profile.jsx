@@ -6,7 +6,7 @@ import { BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, B
 import EmployeeList from '../dashboard/employeelist'; // Import the EmployeeList component
 
 const Profile = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isEmployeeListVisible, setIsEmployeeListVisible] = useState(false); // State variable to track employee list visibility
   const sidebarRef = useRef(null);
 
