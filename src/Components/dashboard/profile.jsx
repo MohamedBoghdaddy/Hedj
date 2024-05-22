@@ -18,10 +18,7 @@ const Profile = () => {
     setIsCollapsed(true);
   };
 
-  // Function to toggle the visibility of the employee list
-  const toggleEmployeeList = () => {
-    setIsEmployeeListVisible(prevState => !prevState);
-  };
+  
 
   return (
     <div className="profile">
@@ -36,12 +33,10 @@ const Profile = () => {
           <img src={userimage} alt="" />
           <h3 className="username">Tommy Peter</h3>
         </div>
-        <button className="toggle-button">
-          {isCollapsed ? '>' : '<'}
-        </button>
+        
         <div className="menulist">
           {/* Modify the button to toggle employee list visibility */}
-          <button className="item" onClick={toggleEmployeeList}>
+          <button className="item" >
             <BsPeopleFill className="icon" />
             {!isCollapsed && 'Employees'}
           </button>

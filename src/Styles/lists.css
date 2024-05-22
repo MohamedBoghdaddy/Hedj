@@ -45,8 +45,10 @@
 }
 
 .listcontainer {
-    width: 100%;
+    width: 78%;
     margin-top: 1rem;
+    margin-left: 300px;
+  
 }
 
 .listcontainer table {
@@ -104,12 +106,12 @@
 }
 
 .actions button.update {
-    background-color: blue;
+    background: #766759;
     color: white;
 }
 
 .actions button.delete {
-    background-color: red;
+    background: #766759;
     color: white;
 }
 
@@ -126,6 +128,10 @@
 
 .form {
     width: 300px;
+}
+.formapp {
+    width: 300px;
+    margin-left: 500px;
 }
 
 /* Styles for email wrapping */
