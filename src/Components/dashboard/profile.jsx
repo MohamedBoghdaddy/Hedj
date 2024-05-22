@@ -18,7 +18,9 @@ const Profile = () => {
     setIsCollapsed(true);
   };
 
-  
+  const handleEmployeeListToggle = () => {
+    setIsEmployeeListVisible(!isEmployeeListVisible);
+  };
 
   return (
     <div className="profile">
@@ -34,37 +36,35 @@ const Profile = () => {
           <h3 className="username">Tommy Peter</h3>
         </div>
         
-        <div className="menulist">
+        <div className={`menulist ${isCollapsed ? 'collapsed' : ''}`}>
           {/* Modify the button to toggle employee list visibility */}
-          <button className="item" >
-            <BsPeopleFill className="icon" />
+          <a className="item" onClick={handleEmployeeListToggle}>
+            <BsPeopleFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Employees'}
-          </button>
-          {/* Render EmployeeList component based on visibility state */}
-          {isEmployeeListVisible && <EmployeeList />}
-          {/* Other menu items */}
+          </a>
+          
           <a href="#dash" className="item">
-            <BsGrid1X2Fill className="icon" />
+            <BsGrid1X2Fill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Dashboard'}
           </a>
           <a href="##" className="item">
-            <BsFillArchiveFill className="icon" />
+            <BsFillArchiveFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Products'}
           </a>
           <a href="##" className="item">
-            <BsFillGrid3X3GapFill className="icon" />
+            <BsFillGrid3X3GapFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Categories'}
           </a>
           <a href="#cust" className="item">
-            <BsPeopleFill className="icon" />
+            <BsPeopleFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Customers'}
           </a>
           <a href="##" className="item">
-            <BsMenuButtonWideFill className="icon" />
+            <BsMenuButtonWideFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Reports'}
           </a>
           <a href="##" className="item">
-            <BsFillGearFill className="icon" />
+            <BsFillGearFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Settings'}
           </a>
         </div>
