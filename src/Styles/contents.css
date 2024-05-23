@@ -1,3 +1,12 @@
+@font-face {
+    font-family: "Beverly";
+    src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+  }
+  
+  @font-face {
+    font-family: "Aeonik Thin";
+    src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+  }
 .content {
     width: 77%;
     margin-left: 40vh;
@@ -110,15 +119,13 @@
     text-align: center;
     font-size: 1.3rem;
     border-radius: 20px;
-    width: 100%;
+    width: 80%;
+    font-family: "Aeonik Thin"
 }
 
-.cardnum {
-    color: #d6cec1;
-    font-size: 30px;
-}
 
-@media only screen and (max-width: 866px) {
+
+@media only screen and (max-width: 766px) {
     .containerofcards {
         flex-wrap: wrap;
         display: flex;

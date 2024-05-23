@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 .profile {
     display: flex;
     flex: 1;
@@ -16,6 +25,7 @@
     height: 65px;
     padding: 0 20px;
     z-index: 1;
+    font-family: "Beverly"
   }
   
   .edit {
@@ -63,6 +73,7 @@
     flex-direction: column;
     justify-content: center;
     transition: opacity 0.3s ease, width 0.3s ease;
+    font-family: "Aeonik Thin";
   }
   
   .userdetails img {
@@ -86,6 +97,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-top: 18px;
   }
   
   .item {
@@ -99,9 +111,10 @@
     border-radius: 20px;
     text-decoration: none;
     color: #D6CEC1;
+    font-family: "Aeonik Thin";
   }
   .big-icon {
-    font-size: 45px; /* Adjust the size as needed */
+    font-size: 42px; /* Adjust the size as needed */
   }
   
   .collapsed .item {
@@ -111,7 +124,7 @@
   .menulist {
     display: flex;
     flex-direction: column;
-    gap: 17px;
+    gap: 14px;
   }
   
   .menulist.collapsed {
