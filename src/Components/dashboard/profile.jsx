@@ -1,9 +1,16 @@
 import React, { useState, useRef } from "react";
-import Profileheader from '../dashboard/profileheader';
+import Profileheader from "../dashboard/profileheader";
 import "../../Styles/profile.css";
-import userimage from '../../Assets/Images/simple.jpg';
-import { BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
-import EmployeeList from '../employee/EmployeeList'; // Import the EmployeeList component
+import userimage from "../../Assets/Images/simple.jpg";
+import {
+  BsGrid1X2Fill,
+  BsFillArchiveFill,
+  BsFillGrid3X3GapFill,
+  BsPeopleFill,
+  BsMenuButtonWideFill,
+  BsFillGearFill,
+} from "react-icons/bs";
+import EmployeeList from "../dashboard/employeelist";
 
 const Profile = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -20,13 +27,13 @@ const Profile = () => {
 
   // Function to toggle the visibility of the employee list
   const toggleEmployeeList = () => {
-    setIsEmployeeListVisible(prevState => !prevState);
+    setIsEmployeeListVisible((prevState) => !prevState);
   };
 
   return (
     <div className="profile">
       <div
-        className={`userprofile ${isCollapsed ? 'collapsed' : ''}`}
+        className={`userprofile ${isCollapsed ? "collapsed" : ""}`}
         ref={sidebarRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -36,41 +43,39 @@ const Profile = () => {
           <img src={userimage} alt="" />
           <h3 className="username">Tommy Peter</h3>
         </div>
-        <button className="toggle-button">
-          {isCollapsed ? '>' : '<'}
-        </button>
+        <button className="toggle-button">{isCollapsed ? ">" : "<"}</button>
         <div className="menulist">
           {/* Modify the button to toggle employee list visibility */}
           <button className="item" onClick={toggleEmployeeList}>
             <BsPeopleFill className="icon" />
-            {!isCollapsed && 'Employees'}
+            {!isCollapsed && "Employees"}
           </button>
           {/* Render EmployeeList component based on visibility state */}
           {isEmployeeListVisible && <EmployeeList />}
           {/* Other menu items */}
           <a href="#dash" className="item">
             <BsGrid1X2Fill className="icon" />
-            {!isCollapsed && 'Dashboard'}
+            {!isCollapsed && "Dashboard"}
           </a>
           <a href="##" className="item">
             <BsFillArchiveFill className="icon" />
-            {!isCollapsed && 'Products'}
+            {!isCollapsed && "Products"}
           </a>
           <a href="##" className="item">
             <BsFillGrid3X3GapFill className="icon" />
-            {!isCollapsed && 'Categories'}
+            {!isCollapsed && "Categories"}
           </a>
           <a href="#cust" className="item">
             <BsPeopleFill className="icon" />
-            {!isCollapsed && 'Customers'}
+            {!isCollapsed && "Customers"}
           </a>
           <a href="##" className="item">
             <BsMenuButtonWideFill className="icon" />
-            {!isCollapsed && 'Reports'}
+            {!isCollapsed && "Reports"}
           </a>
           <a href="##" className="item">
             <BsFillGearFill className="icon" />
-            {!isCollapsed && 'Settings'}
+            {!isCollapsed && "Settings"}
           </a>
         </div>
       </div>
