@@ -1,4 +1,13 @@
 /* Existing styles */
+@font-face {
+    font-family: "Beverly";
+    src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+  }
+  
+  @font-face {
+    font-family: "Aeonik Thin";
+    src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+  }
 
 .employeesList {
     display: flex;
@@ -13,6 +22,7 @@
     margin-left: 1.7rem;
     margin-bottom: 1.7rem;
     width: 100%;
+    font-family: "Beverly";
 }
 
 .add {
@@ -38,6 +48,7 @@
 .listcontainercus td {
     border: 1px solid black;
     padding: 8px;
+    
 }
 
 .listcontainercus th {
@@ -45,8 +56,10 @@
 }
 
 .listcontainer {
-    width: 100%;
+    width: 78%;
     margin-top: 1rem;
+    margin-left: 300px;
+  
 }
 
 .listcontainer table {
@@ -66,15 +79,18 @@
 
 .listcontainercus {
     margin-left: 0; /* Move table to the left */
+    font-family: "Aeonik Thin";
 }
 
 .listcontainerapp {
     margin-left: 0; /* Move table to the left */
+    font-family: "Aeonik Thin";
 }
 
 .listcontaineremp {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 2rem;
+    font-family: "Aeonik Thin";
 }
 
 .listcontaineremp table {
@@ -104,12 +120,12 @@
 }
 
 .actions button.update {
-    background-color: blue;
+    background: #766759;
     color: white;
 }
 
 .actions button.delete {
-    background-color: red;
+    background: #766759;
     color: white;
 }
 
@@ -127,13 +143,17 @@
 .form {
     width: 300px;
 }
+.formapp {
+    width: 300px;
+    margin-left: 500px;
+}
 
 /* Styles for email wrapping */
 .emailemp {
     word-wrap: break-word;
     word-break: break-all;
     white-space: normal;
-    max-width: 150px; /* Adjust the width as necessary */
+    
 }
 
 .nameee {
@@ -190,13 +210,20 @@
     }
 
     .listcontaineremp {
-        margin-top: 0.5rem;
+        margin-top: 2rem;
         margin-left: 0; /* Move table to the left */
+    }
+    .employeesList{
+        margin-top: 15rem;
+    }
+    .employeesList.listheader{
+        left: 0;
     }
 
     .listcontaineremp table {
         font-size: 14px;
     }
+    
 
     .listcontaineremp th,
     .listcontaineremp td {

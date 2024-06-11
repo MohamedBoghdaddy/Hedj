@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../Styles/lists.css";
-import { BsPeopleFill } from "react-icons/bs";
+
 
 const EmployeeList = () => {
     const [employees, setEmployees] = useState(() => {
@@ -14,7 +14,7 @@ const EmployeeList = () => {
 
     const [showAddForm, setShowAddForm] = useState(false);
     const [showUpdateForm, setShowUpdateForm] = useState({ index: null, show: false });
-    const [showEmployeeList, setShowEmployeeList] = useState(false);
+    const [showEmployeeList, setShowEmployeeList] = useState(true);
 
     // State variables for form validation
     const [nameError, setNameError] = useState('');
@@ -80,9 +80,7 @@ const EmployeeList = () => {
         <div className="employeesList">
             <div className="listheader">
                 <h3>Employees</h3>
-                <button className="add" onClick={() => setShowEmployeeList(!showEmployeeList)}>
-                    {showEmployeeList ? "Hide Employees" : "Show Employees"}
-                </button>
+                <button className="add" onClick={handleAdd}>+ Add</button>
             </div>
             {showAddForm && (
                 <EmployeeForm 
