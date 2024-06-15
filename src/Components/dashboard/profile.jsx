@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+/*import React, { useState, useRef } from "react";
 import Profileheader from "../dashboard/profileheader";
 import "../../Styles/profile.css";
 <<<<<<< HEAD
@@ -57,14 +57,14 @@ const Profile = () => {
 <<<<<<< HEAD
         <button className="toggle-button">{isCollapsed ? ">" : "<"}</button>
         <div className="menulist">
-          {/* Modify the button to toggle employee list visibility */}
+          {/* Modify the button to toggle employee list visibility */ /*}
           <button className="item" onClick={toggleEmployeeList}>
             <BsPeopleFill className="icon" />
             {!isCollapsed && "Employees"}
           </button>
-          {/* Render EmployeeList component based on visibility state */}
+          {/* Render EmployeeList component based on visibility state */ /*}
           {isEmployeeListVisible && <EmployeeList />}
-          {/* Other menu items */}
+          {/* Other menu items */ /*}
           <a href="#dash" className="item">
             <BsGrid1X2Fill className="icon" />
             {!isCollapsed && "Dashboard"}
@@ -91,7 +91,7 @@ const Profile = () => {
 =======
         
         <div className={`menulist ${isCollapsed ? 'collapsed' : ''}`}>
-          {/* Modify the button to toggle employee list visibility */}
+          {/* Modify the button to toggle employee list visibility *//*}
           <a className="item" onClick={handleEmployeeListToggle}>
             <BsPeopleFill className={`icon ${isCollapsed ? 'big-icon' : ''}`} />
             {!isCollapsed && 'Employees'}
@@ -128,4 +128,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+/*export default Profile;*/

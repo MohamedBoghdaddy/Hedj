@@ -39,7 +39,7 @@ function Kitcard({ addToCart }) {
           <Card.Img src={kitchen2} className="image" alt="Kitchen 2" />
           <Card.Body>
             <Card.Title>Woody Kitchen</Card.Title>
-            <Card.Text>Price: $60,000</Card.Text>
+            <Card.price>Price: $60,000</Card.price>
             <Button
               className="button"
               onClick={() => handleAddToCart("Woody Kitchen", 60000)}

@@ -3,9 +3,9 @@ import "../../Styles/Products.css";
 import { Link } from "react-router-dom";
 
 function Products() {
-  const Menus=['Profile', "apps", "settings"];
+  /*const Menus=['Profile', "apps", "settings"]; */
   return (
-    /*<div className="container">
+    <div className="container">
       <ul className="first">
         <li>News 2024</li>
         <li>KITCHEN</li>
@@ -27,9 +27,10 @@ function Products() {
           </li>
         </ul>
       </div>
-    </div>*/
+    </div>
 
-<div className="dropdown">
+
+/*<div className="dropdown">
   <ul>
     {
       Menus.map((menu)=>(
@@ -38,7 +39,7 @@ function Products() {
       ))
     }
   </ul>
-</div>
+</div>*/
 
 
 
