@@ -1,156 +1,194 @@
-import React, { useState, useEffect } from "react";
-import "../../Styles/lists.css";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams, Route, Routes } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 
-const EmployeeList = () => {
-    const [employees, setEmployees] = useState(() => {
-        const savedEmployees = localStorage.getItem('employees');
-        return savedEmployees ? JSON.parse(savedEmployees) : [];
-    });
-
-    useEffect(() => {
-        localStorage.setItem('employees', JSON.stringify(employees));
-    }, [employees]);
-
-    const [showAddForm, setShowAddForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState({ index: null, show: false });
-    const [showEmployeeList, setShowEmployeeList] = useState(true);
-
-    // State variables for form validation
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [positionError, setPositionError] = useState('');
-
-    const handleUpdate = (index) => {
-        setShowUpdateForm({ index, show: true });
+const AddUser = ({ setUsers }) => {
+    const users = {
+        fname: "",
+        lname: "",
+        email: "",
+        password: ""
     };
 
-    const handleDelete = (index) => {
-        const updatedEmployees = [...employees];
-        updatedEmployees.splice(index, 1);
-        setEmployees(updatedEmployees);
+    const [User, setUser] = useState(users);
+    const navigate = useNavigate();
+
+    const inputHandler = (e) => {
+        const { name, value } = e.target;
+        setUser({ ...User, [name]: value });
     };
 
-    const handleAdd = () => {
-        setShowAddForm(true);
-    };
-
-    const handleAddSubmit = (newEmployee) => {
-        if (!validateForm(newEmployee)) {
-            return; // Do not submit if form is invalid
+    const submitForm = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("http://localhost:8000/api/create", User);
+            toast.success(response.data.msg, { position: "top-right" });
+            setUsers(prevUsers => [...prevUsers, response.data.user]);
+            navigate("/");
+        } catch (error) {
+            console.error(error);
         }
-        setEmployees([...employees, newEmployee]);
-        setShowAddForm(false);
-    };
-
-    const handleUpdateSubmit = (index, updatedEmployee) => {
-        if (!validateForm(updatedEmployee)) {
-            return; // Do not submit if form is invalid
-        }
-        const updatedEmployees = [...employees];
-        updatedEmployees[index] = updatedEmployee;
-        setEmployees(updatedEmployees);
-        setShowUpdateForm({ index: null, show: false });
-    };
-
-    const validateForm = (employee) => {
-        let isValid = true;
-        if (!employee.name.trim()) {
-            setNameError('Name is required');
-            isValid = false;
-        } else {
-            setNameError('');
-        }
-        if (!employee.email.trim()) {
-            setEmailError('Email is required');
-            isValid = false;
-        } else {
-            setEmailError('');
-        }
-        if (!employee.position.trim()) {
-            setPositionError('Position is required');
-            isValid = false;
-        } else {
-            setPositionError('');
-        }
-        return isValid;
     };
 
     return (
-        <div className="employeesList">
-            <div className="listheader">
-                <h3>Employees</h3>
-                <button className="add" onClick={handleAdd}>+ Add</button>
-            </div>
-            {showAddForm && (
-                <EmployeeForm 
-                    onSubmit={handleAddSubmit} 
-                    onCancel={() => setShowAddForm(false)} 
-                    nameError={nameError}
-                    emailError={emailError}
-                    positionError={positionError}
-                />
-            )}
-            {showUpdateForm.show && (
-                <EmployeeForm
-                    employee={employees[showUpdateForm.index]}
-                    onSubmit={(updatedEmployee) => handleUpdateSubmit(showUpdateForm.index, updatedEmployee)}
-                    onCancel={() => setShowUpdateForm({ index: null, show: false })}
-                    nameError={nameError}
-                    emailError={emailError}
-                    positionError={positionError}
-                />
-            )}
-            {showEmployeeList && (
-                <table className="listcontaineremp">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Position</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {employees.map((employee, index) => (
-                            <tr key={index}>
-                                <td>{employee.name}</td>
-                                <td className="emailemp">{employee.email}</td>
-                                <td>{employee.position}</td>
-                                <td>
-                                    <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
-                                    <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+        <div className='add'>
+            <Link to="/">Back</Link>
+            <h2>Add new user</h2>
+            <form className='adduserform' onSubmit={submitForm}>
+                <div className='inputgroup'>
+                    <label htmlFor='fname'>First Name</label>
+                    <input type="text" onChange={inputHandler} id='fname' name='fname' autoComplete='off' placeholder='First name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='lname'>Last Name</label>
+                    <input type="text" onChange={inputHandler} id='lname' name='lname' autoComplete='off' placeholder='Last name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='email'>Email</label>
+                    <input type="email" onChange={inputHandler} id='email' name='email' autoComplete='off' placeholder='Email' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='password'>Password</label>
+                    <input type="password" onChange={inputHandler} id='password' name='password' autoComplete='off' placeholder='Password' />
+                </div>
+                <div className='inputgroup'>
+                    <button type='submit'>ADD USER</button>
+                </div>
+            </form>
         </div>
     );
 };
 
-const EmployeeForm = ({ employee = { name: "", email: "", position: "" }, onSubmit, onCancel, nameError, emailError, positionError }) => {
-    const [name, setName] = useState(employee.name);
-    const [email, setEmail] = useState(employee.email);
-    const [position, setPosition] = useState(employee.position);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ name, email, position });
+const UserList = ({ users, setUsers }) => {
+    const deleteUser = async (userId) => {
+        try {
+            const response = await axios.delete(`http://localhost:8000/api/delete/${userId}`);
+            setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+            toast.success(response.data.msg, { position: 'top-right' });
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="form">
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-            {nameError && <span className="error">{nameError}</span>}
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-            {emailError && <span className="error">{emailError}</span>}
-            <input type="text" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Position" />
-            {positionError && <span className="error">{positionError}</span>}
-            <button type="submit">Submit</button>
-            <button type="button" onClick={onCancel}>Cancel</button>
-        </form>
+        <div className='usertable'>
+            <Link to="/add" className='addbutton'>Add User</Link>
+            <table border={1} cellPadding={10} cellSpacing={0}>
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Employee Name</th>
+                        <th>Employee Email</th>
+                        <th>Employee position</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {users.map((user, index) => (
+                        <tr key={user._id}>
+                            <td>{index + 1}</td>
+                            <td>{user.fname} {user.lname}</td>
+                            <td>{user.email}</td>
+                            <td className='action'>
+                                <button onClick={() => deleteUser(user._id)}><i className="fa-solid fa-trash"></i></button>
+                                <Link to={'/edit/' + user._id}><i className="fa-solid fa-pen-to-square"></i></Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+const EditUser = ({ setUsers }) => {
+    const users = {
+        fname: "",
+        lname: "",
+        email: ""
+    };
+
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [user, setUser] = useState(users);
+
+    const inputChangeHandler = (e) => {
+        const { name, value } = e.target;
+        setUser({ ...user, [name]: value });
+    };
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/getone/${id}`);
+                setUser(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchUser();
+    }, [id]);
+
+    const submitForm = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.put(`http://localhost:8000/api/update/${id}`, user);
+            toast.success(response.data.msg, { position: "top-right" });
+            setUsers(prevUsers => prevUsers.map(u => u._id === id ? response.data.user : u));
+            navigate("/");
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    return (
+        <div className='add'>
+            <Link to="/">Back</Link>
+            <h2>Update user</h2>
+            <form className='adduserform' onSubmit={submitForm}>
+                <div className='inputgroup'>
+                    <label htmlFor='fname'>First Name</label>
+                    <input type="text" value={user.fname} onChange={inputChangeHandler} id='fname' name='fname' autoComplete='off' placeholder='First name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='lname'>Last Name</label>
+                    <input type="text" value={user.lname} onChange={inputChangeHandler} id='lname' name='lname' autoComplete='off' placeholder='Last name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='email'>Email</label>
+                    <input type="text" value={user.email} onChange={inputChangeHandler} id='email' name='email' autoComplete='off' placeholder='Email' />
+                </div>
+                <div className='inputgroup'>
+                    <button type='submit'>UPDATE USER</button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+const EmployeeList = () => {
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:8000/api/getall");
+                setUsers(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    return (
+        <Routes>
+            <Route path="/" element={<UserList users={users} setUsers={setUsers} />} />
+            <Route path="/add" element={<AddUser setUsers={setUsers} />} />
+            <Route path="/edit/:id" element={<EditUser setUsers={setUsers} />} />
+        </Routes>
     );
 };
 
