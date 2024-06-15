@@ -7,7 +7,6 @@ import Footer from "./Components/Homepage/Footer";
 // import Dashboard from "./Components/dashboard/Dashboard";
 import Profile from "./Components/dashboard/profile";
 import Contents from "./Components/dashboard/contents";
-import AppointmentList from "./Components/dashboard/AppointmentList";
 import Cart from "./Components/Products/cart";
 import Favorites from "./Components/Products/Favorites";
 import Contact from "./Components/Contact/contact";
@@ -55,7 +54,6 @@ const App = () => {
               {/* <Dashboard /> */}
               <Profile />
               <Contents />
-              <AppointmentList />
             </WithNavBar>
           }
         />

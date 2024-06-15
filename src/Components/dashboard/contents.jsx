@@ -4,7 +4,7 @@ import "../../Styles/contents.css";
 import Card from "./card";
 import Employeelist from "./employeelist";
 import Customerslist from "./customerslist";
-import AppointmentList from "./AppointmentList";
+
 
 
 
@@ -14,7 +14,7 @@ const contents = ()=>{
     <Card />
     <Employeelist/>
     <Customerslist/>
-    < AppointmentList/>
+  
   </div>;
 };
 export default contents;
