@@ -65,15 +65,8 @@ import React, { useState, useRef } from "react";
           </div>
         </div>
       </div>
-<<<<<<< Updated upstream
-    );
-  };
-  
-  export default profile;
-=======
-    </div>
+
   );
 };
 
 export default Profile;
->>>>>>> Stashed changes
