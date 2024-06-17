@@ -1,6 +1,4 @@
-
-
-  import React, { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
   import Profileheader from '../dashboard/profileheader';
   import "../../Styles/profile.css";
   import userimage from '../../Assets/Images/simple.jpg';
@@ -68,7 +66,7 @@
         </div>
       </div>
 
-    
+
   );
 };
 
