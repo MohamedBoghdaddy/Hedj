@@ -5,7 +5,11 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons"; // Import
 import "../../Styles/Navbar.css"; // CSS for the NavBar
 import logo from "../../Assets/Images/eco-logo.png"; // Your company logo
 import { Link } from "react-router-dom";
-import { BsCart } from "react-icons/bs";
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+
+
+
+
 
 const NavBar = () => {
   const [searchText, setSearchText] = useState("");
@@ -36,8 +40,9 @@ const NavBar = () => {
             </Link>
            
             <Link to="/cart" className="nav-link">
-              BsCart
+            <FontAwesomeIcon icon={faCartShopping} />
             </Link>
+            
             <Link to="/favorites" className="nav-link">
               Favorites
             </Link>
