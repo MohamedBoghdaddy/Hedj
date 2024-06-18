@@ -71,6 +71,7 @@ const Login = () => {
                 />
                 <button
                   type="button"
+                  className="show-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? "Hide" : "Show"}
