@@ -177,4 +177,19 @@ ul li button:hover {
   button {
     padding: 8px 12px; /* Adjust padding for smaller screens */
   }
+
+  .dropdown{
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    width: 208px;
+    position: absolute;
+    left: -3.5rem;
+    top: 6rem;
+    cursor: pointer;
+  
+  }
+  .dropdown:hover{
+    background-color: #766759;
+  }
 }

@@ -1,4 +1,13 @@
 /* Existing styles */
+@font-face {
+    font-family: "Beverly";
+    src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "Aeonik Thin";
+    src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 
 .employeesList {
     display: flex;
@@ -13,6 +22,7 @@
     margin-left: 1.7rem;
     margin-bottom: 1.7rem;
     width: 100%;
+    font-family: "Beverly";
 }
 
 .add {
@@ -24,76 +34,51 @@
     cursor: pointer;
 }
 
-.listcontainercus {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.listcontainercus table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.listcontainercus th,
-.listcontainercus td {
-    border: 1px solid black;
-    padding: 8px;
-}
-
-.listcontainercus th {
-    background-color: #f2f2f2;
-}
-
-.listcontainer {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.listcontainer table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.listcontainer th,
-.listcontainer td {
-    border: 1px solid black;
-    padding: 8px;
-}
-
-.listcontainer th {
-    background-color: #f2f2f2;
-}
-.listcontainercus {
-    margin-left: 0; /* Move table to the left */
-}
-
-.listcontainerapp {
-    margin-left: 0; /* Move table to the left */
-}
-
+.listcontainercus,
+.listcontainer,
 .listcontaineremp {
     width: 100%;
     margin-top: 1rem;
+    border-radius: 15px;
+    background-color: #f0f0f0; /* Change the background color to a different shade */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow */
+    padding: 20px;
+    overflow: hidden; /* Hide overflow content */
+    font-family: "Aeonik Thin";
 }
 
+.listcontainercus table,
+.listcontainer table,
 .listcontaineremp table {
     width: 100%;
     border-collapse: collapse;
 }
 
+.listcontainercus th,
+.listcontainercus td,
+.listcontainer th,
+.listcontainer td,
 .listcontaineremp th,
 .listcontaineremp td {
-    border: 1px solid black;
     padding: 8px;
 }
 
-.listcontaineremp th {
-    background-color: #f2f2f2;
+.listcontainercus th,
+.listcontainer th {
+    background-color: #f2f2f2; /* Header background color */
+    font-weight: bold; /* Make the header bold */
+}
+
+/* Change background color and hover effect */
+.listcontainercus tr:hover td,
+.listcontainer tr:hover td,
+.listcontaineremp tr:hover td {
+    background-color: #e9ecef; /* Lighter background color on hover */
 }
 
 .actions {
     display: flex;
-    gap: 50px;
+    gap: 10px; /* Adjust gap as necessary */
 }
 
 .actions button {
@@ -103,13 +88,12 @@
 }
 
 .actions button.update {
-    background-color: blue;
+    background: #766759;
     color: white;
-    margin-right: 10px;
 }
 
 .actions button.delete {
-    background-color: red;
+    background: #766759;
     color: white;
 }
 
@@ -128,12 +112,16 @@
     width: 300px;
 }
 
+.formapp {
+    width: 300px;
+    margin-left: 500px;
+}
+
 /* Styles for email wrapping */
 .emailemp {
     word-wrap: break-word;
     word-break: break-all;
     white-space: normal;
-    max-width: 150px; /* Adjust the width as necessary */
 }
 
 .nameee {
@@ -190,8 +178,16 @@
     }
 
     .listcontaineremp {
-        margin-top: 0.5rem;
+        margin-top: 2rem;
         margin-left: 0; /* Move table to the left */
+    }
+
+    .employeesList {
+        margin-top: 15rem;
+    }
+
+    .employeesList.listheader {
+        left: 0;
     }
 
     .listcontaineremp table {
@@ -233,9 +229,11 @@
     .listcontaineremp {
         margin-left: 0; /* Move table to the left */
     }
+
     .listcontainer {
         margin-left: 0; /* Move table to the left */
     }
+
     .listcontainercus {
         margin-left: 0; /* Move table to the left */
     }

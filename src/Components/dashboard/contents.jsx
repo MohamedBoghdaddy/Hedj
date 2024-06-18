@@ -7,13 +7,14 @@ import Customerslist from "./customerslist";
 
 
 
+
 const contents = ()=>{
   return <div className="content">
     <Conheader />
     <Card />
     <Employeelist/>
     <Customerslist/>
-   
+  
   </div>;
 };
 export default contents;

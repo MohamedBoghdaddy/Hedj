@@ -1,10 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import kitchen1 from "../../Assets/Images/89.jpg";
 import kitchen2 from "../../Assets/Images/90.jpg";
 import kitchen3 from "../../Assets/Images/91.jpg";
 import "../../Styles/Products.css"; // Import the CSS
+//import Data from '../../../Data.json';
+/*const Kitcard =() => {
+  const [products, setProducts]=useState(Data.products)
+  return(
+    <div>
+      products.map(p => (
+
+      ))
+    </div>
+  )
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function Kitcard({ addToCart }) {
   // const navigate = useNavigate(); // Hook to navigate to other routes
@@ -39,7 +66,7 @@ function Kitcard({ addToCart }) {
           <Card.Img src={kitchen2} className="image" alt="Kitchen 2" />
           <Card.Body>
             <Card.Title>Woody Kitchen</Card.Title>
-            <Card.Text>Price: $60,000</Card.Text>
+            <Card.price>Price: $60,000</Card.price>
             <Button
               className="button"
               onClick={() => handleAddToCart("Woody Kitchen", 60000)}
@@ -69,5 +96,10 @@ function Kitcard({ addToCart }) {
     </div>
   );
 }
+
+
+
+
+
 
 export default Kitcard;

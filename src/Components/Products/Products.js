@@ -2,7 +2,9 @@ import React from "react";
 import "../../Styles/Products.css";
 import { Link } from "react-router-dom";
 
+
 function Products() {
+  /*const Menus=['Profile', "apps", "settings"]; */
   return (
     <div className="container">
       <ul className="first">
@@ -27,6 +29,21 @@ function Products() {
         </ul>
       </div>
     </div>
+
+
+/*<div className="dropdown">
+  <ul>
+    {
+      Menus.map((menu)=>(
+
+        <li key={menu}>{menu}</li>
+      ))
+    }
+  </ul>
+</div>*/
+
+
+
   );
 }
 

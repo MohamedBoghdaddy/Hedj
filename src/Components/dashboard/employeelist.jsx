@@ -1,121 +1,90 @@
-import React, { useState, useEffect } from "react";
-import "../../Styles/lists.css"
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+
+
 const EmployeeList = () => {
-    const [employees, setEmployees] = useState(() => {
-        const savedEmployees = localStorage.getItem('employees');
-        return savedEmployees ? JSON.parse(savedEmployees) : [];
-    });
+    const [view, setView] = useState('list');
+    const [employeeList, setEmployeeList] = useState([]);
+    const [employee, setEmployee] = useState({ fname: "", lname: "", email: "", department: "" });
+    const [editEmployeeId, setEditEmployeeId] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        localStorage.setItem('employees', JSON.stringify(employees));
-    }, [employees]);
+        fetchEmployees();
+    }, []);
 
-    const [showAddForm, setShowAddForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState({ index: null, show: false });
-    
-    // State variables for form validation
-    const [nameError, setNameError] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [positionError, setPositionError] = useState('');
-
-    const handleUpdate = (index) => {
-        setShowUpdateForm({ index, show: true });
+    const fetchEmployees = async () => {
+        const response = await axios.get("http://localhost:8000/api/getall");
+        setEmployeeList(response.data);
     };
 
-    const handleDelete = (index) => {
-        const updatedEmployees = [...employees];
-        updatedEmployees.splice(index, 1);
-        setEmployees(updatedEmployees);
+    const inputHandler = (e) => {
+        const { name, value } = e.target;
+        setEmployee({ ...employee, [name]: value });
     };
 
-    const handleAdd = () => {
-        setShowAddForm(true);
+    const addEmployee = async (e) => {
+        e.preventDefault();
+        await axios.post("http://localhost:8000/api/create", employee)
+            .then((response) => {
+                toast.success(response.data.msg, { position: "top-right" });
+                setView('list');
+                fetchEmployees();
+            })
+            .catch(error => console.log(error));
     };
 
-    const handleAddSubmit = (newEmployee) => {
-        if (!validateForm(newEmployee)) {
-            return; // Do not submit if form is invalid
-        }
-        setEmployees([...employees, newEmployee]);
-        setShowAddForm(false);
+    const editEmployee = async (e) => {
+        e.preventDefault();
+        await axios.put(`http://localhost:8000/api/update/${editEmployeeId}`, employee)
+            .then((response) => {
+                toast.success(response.data.msg, { position: "top-right" });
+                setView('list');
+                fetchEmployees();
+            })
+            .catch(error => console.log(error));
     };
 
-    const handleUpdateSubmit = (index, updatedEmployee) => {
-        if (!validateForm(updatedEmployee)) {
-            return; // Do not submit if form is invalid
-        }
-        const updatedEmployees = [...employees];
-        updatedEmployees[index] = updatedEmployee;
-        setEmployees(updatedEmployees);
-        setShowUpdateForm({ index: null, show: false });
+    const deleteEmployee = async (employeeId) => {
+        await axios.delete(`http://localhost:8000/api/delete/${employeeId}`)
+            .then((response) => {
+                setEmployeeList(prevEmployee => prevEmployee.filter(employee => employee._id !== employeeId));
+                toast.success(response.data.msg, { position: 'top-right' });
+            })
+            .catch(error => console.log(error));
     };
 
-    const validateForm = (employee) => {
-        let isValid = true;
-        if (!employee.name.trim()) {
-            setNameError('Name is required');
-            isValid = false;
-        } else {
-            setNameError('');
-        }
-        if (!employee.email.trim()) {
-            setEmailError('Email is required');
-            isValid = false;
-        } else {
-            setEmailError('');
-        }
-        if (!employee.position.trim()) {
-            setPositionError('Position is required');
-            isValid = false;
-        } else {
-            setPositionError('');
-        }
-        return isValid;
+    const startEditEmployee = async (employeeId) => {
+        const response = await axios.get(`http://localhost:8000/api/getone/${employeeId}`);
+        setEmployee(response.data);
+        setEditEmployeeId(employeeId);
+        setView('edit');
     };
 
-    return (
-        <div className="employeesList">
-            <div className="listheader">
-                <h3>Employees</h3>
-                <button className="add" onClick={() => handleAdd()}>+ Add</button>
-            </div>
-            {showAddForm && (
-                <EmployeeForm 
-                    onSubmit={handleAddSubmit} 
-                    onCancel={() => setShowAddForm(false)} 
-                    nameError={nameError}
-                    emailError={emailError}
-                    positionError={positionError}
-                />
-            )}
-            {showUpdateForm.show && (
-                <EmployeeForm
-                    employee={employees[showUpdateForm.index]}
-                    onSubmit={(updatedEmployee) => handleUpdateSubmit(showUpdateForm.index, updatedEmployee)}
-                    onCancel={() => setShowUpdateForm({ index: null, show: false })}
-                    nameError={nameError}
-                    emailError={emailError}
-                    positionError={positionError}
-                />
-            )}
-            <table className="listcontaineremp">
+    const renderEmployeeList = () => (
+        <div className='employeetable'>
+            <button className='addbutton' onClick={() => setView('add')}> Add Employee</button>
+            <table border={1} cellPadding={10} cellSpacing={0}>
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Position</th>
+                        <th>S.No.</th>
+                        <th>Employee name</th>
+                        <th>Employee email</th>
+                        <th>Department</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {employees.map((employee, index) => (
-                        <tr key={index}>
-                            <td>{employee.name}</td>
-                            <td className="emailemp">{employee.email}</td>
-                            <td>{employee.position}</td>
-                            <td>
-                                <button className="button update" onClick={() => handleUpdate(index)}>Update</button>
-                                <button className="button delete" onClick={() => handleDelete(index)}>Delete</button>
+                    {employeeList.map((employee, index) => (
+                        <tr key={employee._id}>
+                            <td>{index + 1}</td>
+                            <td>{employee.fname} {employee.lname}</td>
+                            <td>{employee.email}</td>
+                            <td className='action'>
+                                <button onClick={() => deleteEmployee(employee._id)}><i className="fa-solid fa-trash"></i></button>
+                                <button onClick={() => startEditEmployee(employee._id)}><i className="fa-solid fa-pen-to-square"></i></button>
                             </td>
                         </tr>
                     ))}
@@ -123,29 +92,65 @@ const EmployeeList = () => {
             </table>
         </div>
     );
-};
 
-const EmployeeForm = ({ employee = { name: "", email: "", position: "" }, onSubmit, onCancel, nameError, emailError, positionError }) => {
-    const [name, setName] = useState(employee.name);
-    const [email, setEmail] = useState(employee.email);
-    const [position, setPosition] = useState(employee.position);
+    const renderAddEmployee = () => (
+        <div className='add'>
+            <button onClick={() => setView('list')}>Back</button>
+            <h2>Add new employee</h2>
+            <form className='addemployeeform' onSubmit={addEmployee}>
+                <div className='inputgroup'>
+                    <label htmlFor='fname'>First Name</label>
+                    <input type="text" onChange={inputHandler} id='fname' name='fname' autoComplete='off' placeholder='First name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='lname'>Last Name</label>
+                    <input type="text" onChange={inputHandler} id='lname' name='lname' autoComplete='off' placeholder='Last name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='email'>Email</label>
+                    <input type="email" onChange={inputHandler} id='email' name='email' autoComplete='off' placeholder='Email' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='password'>Department</label>
+                    <input type="password" onChange={inputHandler} id='password' name='password' autoComplete='off' placeholder='department' />
+                </div>
+                <div className='inputgroup'>
+                    <button type='submit'>ADD EMPLOYEE</button>
+                </div>
+            </form>
+        </div>
+    );
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ name, email, position });
-    };
+    const renderEditEmployee = () => (
+        <div className='add'>
+            <button onClick={() => setView('list')}>Back</button>
+            <h2>Update employee</h2>
+            <form className='addemployeeform' onSubmit={editEmployee}>
+                <div className='inputgroup'>
+                    <label htmlFor='fname'>First Name</label>
+                    <input type="text" value={employee.fname} onChange={inputHandler} id='fname' name='fname' autoComplete='off' placeholder='First name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='lname'>Last Name</label>
+                    <input type="text" value={employee.lname} onChange={inputHandler} id='lname' name='lname' autoComplete='off' placeholder='Last name' />
+                </div>
+                <div className='inputgroup'>
+                    <label htmlFor='email'>Email</label>
+                    <input type="text" value={employee.email} onChange={inputHandler} id='email' name='email' autoComplete='off' placeholder='Email' />
+                </div>
+                <div className='inputgroup'>
+                    <button type='submit'>UPDATE EMPLOYEE</button>
+                </div>
+            </form>
+        </div>
+    );
 
     return (
-        <form onSubmit={handleSubmit} className="form">
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" />
-            {nameError && <span className="error">{nameError}</span>}
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-            {emailError && <span className="error">{emailError}</span>}
-            <input type="text" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="Position" />
-            {positionError && <span className="error">{positionError}</span>}
-            <button type="submit">Submit</button>
-            <button type="button" onClick={onCancel}>Cancel</button>
-        </form>
+        <div>
+            {view === 'list' && renderEmployeeList()}
+            {view === 'add' && renderAddEmployee()}
+            {view === 'edit' && renderEditEmployee()}
+        </div>
     );
 };
 

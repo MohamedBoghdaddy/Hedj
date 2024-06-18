@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 .profile {
     display: flex;
     flex: 1;
@@ -16,6 +25,7 @@
     height: 65px;
     padding: 0 20px;
     z-index: 1;
+    font-family: "Beverly"
   }
   
   .edit {
@@ -53,15 +63,7 @@
     width: 8vh;
   }
   
-  .toggle-button {
-    margin: 10px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: #d6cec1;
-    font-size: 20px; /* Increased font size */
-    align-self: flex-end;
-  }
+  
   
   .userdetails {
     width: 100%;
@@ -71,6 +73,7 @@
     flex-direction: column;
     justify-content: center;
     transition: opacity 0.3s ease, width 0.3s ease;
+    font-family: "Aeonik Thin";
   }
   
   .userdetails img {
@@ -93,13 +96,14 @@
   .menulist {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 20px;
+    margin-top: 18px;
   }
   
   .item {
     display: flex;
     align-items: center;
-    gap: 17px;
+    gap: 27px;
     font-size: 1.3rem;
     font-weight: 700;
     padding: 10px 15px;
@@ -107,7 +111,26 @@
     border-radius: 20px;
     text-decoration: none;
     color: #D6CEC1;
+    font-family: "Aeonik Thin";
   }
+  .big-icon {
+    font-size: 42px; /* Adjust the size as needed */
+  }
+  
+  .collapsed .item {
+    padding: 10px 15px; /* Add space between items when collapsed */
+  }
+  
+  .menulist {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  
+  .menulist.collapsed {
+    gap: 5px; /* Increase the gap when collapsed */
+  }
+  
   
   .item:hover {
     background: #766759;
