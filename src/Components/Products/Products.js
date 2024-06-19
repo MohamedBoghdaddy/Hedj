@@ -1,6 +1,7 @@
 import React from "react";
 import "../../Styles/Products.css";
 import { Link } from "react-router-dom";
+import Kitcard from "./Kitchen";
 
 
 function Products() {
@@ -28,6 +29,10 @@ function Products() {
           </li>
         </ul>
       </div>
+      <div className="products-container">
+        <Kitcard /> {/* Include Kitcard to display kitchen products */}
+      </div>
+
     </div>
 
 
