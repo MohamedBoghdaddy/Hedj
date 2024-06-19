@@ -67,6 +67,39 @@ body {
   align-items: center; /* Align items vertically */
   flex-direction: row;
 }
+.count{
+  
+  top: -6px; /* Adjusted to position the badge at the top */
+  right: -4px; /* Adjusted to position the badge at the top */
+  background: #ccc;
+  border-radius: 50%;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 12px;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+.count:hover{
+  background: #aaa;
+}
+.navbar .allcategories{
+  padding: 0 10px;
+  display: flex; /* Flexbox for navbar links */
+  flex-grow: 1; /* Allow the navbar to grow */ 
+  background-color: transparent;
+  border: none;
+  display: flex; /* Use Flexbox for layout */
+  justify-content: space-evenly; /* Space between elements */
+  align-items: center; 
+
+}
+.navbar .allcategories-toggler{
+  color: #766759;
+}
 @media (max-width: 768px) {
   .navbar .navbar-collapse {
     flex-direction: row;
