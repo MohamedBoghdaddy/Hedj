@@ -1,39 +1,29 @@
 import React, { useState } from "react";
-import { Card, Button } from "react-bootstrap";
+/*import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import kitchen1 from "../../Assets/Images/89.jpg";
 import kitchen2 from "../../Assets/Images/90.jpg";
-import kitchen3 from "../../Assets/Images/91.jpg";
+import kitchen3 from "../../Assets/Images/91.jpg";*/
 import "../../Styles/Products.css"; // Import the CSS
-//import Data from '../../../Data.json';
-/*const Kitcard =() => {
+import Data from '../Products/Data.json';
+import kproduct from "./kproduct";
+
+const Kitcard =() => {
   const [products, setProducts]=useState(Data.products)
+
   return(
     <div>
-      products.map(p => (
-
-      ))
+       {products.map(product => (
+        <kproduct key={product.id} product={product} />
+      ))}
+     
     </div>
   )
-}*/
+}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function Kitcard({ addToCart }) {
+/*function Kitcard({ addToCart }) {
   // const navigate = useNavigate(); // Hook to navigate to other routes
 
   const handleAddToCart = (item) => {
@@ -43,7 +33,7 @@ function Kitcard({ addToCart }) {
   return (
     <div className="Container">
       <div className="row1">
-        {/* Card 1 */}
+        {/* Card 1 *//*}
         <Card className="card">
           <Card.Img src={kitchen1} className="image" alt="Kitchen 1" />
           <Card.Body>
@@ -61,7 +51,7 @@ function Kitcard({ addToCart }) {
           </Card.Body>
         </Card>
 
-        {/* Card 2 */}
+        {/* Card 2 *//*}
         <Card className="card">
           <Card.Img src={kitchen2} className="image" alt="Kitchen 2" />
           <Card.Body>
@@ -77,7 +67,7 @@ function Kitcard({ addToCart }) {
           </Card.Body>
         </Card>
 
-        {/* Card 3 */}
+        {/* Card 3 *//*}
         <Card className="card">
           <Card.Img src={kitchen3} className="image" alt="Kitchen 3" />
           <Card.Body>
@@ -95,7 +85,7 @@ function Kitcard({ addToCart }) {
       </div>
     </div>
   );
-}
+}*/
 
 
 
