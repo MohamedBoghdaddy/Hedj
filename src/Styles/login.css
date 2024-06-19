@@ -8,12 +8,21 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
+body {
+  margin: 0;
+  font-family: "Aeonik Thin", sans-serif;
+  background-color: #f4f4f4;
+}
+
 .container {
   width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #f4f4f4;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .form-container {

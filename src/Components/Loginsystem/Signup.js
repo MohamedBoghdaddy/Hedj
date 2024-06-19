@@ -11,21 +11,8 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [gender, setGender] = useState("");
-
-  const handlePasswordChange = (e) => {
-    const input = e.target.value;
-    if (/^\d*$/.test(input)) {
-      setPassword(input);
-    }
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    const input = e.target.value;
-    if (/^\d*$/.test(input)) {
-      setConfirmPassword(input);
-    }
-  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -94,7 +81,7 @@ const Signup = () => {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   value={password}
-                  onChange={handlePasswordChange}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button
@@ -102,7 +89,7 @@ const Signup = () => {
                   className="show-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  <i className="fas fa-eye"></i>
+                  <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
                 </button>
               </div>
             </div>
@@ -110,18 +97,18 @@ const Signup = () => {
               <div className="field-wrapper">
                 <label htmlFor="confirmPassword">Confirm Password:</label>
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
                   value={confirmPassword}
-                  onChange={handleConfirmPasswordChange}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
                 <button
                   type="button"
                   className="show-password"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  <i className="fas fa-eye"></i>
+                  <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
                 </button>
               </div>
             </div>
