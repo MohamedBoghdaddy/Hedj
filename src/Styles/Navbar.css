@@ -86,20 +86,31 @@ body {
 .count:hover{
   background: #aaa;
 }
-.navbar .allcategories{
-  padding: 0 10px;
-  display: flex; /* Flexbox for navbar links */
-  flex-grow: 1; /* Allow the navbar to grow */ 
-  background-color: transparent;
-  border: none;
-  display: flex; /* Use Flexbox for layout */
-  justify-content: space-evenly; /* Space between elements */
+.navbar .allcategories {
+  padding: 5px 10px; /* Adjust padding to your needs */
+  background-color: transparent; /* Ensure background is transparent */
+  border: none; /* Remove border */
+  display: flex; /* Flexbox for layout */
+  justify-content: center; /* Center text inside button */
   align-items: center; 
+  width: auto; /* Set width to auto to fit content */
+  max-width: 100px; /* Set a maximum width */
+  text-align: center; /* Center align the text */
+  cursor: pointer; /* Pointer cursor on hover */
+  color: inherit; /* Inherit text color */
+}
 
+.navbar .allcategories:hover {
+  background-color: transparent; /* Remove background color on hover */
+  color: inherit; /* Inherit text color on hover */
 }
-.navbar .allcategories-toggler{
-  color: #766759;
+
+/* Optional: Add more specific styles for button text if needed */
+.navbar .allcategories .text {
+  margin: 0; /* Remove any default margin */
+  padding: 0; /* Remove any default padding */
 }
+
 @media (max-width: 768px) {
   .navbar .navbar-collapse {
     flex-direction: row;
