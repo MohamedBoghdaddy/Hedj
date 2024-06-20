@@ -1,7 +1,17 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, NavLink } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  NavDropdown,
+  Button,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMagnifyingGlass,
+  faCartShopping,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -22,74 +32,75 @@ const NavBar = () => {
   return (
     <Navbar expand="lg" className="navbar">
       <Container fluid>
-        <Navbar.Brand as={NavLink} to="/" className="navbar-brand">
+        <Navbar.Brand as={Link} to="/" className="navbar-brand">
           <img
             src={logo}
             alt="Company Logo"
             style={{ width: "40px", height: "auto" }}
           />
         </Navbar.Brand>
-        <Navbar.Toggle
-          aria-controls="navbarScroll"
-          className="navbar-toggler"
-        />
-        <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
-          <Nav className="navbar-nav" navbarScroll>
-            <Link to="/" className="nav-link">
-              Home
-            </Link>
-            <Link to="/dashboard" className="nav-link">
-              Dashboard
-            </Link>
-
-            <div className="dropdown">
-              <button onClick={toggleDropdown} className="dropdown-toggle allcategories">
-                Products
-              </button>
-              {showDropdown && (
-                <div className="dropdown-content show">
-                  <Link to="/news2024" className="dropdown-item">
-                    NEWS 2024
-                  </Link>
-                  <Link to="/kitchen" className="dropdown-item">
-                    KITCHEN
-                  </Link>
-                  <Link to="/systems" className="dropdown-item">
-                    SYSTEMS
-                  </Link>
-                  <Link to="/sofas" className="dropdown-item">
-                    SOFAS
-                  </Link>
-                  <Link to="/day-complements" className="dropdown-item">
-                    DAY COMPLEMENTS
-                  </Link>
-                  <Link to="/night-complements" className="dropdown-item">
-                    NIGHT COMPLEMENTS
-                  </Link>
-                  <Link to="/outdoor" className="dropdown-item">
-                    OUTDOOR
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <Link to="/cart" className="nav-link">
-              <FontAwesomeIcon icon={faCartShopping} />
-              <span className="count">0</span>
-            </Link>
-
-            <Link to="/favorites" className="nav-link">
-              Favorites
-            </Link>
-            <Link to="/contact" className="nav-link">
-              Contact Us
-            </Link>
-            <Link to="/Login" className="nav-link">
-              Login
-            </Link>
-            <Link to="/Signup" className="nav-link">
-              Signup
-            </Link>
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="me-auto" navbarScroll>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/">
+                Home
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/dashboard">
+                Dashboard
+              </Nav.Link>
+            </Nav.Item>
+            <NavDropdown title="Products" id="navbarScrollingDropdown">
+              <NavDropdown.Item as={Link} to="/news2024">
+                NEWS 2024
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/kitchen">
+                KITCHEN
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/systems">
+                SYSTEMS
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/sofas">
+                SOFAS
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/day-complements">
+                DAY COMPLEMENTS
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/night-complements">
+                NIGHT COMPLEMENTS
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/outdoor">
+                OUTDOOR
+              </NavDropdown.Item>
+            </NavDropdown>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/cart">
+                <FontAwesomeIcon icon={faCartShopping} />
+                <span className="count">0</span>
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/favorites">
+                Favorites
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/contact">
+                Contact Us
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/login">
+                Login
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to="/signup">
+                Signup
+              </Nav.Link>
+            </Nav.Item>
           </Nav>
           <Form className="d-flex">
             <Form.Control
@@ -99,9 +110,9 @@ const NavBar = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
-            <div className="search-button" onClick={handleSearch}>
+            <Button className="search-button" onClick={handleSearch}>
               <FontAwesomeIcon icon={faMagnifyingGlass} />
-            </div>
+            </Button>
           </Form>
         </Navbar.Collapse>
       </Container>
