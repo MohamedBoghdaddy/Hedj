@@ -13,6 +13,7 @@ body {
   /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
+  background-color: #eceae6;
 }
 /* Full page styling for a consistent layout */
 .full-page {
@@ -28,12 +29,15 @@ body {
 
 /* Hero section with background styling */
 .hero-section {
-  background: #eceae6;
-  /* Gradient background for the hero section */
-  color: #eceae6; /* Light text color for contrast */
+  background-color: #eceae6;
   padding: 50px;
   text-align: center;
   width: 100%;
+}
+.hero-section .row,
+.hero-section .col {
+  background-color: #eceae6;
+  color: #eceae6; /* Light text color for contrast */
 }
 
 .hero-section h1 {
@@ -52,8 +56,8 @@ body {
 
 /* Storytelling section with a full-width background */
 .storytelling-section {
-  background-color: #eceae6; /* Light brownish shade for storytelling */
-  padding: 40px; /* Padding for consistent spacing */
+  background-color: #eceae6;
+  padding: 50px; /* Padding for consistent spacing */
   width: 100%; /* Full width */
   gap: 30px;
   margin-left: 0; /* Override default margin */
@@ -63,6 +67,12 @@ body {
 
 .storytelling-section .row {
   margin: 0; /* Ensure the row doesn't have default margins */
+  background-color: #eceae6;
+}
+
+.storytelling-section .col {
+  margin: 0; /* Ensure the row doesn't have default margins */
+  background-color: #eceae6;
 }
 
 .storytelling-section h2 {
@@ -81,13 +91,20 @@ body {
 }
 
 /* CTA section with buttons */
-.Section2 {
+.Section2 .container {
   display: flex; /* Use flex layout */
   justify-content: center; /* Center the buttons */
   gap: 300px; /* 30px space between buttons */
   margin-top: 25px;
+  background-color: #eceae6;
 }
 
+.Section2 .row {
+  background-color: #eceae6;
+}
+.Section2 .col {
+  background-color: #eceae6;
+}
 /* Styling for buttons in the CTA section */
 .Section2 Button {
   background-color: #eceae6; /* Background color */
@@ -108,17 +125,21 @@ body {
 }
 
 /* Virtual showroom section */
-.virtual-showroom {
-  padding: 40px;
+.virtual-showroom .row {
+  padding: 20px;
+  background-color: #eceae6;
 }
-
+.virtual-showroom .col {
+  padding: 20px;
+  background-color: #eceae6;
+}
 .virtual-showroom h2 {
   color: #323c43;
   font-family: "Beverly";
 }
 
 .virtual-showroom p {
-  font-family: "Aeonik Thin"; 
+  font-family: "Aeonik Thin";
   font-size: 1.1em;
   line-height: 1.5em;
 }

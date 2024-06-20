@@ -13,6 +13,7 @@ body {
   /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
+
 }
 .navbar {
   position: fixed; /* Fix the navbar at the top */
