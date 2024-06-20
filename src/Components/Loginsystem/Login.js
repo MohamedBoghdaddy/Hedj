@@ -36,7 +36,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:8000/api/users/login', { email, password });
       console.log('Login successful:', response.data);
       // Redirect to dashboard or another page if needed
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       if (error.response && error.response.data) {
         setError(error.response.data.message); // Assuming your backend sends an error message
