@@ -3,15 +3,27 @@ import mongoose from "mongoose"
 import bodyParser from "body-parser"
 import dotenv  from "dotenv"
 import cors from "cors"
+import session from 'express-session';
 import emproute from "./routes/employeeroutes.js";
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // React app's address
+    credentials: true,
+  }));
+  
+  app.use(session({
+    secret: 'yourSecretKey', // Replace with your own secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set to true if using https
+  }));
+  
 dotenv.config();
 
 
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 8000;
 const URL =process.env.MONGOURL;
 
 mongoose.connect(URL).then(()=>{

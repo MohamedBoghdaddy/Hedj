@@ -3,7 +3,10 @@ import axios from "axios";
 import "../../Styles/signup.css"; // Shared CSS
 import { Link } from "react-router-dom";
 
-const validateEmail = (email) => email.includes("@");
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -13,32 +16,54 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [gender, setGender] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignup = async (e) => {
     e.preventDefault();
 
+    // Clear previous messages
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    // Front-end validation
+    if (!name) {
+      setErrorMessage("Name is required.");
+      return;
+    }
+
     if (!validateEmail(email)) {
-      alert("Please enter a valid email address with '@'.");
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    if (!gender) {
+      setErrorMessage("Gender is required.");
       return;
     }
 
     try {
-      await axios.post("http://localhost:8000/api/users/signup", {
+      const response = await axios.post("http://localhost:8000/api/users/signup", {
         name,
         email,
         password,
         gender,
       });
 
-      alert("Registration successful");
+      setSuccessMessage("Registration successful");
     } catch (error) {
       console.error("Signup error:", error.response?.data || error.message);
-      alert("Signup failed");
+      setErrorMessage(error.response?.data?.message || "Signup failed");
     }
   };
 
@@ -57,7 +82,7 @@ const Signup = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   maxLength={20}
-                  required
+                  
                 />
               </div>
             </div>
@@ -70,7 +95,7 @@ const Signup = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   maxLength={70}
-                  required
+                  
                 />
               </div>
             </div>
@@ -82,7 +107,7 @@ const Signup = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
+                  
                 />
                 <button
                   type="button"
@@ -101,7 +126,7 @@ const Signup = () => {
                   id="confirmPassword"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
+                  
                 />
                 <button
                   type="button"
@@ -137,6 +162,8 @@ const Signup = () => {
                 </label>
               </div>
             </div>
+            {errorMessage && <div className="error">{errorMessage}</div>}
+            {successMessage && <div className="success">{successMessage}</div>}
             <button className="green_btn" type="submit">
               Signup
             </button>
