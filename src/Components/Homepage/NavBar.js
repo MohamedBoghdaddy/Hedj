@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, NavLink } from "react-bootstrap";
+import { Navbar, Nav, Container, Form, NavLink, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons"; // Import the correct icon
 import "../../Styles/Navbar.css"; // CSS for the NavBar
 import logo from "../../Assets/Images/eco-logo.png"; // Your company logo
 import { Link } from "react-router-dom";
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+
+
 
 
 
@@ -35,14 +37,16 @@ const NavBar = () => {
             <Link to="/dashboard" className="nav-link">
               Dashboard
             </Link>
-            <Link to="/Products" className="nav-link">
-              Products
-            </Link>
+
+            <Button className="allcategories"> 
+              <span class="text">Products</span>
+            </Button>
            
             <Link to="/cart" className="nav-link">
             <FontAwesomeIcon icon={faCartShopping} />
+            <span className="count">0</span>
             </Link>
-            
+
             <Link to="/favorites" className="nav-link">
               Favorites
             </Link>
