@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import maram from "../../Assets/Images/maram.jpg";
+import "../../Styles/Home.css";
 
 const StorytellingSection = () => (
   <Container className="storytelling-section" id="About us">

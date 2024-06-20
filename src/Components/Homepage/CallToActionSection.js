@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import maram2 from "../../Assets/Images/maram2.jpg";
+import "../../Styles/Home.css";
 
 const CallToActionSection = () => (
   <Container className="Section2">
