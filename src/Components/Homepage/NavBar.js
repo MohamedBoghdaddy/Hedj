@@ -43,14 +43,11 @@ const NavBar = () => {
             <ScrollLink to="hero-section" smooth className="nav-link">
               Home
             </ScrollLink>
-            <ScrollLink to="our-story" smooth className="nav-link">
-              Our Story
+            <ScrollLink to="About us" smooth className="nav-link">
+              About us
             </ScrollLink>
             <ScrollLink to="view-collection" smooth className="nav-link">
               View Collection
-            </ScrollLink>
-            <ScrollLink to="shop-now" smooth className="nav-link">
-              Shop Now
             </ScrollLink>
             <ScrollLink to="find-us" smooth className="nav-link">
               Find Us

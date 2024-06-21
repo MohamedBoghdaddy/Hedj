@@ -38,6 +38,10 @@ const ProductsDropdown = () => {
           OUTDOOR
         </Link>
       </div>
+      <div className="products-container">
+        {/* Include Kitcard to display kitchen products */}
+      </div>
+
     </div>
   );
 };

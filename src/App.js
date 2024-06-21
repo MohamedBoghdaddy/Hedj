@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Ensure imports are at the top
+import React from "react"; 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./Components/Homepage/NavBar";
 import Mininavbar from "./Components/Homepage/Mininavbar";
@@ -15,28 +15,24 @@ import Bedrooms from "./Components/Products/Bedrooms";
 import Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
-import Kitcard from "./Components/Products/Kitchen"; // Import the modified Kitcard component
+import Kitcard from "./Components/Products/Kitchen"; 
+import Rating from "@mui/material/Rating";
 
 // Ensure cart and addToCart are defined at the top level
 const App = () => {
-  const [cart, setCart] = useState([]); // Initialize empty cart state
-
-  // Define addToCart function to update the cart state
-  const addToCart = (item) => {
-    setCart((prevCart) => [...prevCart, item]);
-  };
-
   return (
     <BrowserRouter>
       <Routes>
+
         <Route
           path="/"
           element={
-            <NavBar>
+            <> 
+            <NavBar/>
               <Slideshow />
               <Home />
               <Footer />
-            </NavBar>
+              </>
           }
         />
         <Route

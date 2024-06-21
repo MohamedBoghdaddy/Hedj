@@ -233,3 +233,11 @@ ul li button:hover {
   }
  
 }
+.productItem{
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.text-light{
+  color: #151111;
+}
