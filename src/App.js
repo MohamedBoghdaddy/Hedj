@@ -125,7 +125,6 @@ const App = () => {
             <>
               <Mininavbar />
               <Signup />
-              <Footer />
             </>
           }
         />

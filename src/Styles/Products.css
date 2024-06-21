@@ -231,6 +231,11 @@ ul li button:hover {
     cursor: pointer;
   
   }
+  .kitchenproduct{
+    flex-direction: column;
+    flex-wrap: wrap;
+    
+  }
  
 }
 .productItem{
