@@ -76,7 +76,7 @@ export const createUser = async (req, res) => {
       // Compare passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.status(400).json({ message: 'incorrect password' });
       }
   
       // Set session
