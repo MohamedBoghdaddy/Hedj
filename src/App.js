@@ -1,10 +1,10 @@
-import React, { useState } from "react"; // Ensure imports are at the top
+import React from "react"; 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./Components/Homepage/NavBar";
+import Mininavbar from "./Components/Homepage/Mininavbar";
 import Home from "./Components/Homepage/Home";
 import Slideshow from "./Components/Homepage/Slideshow";
 import Footer from "./Components/Homepage/Footer";
-// import Dashboard from "./Components/dashboard/Dashboard";
 import Profile from "./Components/dashboard/profile";
 import Contents from "./Components/dashboard/contents";
 import Cart from "./Components/Products/cart";
@@ -15,118 +15,118 @@ import Bedrooms from "./Components/Products/Bedrooms";
 import Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
-import Kitcard from "./Components/Products/Kitchen"; // Import the modified Kitcard component
+import Kitcard from "./Components/Products/Kitchen"; 
+import Rating from "@mui/material/Rating";
 
 // Ensure cart and addToCart are defined at the top level
 const App = () => {
-  const [cart, setCart] = useState([]); // Initialize empty cart state
-
-  // Define addToCart function to update the cart state
-  const addToCart = (item) => {
-    setCart((prevCart) => [...prevCart, item]);
-  };
-
-  const WithNavBar = ({ children }) => (
-    <>
-      <NavBar />
-      {children}
-    </>
-  );
-
-
   return (
     <BrowserRouter>
       <Routes>
+
         <Route
           path="/"
           element={
-            <WithNavBar>
+            <> 
+            <NavBar/>
               <Slideshow />
               <Home />
               <Footer />
-            </WithNavBar>
+              </>
           }
         />
         <Route
           path="/dashboard"
           element={
-            <WithNavBar>
-              {/* <Dashboard /> */}
+            <>
+              <Mininavbar />
               <Profile />
               <Contents />
-            </WithNavBar>
+            </>
           }
         />
         <Route
           path="/Products"
           element={
-            <WithNavBar>
-              <Products addToCart={addToCart} />
-            </WithNavBar>
+            <>
+              <Mininavbar />
+              <Products />
+            </>
           }
         />
         <Route
           path="/Bedrooms"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Bedrooms />
-            </WithNavBar>
+            </>
           }
         />
         <Route
           path="/Kitchen"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Kitchen />
-            </WithNavBar>
+            </>
           }
         />
         <Route
           path="/cart"
           element={
-            <WithNavBar>
-              <Cart cart={cart} />
-            </WithNavBar>
+            <>
+              <Mininavbar />
+              <Cart />
+            </>
           }
         />
         <Route
           path="/cart"
           element={
-            <WithNavBar>
-              <Kitcard cart={cart} />
-            </WithNavBar>
+            <>
+              {" "}
+              <Mininavbar />
+              <Kitcard />
+            </>
           }
         />
         <Route
           path="/Favorites"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Favorites />
-            </WithNavBar>
+            </>
           }
         />
         <Route
           path="/contact"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Contact />
-            </WithNavBar>
+            </>
           }
         />
         <Route
           path="/Login"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Login />
-            </WithNavBar>
+              <Footer />
+            </>
           }
         />
         <Route
           path="/Signup"
           element={
-            <WithNavBar>
+            <>
+              <Mininavbar />
               <Signup />
-            </WithNavBar>
+              <Footer />
+            </>
           }
         />
       </Routes>
