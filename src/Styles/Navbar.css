@@ -8,12 +8,10 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-
 body {
   /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
-
 }
 .navbar {
   position: fixed; /* Fix the navbar at the top */
@@ -71,8 +69,7 @@ body {
   align-items: center; /* Align items vertically */
   flex-direction: row;
 }
-.count{
-  
+.count {
   top: -6px; /* Adjusted to position the badge at the top */
   right: -4px; /* Adjusted to position the badge at the top */
   background: #ccc;
@@ -87,7 +84,7 @@ body {
   width: 20px;
   height: 20px;
 }
-.count:hover{
+.count:hover {
   background: #aaa;
 }
 .navbar .allcategories {
@@ -96,7 +93,7 @@ body {
   border: none; /* Remove border */
   display: flex; /* Flexbox for layout */
   justify-content: center; /* Center text inside button */
-  align-items: center; 
+  align-items: center;
   width: auto; /* Set width to auto to fit content */
   max-width: 100px; /* Set a maximum width */
   text-align: center; /* Center align the text */
@@ -115,8 +112,6 @@ body {
   padding: 0; /* Remove any default padding */
 }
 
-
-
 .dropdown {
   position: relative;
   display: inline-block;
@@ -127,7 +122,7 @@ body {
   position: absolute;
   background-color: #ffffff;
   min-width: 560px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -144,8 +139,6 @@ body {
   display: block;
 }
 
-
-
 .dropdown-content a:hover {
   background-color: #5e4040;
 }
@@ -154,14 +147,51 @@ body {
   display: block;
 }
 
-.dropdown button{
-   color: #091d2b;
+.dropdown button {
+  color: #091d2b;
   font-size: 20px;
   font-weight: 1000;
 }
-@media (max-width: 768px) {
-  .navbar .navbar-collapse {
-    flex-direction: row;
-    justify-content: center; /* Distribute links evenly */
+.custom-navbar {
+  background-color: #100d16 !important;
+}
+
+.custom-navbar .navbar-brand {
+  color: #ffffff !important;
+  font-size: 1.5rem !important;
+}
+
+.nav-link {
+  color: #323c43 !important;
+  font-size: 1.5rem !important;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: #181212 !important;
+}
+
+@media only screen and (max-width: 1800px) {
+  /* Adjustments for screens up to 1800px in width */
+  .nav-link {
+    font-size: 1.8rem !important;
+    margin-left: 15px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  /* Adjustments for screens up to 1200px in width */
+  .nav-link {
+    font-size: 1.5rem !important;
+    margin-left: 10px;
+  }
+}
+
+@media only screen and (max-width: 766px) {
+  /* Adjustments for screens up to 766px in width */
+  .nav-link {
+    font-size: 1.2rem !important;
+    margin-left: 5px;
   }
 }
