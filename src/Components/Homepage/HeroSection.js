@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import "../../Styles/Home.css";
 
 const HeroSection = () => (
   <div className="hero-section">

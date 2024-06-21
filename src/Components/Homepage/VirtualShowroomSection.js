@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import vr from "../../Assets/Images/VR.png";
+import "../../Styles/Home.css";
 
 const VirtualShowroomSection = () => (
   <Container className="virtual-showroom">

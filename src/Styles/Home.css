@@ -9,11 +9,14 @@
   font-family: "Aeonik Thin";
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
+
 body {
-  /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
+  background-color: #eceae6;
+  margin: 0; /* Remove default margin */
 }
+
 /* Full page styling for a consistent layout */
 .full-page {
   display: flex;
@@ -28,48 +31,42 @@ body {
 
 /* Hero section with background styling */
 .hero-section {
-  background: #eceae6;
-  /* Gradient background for the hero section */
-  color: #eceae6; /* Light text color for contrast */
-  padding: 50px;
+  background-color: #eceae6; /* Light grayish background color */
   text-align: center;
   width: 100%;
 }
 
 .hero-section h1 {
   font-size: 2.5em;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin */
   font-family: "Beverly";
   color: #040606; /* Dark text color */
 }
 
 .hero-section p {
   font-size: 1.2em;
-  margin-bottom: 30px;
+  margin-bottom: 15px; /* Reduced margin */
   font-family: "Aeonik Thin";
   color: #102534; /* Dark text color */
 }
 
 /* Storytelling section with a full-width background */
 .storytelling-section {
-  background-color: #eceae6; /* Light brownish shade for storytelling */
-  padding: 40px; /* Padding for consistent spacing */
+  background-color: #eceae6; /* Light grayish background color */
+  padding: 20px 0; /* Reduced padding */
   width: 100%; /* Full width */
-  gap: 30px;
-  margin-left: 0; /* Override default margin */
-  margin-right: 100; /* Override default margin */
   box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .storytelling-section .row {
-  margin: 0; /* Ensure the row doesn't have default margins */
+  margin: 0; /* Remove default margins */
 }
 
 .storytelling-section h2 {
   color: #323c43; /* Dark text color */
   font-size: 1.8em;
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reduced margin */
   font-family: "Beverly";
 }
 
@@ -84,8 +81,9 @@ body {
 .Section2 {
   display: flex; /* Use flex layout */
   justify-content: center; /* Center the buttons */
-  gap: 300px; /* 30px space between buttons */
-  margin-top: 25px;
+  gap: 20px; /* Adjusted gap */
+  padding: 20px 0; /* Reduced padding */
+  background-color: #eceae6; /* Light grayish background color */
 }
 
 /* Styling for buttons in the CTA section */
@@ -95,11 +93,7 @@ body {
   border: 2px solid #323c43; /* Border style */
   padding: 10px 20px; /* Padding for consistent spacing */
   font-size: 1em; /* Font size */
-  transition:
-    background 0.3s,
-    color 0.3s; /* Smooth transitions */
-  gap: 300px;
-  margin-top: 25px;
+  transition: background 0.3s, color 0.3s; /* Smooth transitions */
 }
 
 .Section2 Button:hover {
@@ -109,7 +103,8 @@ body {
 
 /* Virtual showroom section */
 .virtual-showroom {
-  padding: 40px;
+  padding: 20px 0; /* Reduced padding */
+  background-color: #eceae6; /* Light grayish background color */
 }
 
 .virtual-showroom h2 {
@@ -125,8 +120,8 @@ body {
 
 /* Contact information and store locator section */
 .contact-info {
-  background-color: #eceae6;
-  padding: 40px;
+  background-color: #eceae6; /* Light grayish background color */
+  padding: 20px 0; /* Reduced padding */
   text-align: center;
 }
 
@@ -146,9 +141,7 @@ body {
   color: #323c43;
   border: 2px solid #323c43;
   padding: 10px 20px;
-  transition:
-    background 0.3s,
-    color 0.3s;
+  transition: background 0.3s, color 0.3s;
 }
 
 .contact-info button:hover {
