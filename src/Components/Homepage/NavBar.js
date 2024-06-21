@@ -38,9 +38,9 @@ const NavBar = () => {
               Dashboard
             </Link>
 
-            <Button className="allcategories"> 
-              <span class="text">Products</span>
-            </Button>
+            <Link to="/Products" className="nav-link">
+             <Button className="allcategories">Products</Button> 
+            </Link>
            
             <Link to="/cart" className="nav-link">
             <FontAwesomeIcon icon={faCartShopping} />

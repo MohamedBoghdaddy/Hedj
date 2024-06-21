@@ -30,7 +30,7 @@ function Products() {
         </ul>
       </div>
       <div className="products-container">
-        <Kitcard /> {/* Include Kitcard to display kitchen products */}
+        {/* Include Kitcard to display kitchen products */}
       </div>
 
     </div>

@@ -192,3 +192,11 @@ ul li button:hover {
     background-color: #766759;
   }
 }
+.productItem{
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.text-light{
+  color: #151111;
+}
