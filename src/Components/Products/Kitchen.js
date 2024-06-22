@@ -10,7 +10,7 @@ import kitchen1 from "../../Assets/Images/89.jpg";
 import kitchen2 from "../../Assets/Images/90.jpg";
 import kitchen3 from "../../Assets/Images/91.jpg";*/
 import "../../Styles/Products.css"; // Import the CSS
-import { Button, Spinner } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 //import Data from '../Products/Data.json';
 //import kproduct from "./kproduct";
 
