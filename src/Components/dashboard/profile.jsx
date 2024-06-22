@@ -1,17 +1,11 @@
-<<<<<<< Updated upstream
 
   import Profileheader from '../dashboard/profileheader';
   import "../../Styles/profile.css";
   import userimage from '../../Assets/Images/simple.jpg';
   import {  BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
-=======
 import React, { useState, useRef } from "react";
-  import Profileheader from '../dashboard/profileheader';
-  import "../../Styles/profile.css";
-  import userimage from '../../Assets/Images/simple.jpg';
-  import { BsCart3, BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsMenuButtonWideFill, BsFillGearFill } from 'react-icons/bs';
   import { FaToggleOn, FaToggleOff } from 'react-icons/fa';
->>>>>>> Stashed changes
+
   
   const Profile = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -54,15 +48,11 @@ import React, { useState, useRef } from "react";
               <BsFillGrid3X3GapFill className="icon" />
               {!isCollapsed && 'Categories'}
             </a>
-            <a href="#cust" className="item">
+            <a href="#customer" className="item">
               <BsPeopleFill className="icon" />
               {!isCollapsed && 'Customers'}
             </a>
-<<<<<<< Updated upstream
-            <a href="#emplo" className="item">
-=======
             <a href="#employe" className="item">
->>>>>>> Stashed changes
               <BsPeopleFill className="icon" />
               {!isCollapsed && 'Employees'}
             </a>
@@ -75,16 +65,10 @@ import React, { useState, useRef } from "react";
               {!isCollapsed && 'Settings'}
             </a>
           </div>
-<<<<<<< Updated upstream
+
 
         </div>
-      </div>
-=======
-        </div>
-      </div>
-
-
->>>>>>> Stashed changes
+    </div>  
   );
 };
 

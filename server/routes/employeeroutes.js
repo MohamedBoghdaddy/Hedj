@@ -1,6 +1,6 @@
 import express from 'express';
 import { createEmployee, deleteEmployee, getAllEmployees, getEmployee, updateEmployee } from '../controller/employeecontroller.js';
-import {createUser,loginUser,logoutUser } from '../controller/usercontroller.js'
+import {createUser,loginUser,logoutUser,getAllUsers } from '../controller/usercontroller.js'
 
 const router = express.Router();
 
@@ -12,5 +12,6 @@ router.delete('/delete/:id', deleteEmployee);
 router.post('/users/signup', createUser);
 router.post('/users/login', loginUser);
 router.post('/users/logout', logoutUser);
+router.get('/users/customerslist', getAllUsers);
 
 export default router;
