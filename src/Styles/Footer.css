@@ -1,25 +1,36 @@
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
+
 .footer {
   position: absolute;
   left: 50%;
   transform: translate(-50%, -50%);
-  max-width: 1280px;
-  width: 95%;
+  max-width: 1820px;
+  width: 100%;
   border-radius: 6px;
+  background-color: #eceae6;
 }
 .footer .footer-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 3.5rem;
-  padding: 60px;
 }
 .footer-row .footer-col h4 {
-  color: #fff;
+  color: #634f4f;
   font-size: 1.2rem;
   font-weight: 400;
+  font-family: "Beverly";
 }
 .footer-col .links {
   margin-top: 20px;
+  font-family: "Beverly";
 }
 .footer-col .links li {
   list-style: none;
@@ -27,15 +38,16 @@
 }
 .footer-col .links li a {
   text-decoration: none;
-  color: #bfbfbf;
+  color: #625959;
 }
 .footer-col .links li a:hover {
-  color: #fff;
+  color: #0a0909;
 }
 .footer-col p {
   margin: 20px 0;
-  color: #bfbfbf;
+  color: #443838;
   max-width: 300px;
+  font-family: "Aeonik Thin";
 }
 .footer-col form {
   display: flex;
@@ -47,15 +59,12 @@
   background: none;
   width: 100%;
   outline: none;
-  border: 1px solid #7489C6 ;
-  caret-color: #fff;
-  color: #fff;
-  padding-left: 10px;
+  color: #070606;
 }
 .footer-col input::placeholder {
-  color: #ccc;
+  color: #000000;
 }
- .footer-col form button {
+.footer-col form button {
   background: #fff;
   outline: none;
   border: none;
@@ -77,7 +86,7 @@
 .footer-col .icons i {
   color: #afb6c7;
 }
-.footer-col .icons i:hover  {
+.footer-col .icons i:hover {
   color: #fff;
 }
 @media (max-width: 768px) {

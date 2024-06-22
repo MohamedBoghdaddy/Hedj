@@ -1,8 +1,9 @@
 import React from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import "../../Styles/Home.css";
 
 const ContactInfoSection = () => (
-  <Container className="contact-info" id="find-store">
+  <Container className="contact-info" id="find-us">
     <Row>
       <Col>
         <h2>Get in Touch</h2>

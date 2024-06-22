@@ -8,7 +8,6 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-
 body {
   /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
@@ -19,7 +18,7 @@ body {
   top: 0; /* Position at the top of the viewport */
   width: 100%; /* Ensure it spans the full width */
   height: 60px; /* Adjust the height to a smaller size */
-  background-color: #ebddc1; /* Light background color */
+  background-color: #beb9ae; /* Light background color */
   color: #323c43; /* Dark text color */
   padding: 0 20px; /* Adjust padding */
   z-index: 1000; /* Ensure it stays above other content */
@@ -39,6 +38,9 @@ body {
 
 .navbar .nav-link {
   padding: 0 10px; /* Padding between links */
+  color: #091d2b;
+  font-size: larger;
+  font-weight: 800;
 }
 
 .navbar .navbar-toggler {
@@ -67,9 +69,129 @@ body {
   align-items: center; /* Align items vertically */
   flex-direction: row;
 }
-@media (max-width: 768px) {
-  .navbar .navbar-collapse {
-    flex-direction: row;
-    justify-content: center; /* Distribute links evenly */
+.count {
+  top: -6px; /* Adjusted to position the badge at the top */
+  right: -4px; /* Adjusted to position the badge at the top */
+  background: #ccc;
+  border-radius: 50%;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 12px;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+.count:hover {
+  background: #aaa;
+}
+.navbar .allcategories {
+  padding: 5px 10px; /* Adjust padding to your needs */
+  background-color: transparent; /* Ensure background is transparent */
+  border: none; /* Remove border */
+  display: flex; /* Flexbox for layout */
+  justify-content: center; /* Center text inside button */
+  align-items: center;
+  width: auto; /* Set width to auto to fit content */
+  max-width: 100px; /* Set a maximum width */
+  text-align: center; /* Center align the text */
+  cursor: pointer; /* Pointer cursor on hover */
+  color: inherit; /* Inherit text color */
+}
+
+.navbar .allcategories:hover {
+  background-color: transparent; /* Remove background color on hover */
+  color: inherit; /* Inherit text color on hover */
+}
+
+/* Optional: Add more specific styles for button text if needed */
+.navbar .allcategories .text {
+  margin: 0; /* Remove any default margin */
+  padding: 0; /* Remove any default padding */
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  min-width: 560px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content .item {
+  color: rgb(15, 3, 3);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #5e4040;
+}
+
+.show {
+  display: block;
+}
+
+.dropdown button {
+  color: #091d2b;
+  font-size: 20px;
+  font-weight: 1000;
+}
+.custom-navbar {
+  background-color: #100d16 !important;
+}
+
+.custom-navbar .navbar-brand {
+  color: #ffffff !important;
+  font-size: 1.5rem !important;
+}
+
+.nav-link {
+  color: #323c43 !important;
+  font-size: 1.5rem !important;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: #181212 !important;
+}
+
+@media only screen and (max-width: 1800px) {
+  /* Adjustments for screens up to 1800px in width */
+  .nav-link {
+    font-size: 1.8rem !important;
+    margin-left: 15px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  /* Adjustments for screens up to 1200px in width */
+  .nav-link {
+    font-size: 1.5rem !important;
+    margin-left: 10px;
+  }
+}
+
+@media only screen and (max-width: 766px) {
+  /* Adjustments for screens up to 766px in width */
+  .nav-link {
+    font-size: 1.2rem !important;
+    margin-left: 5px;
   }
 }
