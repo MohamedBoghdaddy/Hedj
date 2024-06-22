@@ -34,7 +34,7 @@
     margin-bottom: 20px;
 }
 
-.employeetable {
+.employeetable, .listcontainercus {
     width: 100%;
     margin-top: 1rem;
     border-radius: 15px;
@@ -45,22 +45,22 @@
     font-family: "Aeonik Thin";
 }
 
-.employeetable table {
+.employeetable table ,.listcontainercus table{
     width: 100%;
     border-collapse: collapse;
 }
 
 .employeetable th,
-.employeetable td {
+.employeetable td,.listcontainercus th,.listcontainercus td {
     padding: 8px;
 }
 
-.employeetable th {
+.employeetable th,.listcontainercus th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-.employeetable tr:hover td {
+.employeetable tr:hover td ,.listcontainercus tr:hover td{
     background-color: #e9ecef;
 }
 
@@ -119,7 +119,7 @@
     }
 
     
-        .employeetable {
+        .employeetable ,.listcontainercus {
             margin-top: 2rem;
             width: 380px;
             margin-left: 170px;
@@ -128,14 +128,14 @@
           
         }
     
-        .employeetable table {
+        .employeetable table ,.listcontainercus table {
           width: 20px;
             font-size: 9px;
            
         }
     
         .employeetable th,
-        .employeetable td {
+        .employeetable td,.listcontainercus th,.listcontainercus td {
             padding: 4px;
             white-space: nowrap; /* Prevent line wrapping */
         }
