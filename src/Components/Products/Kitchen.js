@@ -2,6 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import "../../Styles/kitchen.css";
 import Rating from '@mui/material/Rating';
+import { FaRegHeart } from "react-icons/fa";
 
 /*import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -9,7 +10,7 @@ import kitchen1 from "../../Assets/Images/89.jpg";
 import kitchen2 from "../../Assets/Images/90.jpg";
 import kitchen3 from "../../Assets/Images/91.jpg";*/
 import "../../Styles/Products.css"; // Import the CSS
-import { Spinner } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 //import Data from '../Products/Data.json';
 //import kproduct from "./kproduct";
 
@@ -31,6 +32,9 @@ const Kitcard = () => {
           <div className="item">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/736x/c7/26/55/c726555b47cf7fae4bd96e7e1cdcee66.jpg" className="resizeImg" />
+              <div className="actions">
+                <Button><FaRegHeart /></Button>
+              </div>
             </div>
             <h4>Woody Kitchen</h4>
             <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />

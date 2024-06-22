@@ -25,7 +25,7 @@ const NavBar = () => {
   };
 
   return (
-    <Navbar expand="lg" className="navbar">
+    <Navbar expand="lg" className="navbar" variant="dark">
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className="navbar-brand">
           <img
@@ -35,16 +35,16 @@ const NavBar = () => {
           />
         </Navbar.Brand>
         <Navbar.Toggle
-          aria-controls="navbarScroll"
+          aria-controls="basic-navbar-nav"
           className="navbar-toggler"
         />
         <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
-          <Nav className="navbar-nav" navbarScroll>
+          <Nav className="navbar-nav ms-auto" navbarScroll>
             <ScrollLink to="hero-section" smooth className="nav-link">
               Home
             </ScrollLink>
-            <ScrollLink to="About us" smooth className="nav-link">
-              About us
+            <ScrollLink to="about-us" smooth className="nav-link">
+              About Us
             </ScrollLink>
             <ScrollLink to="view-collection" smooth className="nav-link">
               View Collection
@@ -55,7 +55,6 @@ const NavBar = () => {
             <NavDropdown
               title="Products"
               id="basic-nav-dropdown"
-              className="nav-link"
               show={showDropdown}
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
@@ -82,22 +81,22 @@ const NavBar = () => {
                 OUTDOOR
               </NavDropdown.Item>
             </NavDropdown>
-            <Link to="/cart" className="nav-link">
+            <Nav.Link as={Link} to="/favorites" className="nav-link">
+              Favorites
+            </Nav.Link>
+            <Nav.Link as={Link} to="/contact" className="nav-link">
+              Contact Us
+            </Nav.Link>
+            <Nav.Link as={Link} to="/login" className="nav-link">
+              Login
+            </Nav.Link>
+            <Nav.Link as={Link} to="/signup" className="nav-link">
+              Signup
+            </Nav.Link>
+            <Nav.Link as={Link} to="/cart" className="nav-link">
               <FontAwesomeIcon icon={faCartShopping} />
               <span className="count">0</span>
-            </Link>
-            <Link to="/favorites" className="nav-link">
-              Favorites
-            </Link>
-            <Link to="/contact" className="nav-link">
-              Contact Us
-            </Link>
-            <Link to="/login" className="nav-link">
-              Login
-            </Link>
-            <Link to="/signup" className="nav-link">
-              Signup
-            </Link>
+            </Nav.Link>
           </Nav>
           <Form className="d-flex">
             <Form.Control
