@@ -1,27 +1,52 @@
 import React, { useState } from "react";
-import { Navbar, Nav, Container, Form, NavDropdown } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  Form,
+  NavDropdown,
+  Modal,
+} from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlass,
   faCartShopping,
+  faUser,
+  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../Styles/Navbar.css";
-
+import Login from "../Loginsystem/Login"; // Adjust the import path
+import SearchResultsList from "../Homepage/SearchResult";
 const NavBar = () => {
   const [searchText, setSearchText] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleSearch = () => {
-    console.log(`Searching for: ${searchText}`);
-    // Implement your search logic here
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((json) => {
+        const results = json.filter((user) =>
+          user.name.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setSearchResults(results);
+      })
+      .catch((error) => {
+        console.error("Error fetching search results:", error);
+      });
   };
 
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
+  const handleLoginModalOpen = () => {
+    setShowLoginModal(true);
+  };
+
+  const handleLoginModalClose = () => {
+    setShowLoginModal(false);
   };
 
   return (
@@ -31,7 +56,7 @@ const NavBar = () => {
           <img
             src={logo}
             alt="Company Logo"
-            style={{ width: "40px", height: "auto" }}
+            style={{ width: "80px", height: "auto", top: 0 }}
           />
         </Navbar.Brand>
         <Navbar.Toggle
@@ -43,14 +68,8 @@ const NavBar = () => {
             <ScrollLink to="hero-section" smooth className="nav-link">
               Home
             </ScrollLink>
-            <ScrollLink to="about-us" smooth className="nav-link">
-              About Us
-            </ScrollLink>
             <ScrollLink to="view-collection" smooth className="nav-link">
               View Collection
-            </ScrollLink>
-            <ScrollLink to="find-us" smooth className="nav-link">
-              Find Us
             </ScrollLink>
             <NavDropdown
               title="Products"
@@ -59,39 +78,47 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-              <NavDropdown.Item as={Link} to="/news2024">
+              <NavDropdown.Item as={Link} to="/news2024" className="nav-link">
                 NEWS 2024
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/kitchen">
+              <NavDropdown.Item as={Link} to="/kitchen" className="nav-link">
                 KITCHEN
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/systems">
+              <NavDropdown.Item as={Link} to="/systems" className="nav-link">
                 SYSTEMS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/sofas">
+              <NavDropdown.Item as={Link} to="/sofas" className="nav-link">
                 SOFAS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/day-complements">
+              <NavDropdown.Item
+                as={Link}
+                to="/day-complements"
+                className="nav-link"
+              >
                 DAY COMPLEMENTS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/night-complements">
+              <NavDropdown.Item
+                as={Link}
+                to="/night-complements"
+                className="nav-link"
+              >
                 NIGHT COMPLEMENTS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/outdoor">
+              <NavDropdown.Item as={Link} to="/outdoor" className="nav-link">
                 OUTDOOR
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link as={Link} to="/favorites" className="nav-link">
-              Favorites
-            </Nav.Link>
             <Nav.Link as={Link} to="/contact" className="nav-link">
               Contact Us
             </Nav.Link>
-            <Nav.Link as={Link} to="/login" className="nav-link">
-              Login
+            <Nav.Link as={Link} to="/dashboard" className="nav-link">
+              Dashboard
             </Nav.Link>
-            <Nav.Link as={Link} to="/signup" className="nav-link">
-              Signup
+            <Nav.Link as={Link} to="/wishlist" className="nav-link">
+              <FontAwesomeIcon icon={faHeart} />
+            </Nav.Link>
+            <Nav.Link className="nav-link" onClick={handleLoginModalOpen}>
+              <FontAwesomeIcon icon={faUser} />
             </Nav.Link>
             <Nav.Link as={Link} to="/cart" className="nav-link">
               <FontAwesomeIcon icon={faCartShopping} />
@@ -110,8 +137,16 @@ const NavBar = () => {
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </div>
           </Form>
+          {searchText && <SearchResultsList results={searchResults} />}
         </Navbar.Collapse>
       </Container>
+
+      <Modal show={showLoginModal} onHide={handleLoginModalClose} centered>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <Login /> {/* Render your existing login component here */}
+        </Modal.Body>
+      </Modal>
     </Navbar>
   );
 };
