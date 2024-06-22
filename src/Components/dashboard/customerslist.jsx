@@ -11,11 +11,11 @@ const customers = [
 
 const CustomersList = () => {
     return (
-        <div className="customersList">
+        <div className="customersList" >
             <div className="listheader">
                 <h3>Customers</h3>
             </div>
-            <table className="listcontainercus">
+            <table className="listcontainercus" id="customer">
                 <thead>
                     <tr>
                         <th>Name</th>

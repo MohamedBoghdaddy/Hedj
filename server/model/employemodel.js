@@ -1,10 +1,13 @@
+
 import mongoose from 'mongoose';
 
 const employeeSchema = new mongoose.Schema({
+   
     fname: {
         type: String,
         required: true
     },
+  
     lname: {
         type: String,
         required: true
@@ -15,6 +18,10 @@ const employeeSchema = new mongoose.Schema({
         unique: true
     },
     department: {
+        type: String,
+        required: true
+    },
+    password: {
         type: String,
         required: true
     }
