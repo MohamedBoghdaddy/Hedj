@@ -6,21 +6,21 @@ import "../../Styles/Home.css";
 
 const VirtualShowroomSection = () => (
   <Container className="virtual-showroom">
-    <Row>
-      <Col md={8}>
-        <img src={vr} alt="vr" style={{ width: "400px", height: "auto" }} />
+    <Row className="align-items-center">
+      <Col md={6}>
+        <img src={vr} alt="vr" style={{ width: "50%", height: "auto" }} />
       </Col>
-    </Row>
-    <Row>
-      <Col>
-        <h2>Experience Our Virtual Showroom</h2>
-        <p>
-          Explore our furniture in a virtual environment or use our AR tool to
-          visualize our pieces in your own space.
-        </p>
-        <Button variant="dark" as={Link} to="/virtual-showroom">
-          Visit Virtual Showroom
-        </Button>
+      <Col md={6}>
+        <div className="content">
+          <h2>Experience Our Virtual Showroom</h2>
+          <p>
+            Explore our furniture in a virtual environment or use our AR tool to
+            visualize our pieces in your own space.
+          </p>
+          <Button variant="dark" as={Link} to="/virtual-showroom">
+            Visit Virtual Showroom
+          </Button>
+        </div>
       </Col>
     </Row>
   </Container>

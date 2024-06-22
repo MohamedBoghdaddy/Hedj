@@ -15,12 +15,12 @@
   max-width: 1820px;
   width: 100%;
   border-radius: 6px;
-  background-color: #eceae6;
+  background-color: #b8b5af;
 }
 .footer .footer-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 .footer-row .footer-col h4 {
   color: #634f4f;

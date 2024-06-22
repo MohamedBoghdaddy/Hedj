@@ -17,16 +17,16 @@ body {
   position: fixed; /* Fix the navbar at the top */
   top: 0; /* Position at the top of the viewport */
   width: 100%; /* Ensure it spans the full width */
-  height: 60px; /* Adjust the height to a smaller size */
+  height: 100px; /* Adjust the height to a smaller size */
   background-color: #beb9ae; /* Light background color */
-  color: #323c43; /* Dark text color */
+  color: #000000; /* Dark text color */
   padding: 0 20px; /* Adjust padding */
   z-index: 1000; /* Ensure it stays above other content */
 }
 
 .navbar .navbar-collapse {
   display: flex; /* Use Flexbox for layout */
-  justify-content: flex-end; 
+  justify-content: flex-end;
   align-items: center; /* Align items vertically */
 }
 
@@ -38,9 +38,10 @@ body {
 
 .navbar .nav-link {
   padding: 0 10px; /* Padding between links */
-  color: #091d2b;
-  font-size: larger;
-  font-weight: 800;
+  color: #000000;
+  font-size: 30px;
+  font-weight: 600;
+  font-family: "Beverly";
 }
 
 .navbar .navbar-toggler {
@@ -120,7 +121,7 @@ body {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #ffffff;
+  background-color: #9e3232;
   min-width: 560px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
@@ -133,14 +134,14 @@ body {
 }
 
 .dropdown-content .item {
-  color: rgb(15, 3, 3);
+  color: rgb(0, 0, 0);
   padding: 12px 16px;
   text-decoration: none;
   display: block;
 }
 
 .dropdown-content a:hover {
-  background-color: #5e4040;
+  background-color: #000000;
 }
 
 .show {
@@ -148,28 +149,41 @@ body {
 }
 
 .dropdown button {
-  color: #091d2b;
+  color: #000000;
   font-size: 20px;
   font-weight: 1000;
 }
-.custom-navbar {
-  background-color: #100d16 !important;
-}
 
 .custom-navbar .navbar-brand {
-  color: #ffffff !important;
+  color: #000000 !important;
   font-size: 1.5rem !important;
 }
 
 .nav-link {
-  color: #323c43 !important;
-  font-size: 1.5rem !important;
-  margin-left: 20px;
   cursor: pointer;
 }
 
 .nav-link:hover {
-  color: #181212 !important;
+  color: #292323 !important;
+}
+.results-list {
+  position: absolute;
+  top: 50px; /* Adjust according to your navbar height */
+  right: 10px;
+  width: 300px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+.search-result {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.search-result:hover {
+  background-color: #f1f1f1;
 }
 
 @media only screen and (max-width: 1800px) {
