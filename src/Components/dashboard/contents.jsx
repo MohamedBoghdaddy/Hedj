@@ -1,7 +1,7 @@
 import React from "react";
 import Conheader from "./conheader";
 import "../../Styles/contents.css";
-import Card from "./card";
+import Report from "./report";
 import Employeelist from "./employeelist";
 import Customerslist from "./customerslist";
 
@@ -11,9 +11,9 @@ import Customerslist from "./customerslist";
 const contents = ()=>{
   return <div className="content">
     <Conheader />
-    <Card />
     <Employeelist/>
     <Customerslist/>
+    <Report/>
   
   </div>;
 };

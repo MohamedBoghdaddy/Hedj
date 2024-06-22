@@ -1,4 +1,3 @@
-/* Existing styles */
 @font-face {
     font-family: "Beverly";
     src: url("../Assets/Fonts/Beverly.otf") format("opentype");
@@ -25,76 +24,55 @@
     font-family: "Beverly";
 }
 
-.add {
+.addbutton {
     background-color: green;
     color: whitesmoke;
     font-size: 20px;
     border-radius: 20px;
     padding: 10px;
     cursor: pointer;
+    margin-bottom: 20px;
 }
 
-.listcontainercus,
-.listcontainer,
-.listcontaineremp {
+.employeetable {
     width: 100%;
     margin-top: 1rem;
     border-radius: 15px;
-    background-color: #f0f0f0; /* Change the background color to a different shade */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow */
+    background-color: #f0f0f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    overflow: hidden; /* Hide overflow content */
+    overflow: hidden;
     font-family: "Aeonik Thin";
 }
 
-.listcontainercus table,
-.listcontainer table,
-.listcontaineremp table {
+.employeetable table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.listcontainercus th,
-.listcontainercus td,
-.listcontainer th,
-.listcontainer td,
-.listcontaineremp th,
-.listcontaineremp td {
+.employeetable th,
+.employeetable td {
     padding: 8px;
 }
 
-.listcontainercus th,
-.listcontainer th {
-    background-color: #f2f2f2; /* Header background color */
-    font-weight: bold; /* Make the header bold */
+.employeetable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
 }
 
-/* Change background color and hover effect */
-.listcontainercus tr:hover td,
-.listcontainer tr:hover td,
-.listcontaineremp tr:hover td {
-    background-color: #e9ecef; /* Lighter background color on hover */
+.employeetable tr:hover td {
+    background-color: #e9ecef;
 }
 
-.actions {
+.action {
     display: flex;
-    gap: 10px; /* Adjust gap as necessary */
+    gap: 7px;
 }
 
-.actions button {
+.action button {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-}
-
-.actions button.update {
-    background: #766759;
-    color: white;
-}
-
-.actions button.delete {
-    background: #766759;
-    color: white;
 }
 
 .details {
@@ -104,32 +82,26 @@
 }
 
 .details img {
-    width: 60px; /* Decrease the width of the image */
-    height: auto; /* Maintain aspect ratio */
+    width: 60px;
+    height: auto;
 }
-
-.form {
-    width: 300px;
+.nameeee{
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
 }
-
-.formapp {
-    width: 300px;
-    margin-left: 500px;
-}
-
-/* Styles for email wrapping */
-.emailemp {
+.eamillll{
     word-wrap: break-word;
     word-break: break-all;
     white-space: normal;
 }
 
+
 .nameee {
-    font-size: 20px; /* Adjust the size as needed */
-    margin: 0; /* Remove any default margin if necessary */
+    font-size: 20px;
+    margin: 0;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     .listheader {
         flex-direction: column;
@@ -137,104 +109,98 @@
         margin-left: 1rem;
         margin-right: 1rem;
     }
-
-    .add {
-        font-size: 16px;
+.h2{
+    margin-left: 100px;
+}
+    .addbutton {
+        font-size: 9px;
         padding: 8px;
         border-radius: 15px;
     }
 
-    .listcontainercus {
-        margin-top: 0.5rem;
-        margin-left: 0; /* Move table to the left */
-    }
+    
+        .employeetable {
+            margin-top: 2rem;
+            width: 380px;
+            margin-left: 170px;
+           
+         
+          
+        }
+    
+        .employeetable table {
+          width: 20px;
+            font-size: 9px;
+           
+        }
+    
+        .employeetable th,
+        .employeetable td {
+            padding: 4px;
+            white-space: nowrap; /* Prevent line wrapping */
+        }
+        .action {
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+            gap: 4px; /* Reduce the gap between buttons */
+        }
+    
+        .action button {
+            padding: 5px 8px; /* Adjust padding of buttons */
+            font-size: 9px; /* Adjust font size of buttons */
+        }
+    
+        .details img {
+            width: 40px;
+        }
+}
 
-    .listcontainercus table {
-        font-size: 12px;
-    }
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px; /* Reduced padding */
+    background-color: #8B4513; /* Brown color */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    color: #fff; /* White text color */
+}
 
-    .listcontainercus th,
-    .listcontainercus td {
-        padding: 4px;
-    }
+.employee-form {
+    margin-left: 85px;
+    width: 100%;
+    max-width: 500px;
+    background-color: #f0f0f0;
+    padding: 15px; /* Reduced padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-    .listcontainer {
-        margin-top: 0.5rem;
-        margin-left: 0; /* Move table to the left */
-    }
+.input-group {
+    margin-bottom: 10px; /* Reduced margin-bottom */
+    width: 100%;
+}
 
-    .nameee {
-        font-size: 18px; /* Adjust the size as needed */
-        margin: 0; /* Remove any default margin if necessary */
-    }
+.input-group label {
+    display: block;
+    margin-bottom: 3px; /* Reduced margin-bottom */
+    color: #000; /* Black text color for input labels */
+}
 
-    .listcontainer table {
-        font-size: 12px;
-    }
+.input-group input {
+    width: 100%;
+    padding: 5px; /* Reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
 
-    .listcontainer th,
-    .listcontainer td {
-        padding: 11px;
-    }
-
-    .listcontaineremp {
-        margin-top: 2rem;
-        margin-left: 0; /* Move table to the left */
-    }
-
-    .employeesList {
-        margin-top: 15rem;
-    }
-
-    .employeesList.listheader {
-        left: 0;
-    }
-
-    .listcontaineremp table {
-        font-size: 14px;
-    }
-
-    .listcontaineremp th,
-    .listcontaineremp td {
-        padding: 11px;
-        /* font-size: 19px; */
-    }
-
-    .actions {
-        gap: 15px;
-    }
-
-    .actions button {
-        padding: 4px 8px;
-    }
-
-    .details img {
-        width: 40px;
-    }
-
-    .form {
-        width: 250px;
-        margin-left: 0; /* Align form to the left */
-    }
-
-    .formapp {
-        width: 250px;
-        margin-left: 10px;
-    }
-
-    .add {
-        font-size: 10px;
-    }
-
-    .listcontaineremp {
-        margin-left: 0; /* Move table to the left */
-    }
-
-    .listcontainer {
-        margin-left: 0; /* Move table to the left */
-    }
-
-    .listcontainercus {
-        margin-left: 0; /* Move table to the left */
-    }
+.input-group button {
+    width: 100%;
+    padding: 8px; /* Reduced padding */
+    background-color: green;
+    color: whitesmoke;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
