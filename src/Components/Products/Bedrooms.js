@@ -2,19 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import AddToFavorites from "./Favorites";
+import AddToFavorites from "./wishlist";
 import Grey from "../../Assets/Images/70.jpg";
 import modern from "../../Assets/Images/73.jpg";
 import double from "../../Assets/Images/74.jpg";
 import "../../Styles/Products.css";
 
 function Bedrooms({ addToCart }) {
-
   const handleAddToCart = (name, price) => {
     const item = { name, price, quantity: 1 }; // Define item to add
     addToCart(item); // Add item to the cart
   };
-
 
   return (
     <div className="Container">
@@ -60,7 +58,6 @@ function Bedrooms({ addToCart }) {
                 </Button>
               </Card.Body>
             </Card>
-            
           </div>
         </div>
       </div>

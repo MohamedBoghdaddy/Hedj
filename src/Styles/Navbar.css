@@ -26,14 +26,14 @@ body {
 
 .navbar .navbar-collapse {
   display: flex; /* Use Flexbox for layout */
-  justify-content: space-evenly; /* Space between elements */
+  justify-content: flex-end; 
   align-items: center; /* Align items vertically */
 }
 
 .navbar .navbar-nav {
   display: flex; /* Flexbox for navbar links */
   flex-grow: 1; /* Allow the navbar to grow */
-  justify-content: space-evenly; /* Space links evenly */
+  justify-content: flex-end; /* Space links evenly */
 }
 
 .navbar .nav-link {
