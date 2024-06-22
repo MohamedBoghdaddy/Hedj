@@ -66,7 +66,7 @@
 
 .action {
     display: flex;
-    gap: 10px;
+    gap: 7px;
 }
 
 .action button {
@@ -121,48 +121,38 @@
     
         .employeetable {
             margin-top: 2rem;
-            width: 200px;
+            width: 380px;
+            margin-left: 170px;
            
          
           
         }
     
         .employeetable table {
-          width: 50px;
-            font-size: 7px;
+          width: 20px;
+            font-size: 9px;
+           
         }
     
         .employeetable th,
         .employeetable td {
-            padding: 8px;
+            padding: 4px;
             white-space: nowrap; /* Prevent line wrapping */
         }
-    
         .action {
-            gap: 9px;
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+            gap: 4px; /* Reduce the gap between buttons */
         }
     
         .action button {
-            padding: 4px 8px;
+            padding: 5px 8px; /* Adjust padding of buttons */
+            font-size: 9px; /* Adjust font size of buttons */
         }
     
         .details img {
             width: 40px;
         }
-    
-    
-
-    .action {
-        gap: 15px;
-    }
-
-    .action button {
-        padding: 4px 8px;
-    }
-
-    .details img {
-        width: 40px;
-    }
 }
 
 .form-container {

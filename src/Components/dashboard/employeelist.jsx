@@ -81,7 +81,7 @@ const EmployeeList = () => {
     };
 
     const renderEmployeeList = () => (
-        <div className='employeetable'>
+        <div className='employeetable' id='employe'>
             <button className='addbutton' onClick={() => openForm()}>Add Employee</button>
             <table border={1} cellPadding={10} cellSpacing={0}>
                 <thead>
