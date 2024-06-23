@@ -86,14 +86,7 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-              <NavDropdown.Item
-                as={Link}
-                to="/news2024"
-                className="nav-link"
-                onClick={handleNavCollapse}
-              >
-                NEWS 2024
-              </NavDropdown.Item>
+            
               <NavDropdown.Item
                 as={Link}
                 to="/kitchen"
@@ -102,14 +95,7 @@ const NavBar = () => {
               >
                 KITCHEN
               </NavDropdown.Item>
-              <NavDropdown.Item
-                as={Link}
-                to="/systems"
-                className="nav-link"
-                onClick={handleNavCollapse}
-              >
-                SYSTEMS
-              </NavDropdown.Item>
+            
               <NavDropdown.Item
                 as={Link}
                 to="/sofas"

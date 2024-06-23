@@ -9,12 +9,6 @@
   z-index: 1000; /* Ensure it stays above other content */
 }
 
-.navbar .navbar-collapse {
-  display: flex; /* Use Flexbox for layout */
-  justify-content: flex-end;
-  align-items: center; /* Align items vertically */
-}
-
 .navbar .navbar-nav {
   display: flex; /* Flexbox for navbar links */
   flex-grow: 1; /* Allow the navbar to grow */
@@ -23,7 +17,7 @@
 
 .navbar .nav-link {
   padding: 0 10px; /* Padding between links */
-  color: #ffffff; /* Light text color */
+    color: rgb(0, 0, 0);
   font-family: "Beverly";
 }
 
@@ -76,23 +70,9 @@
   background: #aaa;
 }
 
-.navbar .allcategories {
-  padding: 5px 10px; /* Adjust padding to your needs */
-  background-color: transparent; /* Ensure background is transparent */
-  border: none; /* Remove border */
-  display: flex; /* Flexbox for layout */
-  justify-content: center; /* Center text inside button */
-  align-items: center;
-  width: auto; /* Set width to auto to fit content */
-  max-width: 100px; /* Set a maximum width */
-  text-align: center; /* Center align the text */
-  cursor: pointer; /* Pointer cursor on hover */
-  color: inherit; /* Inherit text color */
-}
 
 .navbar .allcategories:hover {
   background-color: transparent; /* Remove background color on hover */
-  color: inherit; /* Inherit text color on hover */
 }
 
 /* Optional: Add more specific styles for button text if needed */
@@ -112,13 +92,16 @@
   background-color: #323c43;
   min-width: 560px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
+  color: rgb(0, 0, 0);
+
 }
 
 .dropdown-content a {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
+    color: rgb(0, 0, 0);
+
 }
 
 .dropdown-content .item {
@@ -149,12 +132,14 @@
 
 .nav-link {
   cursor: pointer;
+    color: rgb(0, 0, 0);
+
 }
 
 .nav-link:hover {
   color: #292323 !important;
 }
-.link-wish:hover {
+.navbar .link-wish:hover {
   color: red;
 }
 .results-list {
