@@ -87,6 +87,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "gh-pages": "^6.1.1",
+    "nodemon": "^3.1.4",
     "prettier": "3.2.5"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
