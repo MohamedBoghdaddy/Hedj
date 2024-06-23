@@ -9,7 +9,6 @@ import "../../Styles/Home.css";
 import pdf from "../../Assets/collection/HEDJ-Company Profile-2024 Q01.pdf";
 import Card from "react-bootstrap/Card";
 import Slider from "react-slick";
-import "../../Styles/kitchen.css";
 
 const CallToActionSection = () => {
   const downloadPdf = () => {
@@ -43,6 +42,20 @@ const CallToActionSection = () => {
     slidesToScroll: 1,
     responsive: [
       {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
         breakpoint: 776,
         settings: {
           slidesToShow: 1,
@@ -57,8 +70,8 @@ const CallToActionSection = () => {
       <Slider {...productSliderOptions}>
         {[maram2, maram3, maram4, maram5, maram2, maram3, maram4, maram5].map(
           (image, index) => (
-            <div key={index}>
-              <Card style={{ width: "18rem" }}>
+            <div key={index} className="card-container">
+              <Card className="custom-card">
                 <Card.Img variant="top" src={image} />
                 <Card.Body>
                   <Card.Title>Card Title</Card.Title>
@@ -69,14 +82,7 @@ const CallToActionSection = () => {
                   <Button
                     variant="dark"
                     onClick={downloadPdf}
-                    style={{
-                      color: "#fff",
-                      padding: "10px 20px",
-                      border: "1px solid #333",
-                      borderRadius: "5px",
-                      margin: "10px",
-                      transition: "0.3s",
-                    }}
+                    className="download-button"
                   >
                     Download Collection
                   </Button>
@@ -91,3 +97,5 @@ const CallToActionSection = () => {
 };
 
 export default CallToActionSection;
+
+
