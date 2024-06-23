@@ -24,7 +24,7 @@ const employeeSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["readonly", "admin"],
+        enum: ["readonly", "admin"], default:"readonly",
         required: true
     }
 });

@@ -3,12 +3,12 @@ import{BsSearch} from 'react-icons/bs';
 import{BiNotification} from 'react-icons/bi';
 
 const conheader = ()=>{
-  return <div className="contenth"id="dash">
-            <h1 className="htitle" >Dashboard</h1>
+  return <div className="contenth">
+            <h1 className="htitle"  >Dashboard</h1>
             <div className="activity">
                         <div className="searchbox">
                                 <input type="text" class="text" placeholder="Search Here" />
-                                <BsSearch className="iconn"/>
+                                <BsSearch className="iconn" id="dash"/>
                         </div>
                     <div className="notify">
                         <BiNotification className="icon"/>

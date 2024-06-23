@@ -96,7 +96,7 @@
     margin-top: 18px;
   }
   
-  .item {
+  .itemm {
     display: flex;
     align-items: center;
     gap: 24px;
@@ -113,7 +113,7 @@
     font-size: 42px; /* Adjust the size as needed */
   }
   
-  .collapsed .item {
+  .collapsed .itemm {
     padding: 10px 15px; /* Add space between items when collapsed */
   }
   
@@ -128,7 +128,7 @@
   }
   
   
-  .item:hover {
+  .itemm:hover {
     background: #766759;
     color: whitesmoke;
     
@@ -157,7 +157,7 @@
     .proheader {
       font-size: 6px;
     }
-    .item{
+    .itemm{
       font-size: 0.75rem;
       gap: 0rem;
 
