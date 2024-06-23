@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import '../../Styles/lists.css' 
 
 const EmployeeList = () => {
     const [view, setView] = useState('list');
     const [employeeList, setEmployeeList] = useState([]);
-    const [employee, setEmployee] = useState({ fname: "", lname: "", email: "", department: "", password: "" });
+    const [employee, setEmployee] = useState({ fname: "", lname: "", email: "", department: "", password: "", role: "readonly" });
     const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
@@ -47,7 +48,7 @@ const EmployeeList = () => {
             fetchEmployee(employeeId);
             setEditingId(employeeId);
         } else {
-            setEmployee({ fname: "", lname: "", email: "", department: "", password: "" });
+            setEmployee({ fname: "", lname: "", email: "", department: "", password: "", role: "readonly" });
             setEditingId(null);
         }
         setView('form');
@@ -91,6 +92,7 @@ const EmployeeList = () => {
                         <th>Employee email</th>
                         <th>Department</th>
                         <th>Password</th>
+                        <th>Role</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -101,9 +103,8 @@ const EmployeeList = () => {
                             <td className='nameeee'>{employee.fname} {employee.lname}</td>
                             <td className='emaillll'>{employee.email}</td>
                             <td>{employee.department}</td>
-                            <td>
-                               {employee.password} 
-                            </td>
+                            <td>{employee.password}</td>
+                            <td>{employee.role}</td>
                             <td className='action'>
                                 <button onClick={() => deleteEmployee(employee._id)}><i className="fa-solid fa-trash"></i></button>
                                 <button onClick={() => openForm(employee._id)}><i className="fa-solid fa-pen-to-square"></i></button>
@@ -140,6 +141,13 @@ const EmployeeList = () => {
                     <div className='input-group'>
                         <label htmlFor='password'>Password</label>
                         <input type="password" value={employee.password} onChange={inputHandler} id='password' name='password' autoComplete='off' placeholder='Password' />
+                    </div>
+                    <div className='input-group'>
+                        <label htmlFor='role'>Role</label>
+                        <select id='role' name='role' value={employee.role} onChange={inputHandler}>
+                            <option value="readonly">Readonly</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
                     <div className='input-group'>
                         <button type='submit'>{editingId ? 'Update' : 'Add'}</button>

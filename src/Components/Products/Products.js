@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Kitcard from "./Kitchen"
+// import Kitcard from "./Kitchen"
 import "../../Styles/Products.css";
 
 const ProductsDropdown = () => {

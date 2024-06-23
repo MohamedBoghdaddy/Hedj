@@ -4,111 +4,106 @@
 }
 
 @font-face {
-  font-family: "Aeonik Thin";
+  font-family: "Aeonik-Thin";
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
 .footer {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 1820px;
-  width: 100%;
-  border-radius: 6px;
-  background-color: #eceae6;
+  background-color: #1c1c1c;
+  color: #fff;
+  padding: 50px 0;
 }
-.footer .footer-row {
+
+.footer-container {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
-.footer-row .footer-col h4 {
-  color: #634f4f;
-  font-size: 1.2rem;
-  font-weight: 400;
+
+.footer-col {
+  flex: 1;
+  margin: 20px;
+  min-width: 200px;
+}
+
+.footer-col h4 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ffffff;
   font-family: "Beverly";
 }
-.footer-col .links {
-  margin-top: 20px;
-  font-family: "Beverly";
+
+.footer-col p,
+.footer-col ul,
+.footer-col form {
+  margin: 0;
+  padding: 0;
+  font-family: "Aeonik-Thin";
 }
-.footer-col .links li {
+
+.footer-col ul {
   list-style: none;
+}
+
+.footer-col ul li {
   margin-bottom: 10px;
 }
-.footer-col .links li a {
+
+.footer-col ul li a {
+  color: #ccc;
   text-decoration: none;
-  color: #625959;
 }
-.footer-col .links li a:hover {
-  color: #0a0909;
+
+.footer-col ul li a:hover {
+  color: #ffffff;
 }
-.footer-col p {
-  margin: 20px 0;
-  color: #443838;
-  max-width: 300px;
-  font-family: "Aeonik Thin";
-}
-.footer-col form {
+
+.icons {
   display: flex;
-  gap: 5px;
+  gap: 15px;
+  margin-top: 20px;
 }
-.footer-col input {
-  height: 40px;
-  border-radius: 6px;
-  background: none;
-  width: 100%;
-  outline: none;
-  color: #070606;
-}
-.footer-col input::placeholder {
-  color: #000000;
-}
-.footer-col form button {
-  background: #fff;
-  outline: none;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s ease;
-}
-.footer-col form button:hover {
-  background: #cecccc;
-}
-.footer-col .icons {
-  display: flex;
-  margin-top: 30px;
-  gap: 30px;
-  cursor: pointer;
-}
-.footer-col .icons i {
-  color: #afb6c7;
-}
-.footer-col .icons i:hover {
+
+.icons a {
   color: #fff;
+  font-size: 18px;
+  transition: color 0.3s;
 }
-@media (max-width: 768px) {
-  .footer {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    transform: none;
-    width: 100%;
-    border-radius: 0;
-  }
-  .footer .footer-row {
-    padding: 20px;
-    gap: 1rem;
-  }
-  .footer-col form {
-    display: block;
-  }
-  .footer-col form :where(input, button) {
-    width: 100%;
-  }
-  .footer-col form button {
-    margin: 10px 0 0 0;
-  }
+
+.icons a:hover {
+  color: #fcfcfc;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsletter-form input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  font-family: "Aeonik-Thin";
+}
+
+.newsletter-form button {
+  padding: 10px;
+  border: none;
+  background-color: #ffffff;
+  color: #1c1c1c;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.newsletter-form button:hover {
+  background-color: #fff;
+  color: #1c1c1c;
 }

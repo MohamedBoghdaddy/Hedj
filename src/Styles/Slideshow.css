@@ -19,6 +19,7 @@ background-color: #eceae6;
   width: 80%; /* Example: 80% of parent container */
   /* max-width: 600px; Maximum width */
   margin: 0 auto; /* Center the carousel */
+  top:100px;
   
 }
 
