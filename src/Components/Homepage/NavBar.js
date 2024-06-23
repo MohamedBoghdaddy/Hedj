@@ -19,13 +19,15 @@ import { Link as ScrollLink } from "react-scroll";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../Styles/Navbar.css";
-import Login from "../Loginsystem/Login"; // Adjust the import path
+import Login from "../Loginsystem/Login";
 import SearchResultsList from "../Homepage/SearchResult";
+
 const NavBar = () => {
   const [searchText, setSearchText] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [expanded, setExpanded] = useState(false);
 
   const handleSearch = () => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -49,8 +51,10 @@ const NavBar = () => {
     setShowLoginModal(false);
   };
 
+  const handleNavCollapse = () => setExpanded(!expanded);
+
   return (
-    <Navbar expand="lg" className="navbar" variant="dark">
+    <Navbar expand="lg" className="navbar" variant="dark" expanded={expanded}>
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className="navbar-brand">
           <img
@@ -62,15 +66,19 @@ const NavBar = () => {
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           className="navbar-toggler"
+          onClick={handleNavCollapse}
         />
         <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
           <Nav className="navbar-nav ms-auto" navbarScroll>
-            <ScrollLink to="hero-section" smooth className="nav-link">
+            <ScrollLink
+              to="hero-section"
+              smooth
+              className="nav-link"
+              onClick={handleNavCollapse}
+            >
               Home
             </ScrollLink>
-            <ScrollLink to="view-collection" smooth className="nav-link">
-              View Collection
-            </ScrollLink>
+
             <NavDropdown
               title="Products"
               id="basic-nav-dropdown"
@@ -78,22 +86,43 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-              <NavDropdown.Item as={Link} to="/news2024" className="nav-link">
+              <NavDropdown.Item
+                as={Link}
+                to="/news2024"
+                className="nav-link"
+                onClick={handleNavCollapse}
+              >
                 NEWS 2024
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/kitchen" className="nav-link">
+              <NavDropdown.Item
+                as={Link}
+                to="/kitchen"
+                className="nav-link"
+                onClick={handleNavCollapse}
+              >
                 KITCHEN
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/systems" className="nav-link">
+              <NavDropdown.Item
+                as={Link}
+                to="/systems"
+                className="nav-link"
+                onClick={handleNavCollapse}
+              >
                 SYSTEMS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/sofas" className="nav-link">
+              <NavDropdown.Item
+                as={Link}
+                to="/sofas"
+                className="nav-link"
+                onClick={handleNavCollapse}
+              >
                 SOFAS
               </NavDropdown.Item>
               <NavDropdown.Item
                 as={Link}
                 to="/day-complements"
                 className="nav-link"
+                onClick={handleNavCollapse}
               >
                 DAY COMPLEMENTS
               </NavDropdown.Item>
@@ -101,26 +130,58 @@ const NavBar = () => {
                 as={Link}
                 to="/night-complements"
                 className="nav-link"
+                onClick={handleNavCollapse}
               >
                 NIGHT COMPLEMENTS
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/outdoor" className="nav-link">
+              <NavDropdown.Item
+                as={Link}
+                to="/outdoor"
+                className="nav-link"
+                onClick={handleNavCollapse}
+              >
                 OUTDOOR
               </NavDropdown.Item>
             </NavDropdown>
-            <Nav.Link as={Link} to="/contact" className="nav-link">
+            <Nav.Link
+              as={Link}
+              to="/contact"
+              className="nav-link"
+              onClick={handleNavCollapse}
+            >
               Contact Us
             </Nav.Link>
-            <Nav.Link as={Link} to="/dashboard" className="nav-link">
+            <Nav.Link
+              as={Link}
+              to="/dashboard"
+              className="nav-link"
+              onClick={handleNavCollapse}
+            >
               Dashboard
             </Nav.Link>
-            <Nav.Link as={Link} to="/wishlist" className="nav-link">
+            <Nav.Link
+              as={Link}
+              to="/wishlist"
+              className="link-wish"
+              onClick={handleNavCollapse}
+            >
               <FontAwesomeIcon icon={faHeart} />
             </Nav.Link>
-            <Nav.Link className="nav-link" onClick={handleLoginModalOpen}>
+            <Nav.Link
+              className="nav-link"
+              onClick={() => {
+                handleLoginModalOpen();
+                handleNavCollapse();
+              }}
+            >
               <FontAwesomeIcon icon={faUser} />
             </Nav.Link>
-            <Nav.Link as={Link} to="/cart" className="nav-link">
+            <Nav.Link
+              as={Link}
+              to="/cart"
+              className="nav-link"
+              onClick={handleNavCollapse}
+            >
               <FontAwesomeIcon icon={faCartShopping} />
               <span className="count">0</span>
             </Nav.Link>
