@@ -5,7 +5,7 @@ import Chart from 'chart.js/auto'; // Import Chart.js
 const Report = () => {
   // Sample data for charts
   const salesData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
       {
         label: 'Sales',
@@ -73,7 +73,7 @@ const Report = () => {
   }, [salesData, inventoryData, customerData]); // Include data dependencies if needed
 
   return (
-    <div className="report-container">
+    <div className="report-container" id='Report'>
       <div className="chart-container">
         <canvas id="sales-chart" />
       </div>

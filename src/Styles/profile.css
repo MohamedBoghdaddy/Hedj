@@ -76,16 +76,12 @@
     font-family: "Aeonik Thin";
   }
   
-  .userdetails img {
-    margin-top: 70px;
-    padding-bottom: 10px;
-    border-radius: 50%;
-    width: 150px;
-  }
+  
   
   .userdetails h3 {
     color: #eceae6;
     font-size: 20px;
+    margin-top: 100px;
   }
   
   .userprofile.collapsed .userdetails {
