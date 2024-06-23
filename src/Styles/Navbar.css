@@ -70,7 +70,6 @@
   background: #aaa;
 }
 
-
 .navbar .allcategories:hover {
   background-color: black; /* Remove background color on hover */
 }
@@ -93,15 +92,13 @@
   min-width: 560px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   color: rgb(0, 0, 0);
-
 }
 
 .dropdown-content a {
   padding: 12px 16px;
   text-decoration: none;
   display: block;
-    color: rgb(0, 0, 0);
-
+  color: rgb(0, 0, 0);
 }
 
 .dropdown-content .item {
@@ -132,21 +129,19 @@
 
 .nav-link-products {
   cursor: pointer;
-    color: rgb(248, 222, 222);
-
+  color: rgb(0, 0, 0);
 }
 
 .nav-link-products:hover {
-  background-color: #eceae6; 
+  background-color: #eceae6;
 }
 .nav-link {
   cursor: pointer;
-    color: rgb(249, 227, 227);
-
+  color: rgb(249, 227, 227);
 }
 
 .nav-link:hover {
-  color: #292323 ;
+  color: #292323;
 }
 .navbar .link-wish:hover {
   color: red;
