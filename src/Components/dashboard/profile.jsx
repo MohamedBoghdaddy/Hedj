@@ -1,6 +1,6 @@
-import Profileheader from "../dashboard/profileheader";
+import React, { useState, useEffect } from "react";
+import Profileheader from '../dashboard/profileheader';
 import "../../Styles/profile.css";
-import userimage from "../../Assets/Images/simple.jpg";
 import {
   BsGrid1X2Fill,
   BsFillArchiveFill,
@@ -8,12 +8,28 @@ import {
   BsPeopleFill,
   BsMenuButtonWideFill,
   BsFillGearFill,
-} from "react-icons/bs";
-import React, { useState, useRef } from "react";
+} from 'react-icons/bs';
 
 const Profile = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const sidebarRef = useRef(null);
+  const [lastAdmins, setLastAdmins] = useState([]);
+
+  useEffect(() => {
+    const fetchLastAdmins = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/getlastadmins'); // Adjust the URL as needed
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setLastAdmins(data);
+      } catch (error) {
+        console.error('Error fetching last admins:', error);
+      }
+    };
+
+    fetchLastAdmins();
+  }, []);
 
   const handleMouseEnter = () => {
     setIsCollapsed(false);
@@ -26,45 +42,44 @@ const Profile = () => {
   return (
     <div className="profile">
       <div
-        className={`userprofile ${isCollapsed ? "collapsed" : ""}`}
-        ref={sidebarRef}
+        className={`userprofile ${isCollapsed ? 'collapsed' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         <Profileheader isCollapsed={isCollapsed} />
         <div className="userdetails">
-          <img src={userimage} alt="" />
-          <h3 className="username">Tommy Peter</h3>
+          <h3 className="username">
+            {lastAdmins.map((admin, index) => (
+              <span key={index}>
+                {admin.fname} {admin.lname}
+                {index !== lastAdmins.length - 1 && <br />} {/* Add line break except for the last element */}
+              </span>
+            ))}
+          </h3>
         </div>
-        <button className="toggle-button">{isCollapsed ? ">" : "<"}</button>
+        <button className="toggle-button">
+          {isCollapsed ? '>' : '<'}
+        </button>
         <div className="menulist">
-          <a href="#dash" className="item">
+          <a href="#dash" className="itemm">
             <BsGrid1X2Fill className="icon" />
-            {!isCollapsed && "Dashboard"}
+            {!isCollapsed && 'Dashboard'}
           </a>
-          <a href="##" className="item">
-            <BsFillArchiveFill className="icon" />
-            {!isCollapsed && "Products"}
-          </a>
-          <a href="##" className="item">
-            <BsFillGrid3X3GapFill className="icon" />
-            {!isCollapsed && "Categories"}
-          </a>
-          <a href="#customer" className="item">
+          <a href="#customer" className="itemm">
             <BsPeopleFill className="icon" />
-            {!isCollapsed && "Customers"}
+            {!isCollapsed && 'Customers'}
           </a>
-          <a href="#employe" className="item">
+          <a href="#employe" className="itemm">
             <BsPeopleFill className="icon" />
-            {!isCollapsed && "Employees"}
+            {!isCollapsed && 'Employees'}
           </a>
-          <a href="##" className="item">
+          <a href="#Report" className="itemm">
             <BsMenuButtonWideFill className="icon" />
-            {!isCollapsed && "Reports"}
+            {!isCollapsed && 'Reports'}
           </a>
-          <a href="##" className="item">
+          <a href="##" className="itemm">
             <BsFillGearFill className="icon" />
-            {!isCollapsed && "Settings"}
+            {!isCollapsed && 'Settings'}
           </a>
         </div>
       </div>
