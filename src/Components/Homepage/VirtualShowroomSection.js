@@ -11,7 +11,6 @@ const VirtualShowroomSection = () => (
         <img src={vr} alt="vr" style={{ width: "50%", height: "auto" }} />
       </Col>
       <Col md={6}>
-        <div className="content">
           <h2>Experience Our Virtual Showroom</h2>
           <p>
             Explore our furniture in a virtual environment or use our AR tool to
@@ -20,7 +19,6 @@ const VirtualShowroomSection = () => (
           <Button variant="dark" as={Link} to="/virtual-showroom">
             Visit Virtual Showroom
           </Button>
-        </div>
       </Col>
     </Row>
   </Container>
