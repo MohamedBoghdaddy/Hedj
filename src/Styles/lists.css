@@ -94,9 +94,13 @@
     .listheader {
         flex-direction: column;
         align-items: flex-start;
-        margin-left: 1rem;
+        margin-left: 0rem;
         margin-right: 1rem;
         margin-bottom: 0;
+    }
+    .listheader{
+font-size: 20px;
+align-items: center;
     }
 .h2{
     margin-left: 100px;
@@ -110,28 +114,28 @@
     
         .employeetable  {
             margin-top: 2rem;
-            width: 350px;
-            margin-left: 120px;
+            width: 400px;
+            margin-left: 110px;
            
          
           
         }
-        .customersList{
-           margin-right: 500px;
+        .listcontainercus{
+           margin-right: 50000px;
            left: 0;
            margin-left: 0;
         }
     
         .employeetable table ,.listcontainercus table {
-          width: 25px;
-            font-size: 0.4rem;
+          width: 15px;
+            font-size: 0.3rem;
             
            
         }
     
         .employeetable th,
         .employeetable td {
-            padding: 0.3rem;
+            padding: 0.2rem;
             
         }
         .action {
@@ -152,6 +156,14 @@
             display: flex;
             flex-wrap: wrap;
         }
+        .back{
+            font-size: 8px;
+        }
+        .h2{
+            font-size: 20px;
+            align-items: center;
+            left :0;
+        }
         
 }
 
@@ -168,7 +180,8 @@
 }
 
 .employee-form {
-    margin-left: 85px;
+    margin-left: 0px;
+    left: 0;
     width: 100%;
     max-width: 500px;
     background-color: #f0f0f0;

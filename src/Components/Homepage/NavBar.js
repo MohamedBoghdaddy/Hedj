@@ -86,20 +86,19 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-            
               <NavDropdown.Item
                 as={Link}
                 to="/kitchen"
-                className="nav-link"
+                className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 KITCHEN
               </NavDropdown.Item>
-            
+
               <NavDropdown.Item
                 as={Link}
                 to="/sofas"
-                className="nav-link"
+                className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 SOFAS
@@ -107,7 +106,7 @@ const NavBar = () => {
               <NavDropdown.Item
                 as={Link}
                 to="/day-complements"
-                className="nav-link"
+                className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 DAY COMPLEMENTS
@@ -115,7 +114,7 @@ const NavBar = () => {
               <NavDropdown.Item
                 as={Link}
                 to="/night-complements"
-                className="nav-link"
+                className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 NIGHT COMPLEMENTS
@@ -123,7 +122,7 @@ const NavBar = () => {
               <NavDropdown.Item
                 as={Link}
                 to="/outdoor"
-                className="nav-link"
+                className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 OUTDOOR

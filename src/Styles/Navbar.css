@@ -4,7 +4,7 @@
   width: 100%; /* Ensure it spans the full width */
   height: 70px; /* Adjust the height to a smaller size */
   background-color: #323c43;
-  color: #000000; /* Dark text color */
+  color: #eceae6;
   padding: 0 20px; /* Adjust padding */
   z-index: 1000; /* Ensure it stays above other content */
 }
@@ -17,7 +17,7 @@
 
 .navbar .nav-link {
   padding: 0 10px; /* Padding between links */
-    color: rgb(0, 0, 0);
+  color: #bbb4a7;
   font-family: "Beverly";
 }
 
@@ -72,7 +72,7 @@
 
 
 .navbar .allcategories:hover {
-  background-color: transparent; /* Remove background color on hover */
+  background-color: black; /* Remove background color on hover */
 }
 
 /* Optional: Add more specific styles for button text if needed */
@@ -130,14 +130,23 @@
   font-size: 1.5rem !important;
 }
 
+.nav-link-products {
+  cursor: pointer;
+    color: rgb(248, 222, 222);
+
+}
+
+.nav-link-products:hover {
+  background-color: #eceae6; 
+}
 .nav-link {
   cursor: pointer;
-    color: rgb(0, 0, 0);
+    color: rgb(249, 227, 227);
 
 }
 
 .nav-link:hover {
-  color: #292323 !important;
+  color: #292323 ;
 }
 .navbar .link-wish:hover {
   color: red;

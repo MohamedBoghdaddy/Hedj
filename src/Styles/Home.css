@@ -151,13 +151,39 @@ body {
   transform: translateY(-10px); /* Slightly lift the card on hover */
 }
 
-/* Virtual showroom section */
-.virtual-showroom .row,
-.virtual-showroom .col {
-  background-color: #eceae6; /* Light grayish background color */
-  width: 80%; /* Full width */
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
+.virtual-showroom {
+  padding: 40px 0;
 }
+
+.virtual-showroom .content {
+  text-align: left;
+  padding: 20px;
+}
+
+.virtual-showroom img {
+  max-width: 100%;
+  height: auto;
+}
+
+.virtual-showroom h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.virtual-showroom p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.virtual-showroom .btn-dark {
+  background-color: #333;
+  border: none;
+}
+
+.virtual-showroom .btn-dark:hover {
+  background-color: #555;
+}
+
 
 .content h2 {
   color: #323c43;
@@ -217,12 +243,12 @@ body {
   }
 
   .video-background {
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 50%;
     object-fit: cover;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 300px;
+    left: 26px;
   }
   .slick-slide {
     justify-content: space-around;

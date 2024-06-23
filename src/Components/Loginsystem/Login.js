@@ -48,8 +48,8 @@ const Login = () => {
 
   return (
     <div className="main-container">
-      <div className="form-container">
-        <div className="left">
+      <div className="login-container">
+        <div className="left-login">
           <h2>Login</h2>
           <form onSubmit={handleLogin}>
             <div className="field">
@@ -84,16 +84,16 @@ const Login = () => {
               </div>
             </div>
             {error && <div className="error">{error}</div>}
-            <button className="green_btn" type="submit">
+            <button className="left_btn" type="submit">
               Login
             </button>
           </form>
         </div>
 
-        <div className="right">
+        <div className="right-login">
           <h1>Don't have an account?</h1>
           <Link to="/signup">
-            <button className="white_btn" type="button">
+            <button className="right_btn" type="button">
               Signup
             </button>
           </Link>
