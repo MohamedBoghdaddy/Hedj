@@ -70,7 +70,7 @@ const Signup = () => {
   return (
     <div className="main-Container">
       <div className="frame-Container">
-        <div className="left">
+        <div className="left-sign">
           <h2>Signup</h2>
           <form onSubmit={handleSignup}>
             <div className="field">
@@ -164,16 +164,16 @@ const Signup = () => {
             </div>
             {errorMessage && <div className="error">{errorMessage}</div>}
             {successMessage && <div className="success">{successMessage}</div>}
-            <button className="green_btn" type="submit">
+            <button className="left_btn" type="submit">
               Signup
             </button>
           </form>
         </div>
 
-        <div className="right">
+        <div className="right-sign">
           <h1>Already have an account?</h1>
           <Link to="/login">
-            <button className="white_btn" type="button">
+            <button className="right_btn" type="button">
               Login
             </button>
           </Link>

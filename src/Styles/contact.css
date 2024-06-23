@@ -4,88 +4,68 @@
 }
 
 @font-face {
-  font-family: "Aeonik Thin";
+  font-family: "Aeonik-Thin";
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
-
-.main-container {
-  width: 100%;
+.contact-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-top: 200px;
-}
-
-h1 {
-  font-family: "Beverly";
-  text-align: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .frame-container {
+  background-color: #323c43;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 600px;
-  height: 300px;
-  display: flex;
-  flex-direction: row;
-  background-color: #766759;
-  border-radius: 10px;
-  box-shadow:
-    0px 3px 3px -2px rgb(0 0 0 / 20%),
-    0px 3px 4px 0px rgb(0 0 0 / 14%),
-    0px 1px 8px 0px rgb(0 0 0 / 12%);
 }
 
-.input {
-  outline: none;
-  border: none;
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  background-color: #d6cec1;
-  margin: 10px 0;
-  font-size: 14px;
-}
-
-.error_msg {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  font-size: 14px;
-  background-color: #f34646;
-  color: white;
-  border-radius: 5px;
+.frame-container h1 {
   text-align: center;
+  color: #fff; /* Adjust as needed */
+  margin-bottom: 20px;
 }
 
-label {
-  font-size: 18px;
+.field.input {
+  margin-bottom: 20px;
+}
+
+.field.input label {
+  display: block;
+  font-size: 18px; /* Increased font size */
+  color: #fff; /* Changed to white */
   margin-bottom: 5px;
 }
 
-.field input {
-  display: flex;
-  align-items: center;
+.field.input input,
+.field.input textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-button {
-  background-color: #4a4a4a;
-  color: white;
-  border: none;
+.field.input input:focus,
+.field.input textarea:focus {
+  outline: none;
+  border-color: #666; /* Adjust as needed */
+}
+
+input[type="submit"] {
+  width: 100%;
   padding: 10px;
+  background-color: #1e282f;
+  color: #fff; /* Adjust as needed */
+  border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #333;
-}
-
-/* Responsive styles for smaller screens */
-@media only screen and (max-width: 760px) {
-  .form-container {
-    width: 90%;
-    padding: 15px;
-  }
+input[type="submit"]:hover {
+  background-color: #20323d;
 }
