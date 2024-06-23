@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Bar, Line, Doughnut } from 'react-chartjs-2';
 import Chart from 'chart.js/auto'; // Import Chart.js
 
 const Report = () => {

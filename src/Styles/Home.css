@@ -1,8 +1,17 @@
 /* Home.css */
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 
 body {
-    margin: 0; /* Remove default margin */
-overflow-y: auto; /* Enable vertical scroll if needed */
+  margin: 0; /* Remove default margin */
+  overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
   background-color: #eceae6;
 }
@@ -13,19 +22,30 @@ overflow-y: auto; /* Enable vertical scroll if needed */
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #eceae6; /* Light grayish background color */
   color: #323c43; /* Dark text color */
   min-height: 100vh;
   width: 100%;
-    scroll-behavior: smooth;
-
 }
 
 /* Hero section with background styling */
-.hero-section {
-  background-color: #eceae6; /* Light grayish background color */
+
+.hero-section .row,
+.hero-section .col {
   text-align: center;
+  position: relative;
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  padding: 80px 0; /* Reduced padding */
+}
+
+.video-background {
+  width: 100%;
+  height: 40%;
+  object-fit: cover;
+  position: absolute;
+  top: 300px;
+  left: 10px;
 }
 
 .hero-section h1 {
@@ -43,9 +63,10 @@ overflow-y: auto; /* Enable vertical scroll if needed */
 }
 
 /* Storytelling section with a full-width background */
-.storytelling-section {
+.storytelling-section .row,
+.storytelling-section .col {
   background-color: #eceae6; /* Light grayish background color */
-  padding: 20px 0; /* Reduced padding */
+  padding: 80px 0; /* Reduced padding */
   width: 100%; /* Full width */
   box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
@@ -69,45 +90,69 @@ overflow-y: auto; /* Enable vertical scroll if needed */
   color: #323c43;
 }
 
-/* CTA section with buttons */
-.Section2 {
-  display: flex; /* Use flex layout */
-  justify-content: center; /* Center the buttons */
-  gap: 20px; /* Adjusted gap */
-  padding: 20px 0; /* Reduced padding */
-  background-color: #eceae6; /* Light grayish background color */
+/* Adjust container styles */
+.Section4 {
+  padding: 20px 0; 
+  width: 100%; 
+  box-sizing: border-box; 
+  background-color: #eceae6; 
+  margin-left: 76px;
 }
 
-/* Styling for buttons in the CTA section */
-.Section2 Button {
-  background-color: #eceae6; /* Background color */
-  color: #323c43; /* Text color */
-  border: 2px solid #323c43; /* Border style */
-  padding: 10px 20px; /* Padding for consistent spacing */
-  font-size: 1em; /* Font size */
-  transition: background 0.3s, color 0.3s; /* Smooth transitions */
+.Section4 .row,
+.Section4 .col {
+  padding: 60px 0; 
 }
 
-.Section2 Button:hover {
-  background-color: #323c43; /* Dark background on hover */
-  color: #eceae6; /* Light text on hover */
+.Section4 Button:hover {
+  background-color: #323c43; 
+  color: #eceae6; 
+}
+
+.slider1 {
+  margin-top: 30px;
+  margin-left: 10px;
+  margin-right: 20px;
+  height: 74vh !important;
+  width: 96vw !important;
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center; 
+}
+
+.slick-track {
+  display: flex;
+  align-items: center;
+}
+
+.Slider .slick-list {
+  display: flex;
+  justify-content: space-between !important;
 }
 
 /* Virtual showroom section */
-.virtual-showroom {
-  padding: 20px 0; /* Reduced padding */
+.virtual-showroom .row,
+.virtual-showroom .col {
   background-color: #eceae6; /* Light grayish background color */
+  width: 80%; /* Full width */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
-.virtual-showroom h2 {
+.content h2 {
   color: #323c43;
   font-family: "Beverly";
 }
 
-.virtual-showroom p {
-  font-family: "Aeonik Thin"; 
+.content p {
+  font-family: "Aeonik Thin";
   font-size: 1.1em;
   line-height: 1.5em;
+}
+
+.content Button {
+  margin-top: 10px; /* Example margin */
 }
 
 /* Contact information and store locator section */
@@ -133,7 +178,9 @@ overflow-y: auto; /* Enable vertical scroll if needed */
   color: #323c43;
   border: 2px solid #323c43;
   padding: 10px 20px;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 .contact-info button:hover {
@@ -141,3 +188,40 @@ overflow-y: auto; /* Enable vertical scroll if needed */
   color: #eceae6;
 }
 
+@media only screen and (max-width: 766px) {
+  .hero-section {
+    text-align: center;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .video-background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  .slick-slide {
+    justify-content: space-around;
+  }
+  
+  .Section4 {
+    margin-left: 0;
+    padding: 10px 0;
+  }
+  
+  .slider1 {
+    width: 100vw !important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .slick-slide > div {
+    width: 80%; /* Adjust the width of cards to fit smaller screens */
+  }
+
+}

@@ -1,32 +1,17 @@
-@font-face {
-  font-family: "Beverly";
-  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
-}
-
-@font-face {
-  font-family: "Aeonik Thin";
-  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
-}
-
-body {
-  /* Updated background color */
-  overflow-y: auto; /* Enable vertical scroll if needed */
-  overflow-x: hidden; /* Hide horizontal scroll bar */
-}
 .navbar {
   position: fixed; /* Fix the navbar at the top */
   top: 0; /* Position at the top of the viewport */
   width: 100%; /* Ensure it spans the full width */
-  height: 60px; /* Adjust the height to a smaller size */
-  background-color: #beb9ae; /* Light background color */
-  color: #323c43; /* Dark text color */
+  height: 70px; /* Adjust the height to a smaller size */
+  background-color: #323c43;
+  color: #000000; /* Dark text color */
   padding: 0 20px; /* Adjust padding */
   z-index: 1000; /* Ensure it stays above other content */
 }
 
 .navbar .navbar-collapse {
   display: flex; /* Use Flexbox for layout */
-  justify-content: flex-end; 
+  justify-content: flex-end;
   align-items: center; /* Align items vertically */
 }
 
@@ -38,13 +23,13 @@ body {
 
 .navbar .nav-link {
   padding: 0 10px; /* Padding between links */
-  color: #091d2b;
-  font-size: larger;
-  font-weight: 800;
+  color: #ffffff; /* Light text color */
+  font-family: "Beverly";
 }
 
 .navbar .navbar-toggler {
-  color: #766759; /* Icon color for Navbar Toggle */
+  background-color: #303132;
+  border: none;
 }
 
 .search-button {
@@ -63,12 +48,14 @@ body {
   padding: 10px;
   border-radius: 4px;
 }
+
 .d-flex {
   display: flex; /* Use Flexbox for layout */
   justify-content: space-evenly; /* Space between elements */
   align-items: center; /* Align items vertically */
   flex-direction: row;
 }
+
 .count {
   top: -6px; /* Adjusted to position the badge at the top */
   right: -4px; /* Adjusted to position the badge at the top */
@@ -84,9 +71,11 @@ body {
   width: 20px;
   height: 20px;
 }
+
 .count:hover {
   background: #aaa;
 }
+
 .navbar .allcategories {
   padding: 5px 10px; /* Adjust padding to your needs */
   background-color: transparent; /* Ensure background is transparent */
@@ -120,7 +109,7 @@ body {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #ffffff;
+  background-color: #323c43;
   min-width: 560px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
@@ -133,14 +122,14 @@ body {
 }
 
 .dropdown-content .item {
-  color: rgb(15, 3, 3);
+  color: rgb(0, 0, 0);
   padding: 12px 16px;
   text-decoration: none;
   display: block;
 }
 
 .dropdown-content a:hover {
-  background-color: #5e4040;
+  background-color: #000000;
 }
 
 .show {
@@ -148,28 +137,45 @@ body {
 }
 
 .dropdown button {
-  color: #091d2b;
+  color: #000000;
   font-size: 20px;
   font-weight: 1000;
 }
-.custom-navbar {
-  background-color: #100d16 !important;
-}
 
 .custom-navbar .navbar-brand {
-  color: #ffffff !important;
+  color: #000000 !important;
   font-size: 1.5rem !important;
 }
 
 .nav-link {
-  color: #323c43 !important;
-  font-size: 1.5rem !important;
-  margin-left: 20px;
   cursor: pointer;
 }
 
 .nav-link:hover {
-  color: #181212 !important;
+  color: #292323 !important;
+}
+.link-wish:hover {
+  color: red;
+}
+.results-list {
+  position: absolute;
+  top: 50px; /* Adjust according to your navbar height */
+  right: 10px;
+  width: 300px;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.search-result {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.search-result:hover {
+  background-color: #f1f1f1;
 }
 
 @media only screen and (max-width: 1800px) {

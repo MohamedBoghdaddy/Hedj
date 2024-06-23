@@ -16,13 +16,11 @@ import Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 import Kitcard from "./Components/Products/Kitchen";
-import Rating from "@mui/material/Rating";
-
-// Ensure cart and addToCart are defined at the top level
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* <Route path="/" element={<main />} /> */}
         <Route
           path="/"
           element={
