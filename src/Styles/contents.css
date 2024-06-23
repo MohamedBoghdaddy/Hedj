@@ -1,195 +1,190 @@
 @font-face {
-    font-family: "Beverly";
-    src: url("../Assets/Fonts/Beverly.otf") format("opentype");
-  }
-  
-  @font-face {
-    font-family: "Aeonik Thin";
-    src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
-  }
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 .content {
-    width: 77%;
-    margin-left: 40vh;
-    margin-top: 70px;
-    
+  width: 77%;
+  margin-left: 40vh;
+  margin-top: 70px;
 }
 
 .contenth {
-    align-items: center;
-    justify-content: space-between;
-    display: flex;
+  align-items: center;
+  justify-content: space-between;
+  display: flex;
 }
 
 .htitle {
-    color: #323c43;
+  color: #323c43;
 }
 
 .activity {
-    align-items: center;
-    gap: 8px;
-    display: flex;
+  align-items: center;
+  gap: 8px;
+  display: flex;
 }
 
 .searchbox {
-    display: flex;
-    background: #766759;
-    padding: 10px 13px;
-    border-radius: 20px;
-    align-items: center;
-    width: 200px;
-    height: 45px;
+  display: flex;
+  background: #766759;
+  padding: 10px 13px;
+  border-radius: 20px;
+  align-items: center;
+  width: 200px;
+  height: 45px;
 }
 
 .text {
-    color: #d6cec1;
+  color: #d6cec1;
 }
 
 .searchbox input {
-    border: none;
-    outline: none;
-    background: transparent;
-    padding:10px;
-    color: #d6cec1;
-    font-size: 0.6rem; /* Adjust font size for smaller screens */
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px;
+  color: #d6cec1;
+  font-size: 0.6rem; /* Adjust font size for smaller screens */
 }
 
 .iconn {
-    color: #d6cec1;
-    font-size: 25px;
-    transition: 0.5s ease-in-out;
+  color: #d6cec1;
+  font-size: 25px;
+  transition: 0.5s ease-in-out;
 }
 
 .notify {
-    border-radius: 20px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    background: #766759;
-    color: #d6cec1;
-    font-size: 25px;
-    margin-right: 500px;
+  border-radius: 20px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  background: #766759;
+  color: #d6cec1;
+  font-size: 25px;
+  margin-right: 500px;
 }
 
 .icon:hover,
 .notify:hover {
-    transform: scale(1.04);
-    cursor: pointer;
+  transform: scale(1.04);
+  cursor: pointer;
 }
 
 .containerofcards {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 3.5rem;
-    flex-wrap: wrap-reverse;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 3.5rem;
+  flex-wrap: wrap-reverse;
 }
 
 .thecard {
-    flex: 1;
-    background: #766759;
-    padding: 20px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-shadow: 0 5px 25px black;
-    gap: 20px;
-    transition: 0.5s ease-in-out;
+  flex: 1;
+  background: #766759;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 5px 25px black;
+  gap: 20px;
+  transition: 0.5s ease-in-out;
 }
 
 .thecard:hover {
-    transform: scale(1.04);
-    cursor: pointer;
+  transform: scale(1.04);
+  cursor: pointer;
 }
 
 .cardicon {
-    color: #323c43;
-    font-size: 2.75rem;
-    padding: 20px;
-    background: #eceae6;
-    display: flex;
-    align-items: center;
-    border-radius: 20px;
-    justify-content: center;
+  color: #323c43;
+  font-size: 2.75rem;
+  padding: 20px;
+  background: #eceae6;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  justify-content: center;
 }
 
 .cardtitle {
-    color: #323c43;
-    padding: 10px 0;
-    background: #eceae6;
-    text-align: center;
-    font-size: 1.3rem;
-    border-radius: 20px;
-    width: 80%;
-    font-family: "Aeonik Thin"
+  color: #323c43;
+  padding: 10px 0;
+  background: #eceae6;
+  text-align: center;
+  font-size: 1.3rem;
+  border-radius: 20px;
+  width: 80%;
+  font-family: "Aeonik Thin";
 }
 
-
-
 @media only screen and (max-width: 766px) {
-    .containerofcards {
-        flex-wrap: wrap;
-        display: flex;
-        flex-wrap: wrap-reverse;
-        width: 170px;
-    }
+  .containerofcards {
+    flex-wrap: wrap;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    width: 170px;
+  }
 
-    .thecard {
-        flex-basis: calc(50% - 20px);
-        gap: 10px;
-    }
+  .thecard {
+    flex-basis: calc(50% - 20px);
+    gap: 10px;
+  }
 
-    .cardicon {
-        font-size: 1.75rem;
-    }
+  .cardicon {
+    font-size: 1.75rem;
+  }
 
-    .searchbox {
-        width: 10vh;
-        padding: 4px 0px;
-        margin-left: 10px;
-        height: 40px;
-        
-    }
+  .searchbox {
+    width: 10vh;
+    padding: 4px 0px;
+    margin-left: 10px;
+    height: 40px;
+  }
 
-    .searchbox input {
-        font-size: 0.5rem;
-        
-    }
+  .searchbox input {
+    font-size: 0.5rem;
+  }
 
-    .iconn {
-        font-size: 1.0rem;
-        margin-right: 0.9rem;
-    }
+  .iconn {
+    font-size: 1rem;
+    margin-right: 0.9rem;
+  }
 
-    .contenth {
-        margin-top: 50px;
-    }
+  .contenth {
+    margin-top: 50px;
+  }
+
 
     .htitle {
         font-size: 1.0rem;
         margin-top: 24px;
         left: 0;
         
-
-       
     }
+  
 
-    .content {
-        width: calc(50% - 100vh);
-        margin-left: 23vh;
-        margin-top: 65px;
-       
-    }
-   
+  .content {
+    width: calc(50% - 100vh);
+    margin-left: 23vh;
+    margin-top: 65px;
+  }
 
-    body {
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 
-    .notify {
-        margin-right: 1900px;
-        font-size: 15px;
-        padding: 9px;
-    }
+  .notify {
+    margin-right: 1900px;
+    font-size: 15px;
+    padding: 9px;
+  }
+
+
 }

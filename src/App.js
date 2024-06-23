@@ -48,6 +48,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Products />
+              <Footer />
             </>
           }
         />
@@ -57,6 +58,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Bedrooms />
+              <Footer />
             </>
           }
         />
@@ -66,6 +68,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Kitchen />
+              <Footer />
             </>
           }
         />
@@ -75,6 +78,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Cart />
+              <Footer />
             </>
           }
         />
@@ -89,7 +93,7 @@ const App = () => {
           }
         />
         <Route
-          path="/Favorites"
+          path="/wishlist"
           element={
             <>
               <Mininavbar />
@@ -103,6 +107,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Contact />
+              <Footer />
             </>
           }
         />
@@ -122,6 +127,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Signup />
+              <Footer />
             </>
           }
         />

@@ -3,8 +3,6 @@ import Profileheader from '../dashboard/profileheader';
 import "../../Styles/profile.css";
 import {
   BsGrid1X2Fill,
-  BsFillArchiveFill,
-  BsFillGrid3X3GapFill,
   BsPeopleFill,
   BsMenuButtonWideFill,
   BsFillGearFill,

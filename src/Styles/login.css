@@ -4,14 +4,13 @@
 }
 
 @font-face {
-  font-family: "Aeonik Thin";
+  font-family: "Aeonik-Thin";
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
 body {
   margin: 0;
-  font-family: "Aeonik Thin", sans-serif;
-  /* background-color: #f4f4f4; */
+  font-family: "Aeonik-Thin", sans-serif;
 }
 
 .main-container {
@@ -25,35 +24,38 @@ body {
   box-sizing: border-box;
 }
 
-.form-container {
+.login-container {
   max-width: 900px;
   width: 100%;
   display: flex;
   flex-direction: row;
-  background-color: #fff;
+  background-color: #323c43;
   border-radius: 10px;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-.left,
-.right {
+.left-login,
+.right-login {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background-color: #f9f9f9;
 }
 
-.left {
+.left-login {
   background-color: #eceae6;
 }
 
-.left h2,
-.right h1 {
-  color: #28333b;
+.right-login {
+  background-color: #323c43;
+}
+
+.left-login h2,
+.right-login h1 {
+  color: #f7f8f9;
   font-size: 36px;
   margin-bottom: 20px;
   font-family: "Beverly", sans-serif;
@@ -88,7 +90,7 @@ body {
 }
 
 .field input:focus {
-  border-color: #e3bc67;
+  border-color: #dcd7cc;
   outline: none;
 }
 
@@ -137,36 +139,41 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.green_btn {
-  background-color: #e3bc67;
-  color: #28333b;
+.left_btn {
+  background-color: #323c43;
+  color: #eef0f1;
 }
 
-.green_btn:hover {
-  background-color: #cfab5a;
+.left_btn:hover {
+  background-color: #4c6271;
 }
 
-.white_btn {
+.right_btn {
   background-color: #eceae6;
   color: #28333b;
 }
 
-.white_btn:hover {
-  background-color: #d8d7d3;
+.right_btn:hover {
+  background-color: #a9a69b;
 }
 
+.error {
+  color: #323c43;
+}
+
+
 @media only screen and (max-width: 760px) {
-  .form-container {
+  .login-container {
     flex-direction: column;
     width: 90%;
   }
 
-  .left,
-  .right {
+  .left-login,
+  .right-login {
     padding: 20px;
   }
 
-  .right h1 {
+  .right-login h1 {
     font-size: 30px;
   }
 }
