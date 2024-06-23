@@ -141,26 +141,25 @@
       top: 0;
       left: 0;
       bottom: 0;
-      width: 10vh;
+      width: 8vh;
       z-index: 0;
       margin-right: 0.1rem;
     }
   
-    .userdetails img {
-      width: 110px;
-    }
+  
   
     .userdetails h3 {
-      font-size: 19px;
+      font-size: 12px;
     }
   
-    .proheader {
-      font-size: 6px;
+    .profiletitle {
+      font-size: 19px;
+      
     }
     .itemm{
-      font-size: 0.75rem;
+      font-size: 0.55rem;
       gap: 0rem;
-
+     
     }
    
   }

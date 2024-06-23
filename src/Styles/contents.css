@@ -160,9 +160,14 @@
     margin-top: 50px;
   }
 
-  .htitle {
-    font-size: 0.9rem;
-  }
+
+    .htitle {
+        font-size: 1.0rem;
+        margin-top: 24px;
+        left: 0;
+        
+    }
+  
 
   .content {
     width: calc(50% - 100vh);

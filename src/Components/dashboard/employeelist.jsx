@@ -124,8 +124,8 @@ const EmployeeList = () => {
 
     const renderEmployeeForm = () => (
         <div>
-            <button onClick={() => setView('list')}>Back</button>
-            <h2>{editingId ? 'Update Employee' : 'Add New Employee'}</h2>
+            <button onClick={() => setView('list')} className='back'>Back</button>
+            <h2 className='h2'>{editingId ? 'Update Employee' : 'Add New Employee'}</h2>
             <div className='form-box'>
                 <form className='employee-form' onSubmit={handleSubmit}>
                     <div className='input-group'>
