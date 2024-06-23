@@ -86,7 +86,6 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-            
               <NavDropdown.Item
                 as={Link}
                 to="/kitchen"
@@ -95,7 +94,7 @@ const NavBar = () => {
               >
                 KITCHEN
               </NavDropdown.Item>
-            
+
               <NavDropdown.Item
                 as={Link}
                 to="/sofas"
