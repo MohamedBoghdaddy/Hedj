@@ -2,7 +2,7 @@ import Employee from '../model/employemodel.js';
 
 export const createEmployee = async (req, res) => {
     try {
-        const { role } = req.body;
+        const { role, email } = req.body;
 
         // Check if there are already two admins
         if (role === 'admin') {
@@ -13,8 +13,16 @@ export const createEmployee = async (req, res) => {
         }
 
         const employeeData = new Employee(req.body);
-        const savedEmployee = await employeeData.save();
-        res.status(201).json({ msg: "Employee added successfully", employee: savedEmployee });
+        
+        try {
+            const savedEmployee = await employeeData.save();
+            res.status(201).json({ msg: "Employee added successfully", employee: savedEmployee });
+        } catch (error) {
+            if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
+                return res.status(400).json({ error: "Email must be unique" });
+            }
+            throw error;
+        }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

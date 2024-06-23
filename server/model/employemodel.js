@@ -12,7 +12,7 @@ const employeeSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true  // Ensure uniqueness
     },
     department: {
         type: String,
@@ -24,7 +24,8 @@ const employeeSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ["readonly", "admin"], default:"readonly",
+        enum: ["readonly", "admin"],
+        default: "readonly",
         required: true
     }
 });
