@@ -1,4 +1,13 @@
 /* Home.css */
+@font-face {
+  font-family: "Beverly";
+  src: url("../Assets/Fonts/Beverly.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Aeonik Thin";
+  src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
+}
 
 body {
   margin: 0; /* Remove default margin */
@@ -81,23 +90,46 @@ body {
   color: #323c43;
 }
 
-/* CTA section with buttons */
+/* Adjust container styles */
 .Section4 {
-  gap: 60px; /* Adjusted gap */
-  padding: 20px 0; /* Reduced padding */
-  width: 100%; /* Full width */
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
-  background-color: #eceae6; /* Light grayish background color */
+  padding: 20px 0; 
+  width: 100%; 
+  box-sizing: border-box; 
+  background-color: #eceae6; 
+  margin-left: 76px;
 }
 
 .Section4 .row,
 .Section4 .col {
-  padding: 60px 0; /* Reduced padding */
+  padding: 60px 0; 
 }
 
 .Section4 Button:hover {
-  background-color: #323c43; /* Dark background on hover */
-  color: #eceae6; /* Light text on hover */
+  background-color: #323c43; 
+  color: #eceae6; 
+}
+
+.slider1 {
+  margin-top: 30px;
+  margin-left: 10px;
+  margin-right: 20px;
+  height: 74vh !important;
+  width: 96vw !important;
+}
+
+.slick-slide {
+  display: flex;
+  justify-content: center; 
+}
+
+.slick-track {
+  display: flex;
+  align-items: center;
+}
+
+.Slider .slick-list {
+  display: flex;
+  justify-content: space-between !important;
 }
 
 /* Virtual showroom section */
@@ -173,4 +205,23 @@ body {
     top: 0;
     left: 0;
   }
+  .slick-slide {
+    justify-content: space-around;
+  }
+  
+  .Section4 {
+    margin-left: 0;
+    padding: 10px 0;
+  }
+  
+  .slider1 {
+    width: 100vw !important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .slick-slide > div {
+    width: 80%; /* Adjust the width of cards to fit smaller screens */
+  }
+
 }
