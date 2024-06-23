@@ -1,6 +1,6 @@
 import express from 'express';
-import { createEmployee, deleteEmployee, getAllEmployees, getEmployee, updateEmployee } from '../controller/employeecontroller.js';
-import {createUser,loginUser,logoutUser,getAllUsers } from '../controller/usercontroller.js'
+import { createEmployee, deleteEmployee, getAllEmployees, getEmployee, updateEmployee, getLastAdmins } from '../controller/employeecontroller.js';
+import { createUser, loginUser, logoutUser, getAllUsers, updateUser,deleteUser } from '../controller/usercontroller.js';
 
 const router = express.Router();
 
@@ -13,5 +13,8 @@ router.post('/users/signup', createUser);
 router.post('/users/login', loginUser);
 router.post('/users/logout', logoutUser);
 router.get('/users/customerslist', getAllUsers);
+router.put('/users/update/:id', updateUser);  // Add this line
+router.get('/getlastadmins', getLastAdmins);
+router.delete('/users/:id', deleteUser);
 
 export default router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import '../../Styles/lists.css' 
+import '../../Styles/lists.css';
 
 const EmployeeList = () => {
     const [view, setView] = useState('list');
@@ -61,22 +61,28 @@ const EmployeeList = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitting form with data:", employee);
-        if (editingId) {
-            try {
+        
+        // Client-side validation
+        if (!employee.fname || !employee.lname || !employee.email || !employee.department || !employee.password) {
+            alert('All fields are required.');
+            return;
+        }
+
+        try {
+            if (editingId) {
                 const response = await axios.put(`http://localhost:8000/api/update/${editingId}`, employee);
                 toast.success(response.data.msg, { position: "top-right" });
                 setView('list');
-            } catch (error) {
-                console.error("Error updating employee:", error);
-            }
-        } else {
-            try {
+            } else {
                 const response = await axios.post("http://localhost:8000/api/create", employee);
                 toast.success(response.data.msg, { position: "top-right" });
                 setView('list');
-            } catch (error) {
-                console.error("Error creating employee:", error);
+            }
+        } catch (error) {
+            if (error.response && error.response.data.error) {
+                alert(error.response.data.error);
+            } else {
+                console.error("Error submitting form:", error);
             }
         }
     };
@@ -101,7 +107,7 @@ const EmployeeList = () => {
                         <tr key={employee._id}>
                             <td>{index + 1}</td>
                             <td className='nameeee'>{employee.fname} {employee.lname}</td>
-                            <td className='emaillll'>{employee.email}</td>
+                            <td className='emailllll'>{employee.email}</td>
                             <td>{employee.department}</td>
                             <td>{employee.password}</td>
                             <td>{employee.role}</td>
@@ -144,10 +150,12 @@ const EmployeeList = () => {
                     </div>
                     <div className='input-group'>
                         <label htmlFor='role'>Role</label>
-                        <select id='role' name='role' value={employee.role} onChange={inputHandler}>
-                            <option value="readonly">Readonly</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                        <div>
+                            <input type="radio" id='role-readonly' name='role' value="readonly" checked={employee.role === 'readonly'} onChange={inputHandler} />
+                            <label htmlFor='role-readonly'>Readonly</label>
+                            <input type="radio" id='role-admin' name='role' value="admin" checked={employee.role === 'admin'} onChange={inputHandler} />
+                            <label htmlFor='role-admin'>Admin</label>
+                        </div>
                     </div>
                     <div className='input-group'>
                         <button type='submit'>{editingId ? 'Update' : 'Add'}</button>
@@ -159,7 +167,7 @@ const EmployeeList = () => {
 
     return (
         <div className='employeesList'>
-            <h1 className='listheader'>Employee Management System</h1>
+            <h1 className='listheader'>Employees</h1>
             {view === 'list' ? renderEmployeeList() : renderEmployeeForm()}
         </div>
     );

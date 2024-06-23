@@ -89,24 +89,23 @@ body {
   font-family: "Aeonik Thin";
   color: #323c43;
 }
-
 /* Adjust container styles */
 .Section4 {
-  padding: 20px 0; 
-  width: 100%; 
-  box-sizing: border-box; 
-  background-color: #eceae6; 
+  padding: 20px 0;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #eceae6;
   margin-left: 76px;
 }
 
 .Section4 .row,
 .Section4 .col {
-  padding: 60px 0; 
+  padding: 60px 0;
 }
 
-.Section4 Button:hover {
-  background-color: #323c43; 
-  color: #eceae6; 
+.download-button:hover {
+  background-color: #323c43;
+  color: #eceae6;
 }
 
 .slider1 {
@@ -119,7 +118,13 @@ body {
 
 .slick-slide {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
+  transform: perspective(1000px) rotateY(15deg); /* Add 3D effect */
+  transition: transform 0.3s; /* Smooth transition */
+}
+
+.slick-slide:hover {
+  transform: perspective(1000px) rotateY(0); /* Remove rotation on hover */
 }
 
 .slick-track {
@@ -130,6 +135,20 @@ body {
 .Slider .slick-list {
   display: flex;
   justify-content: space-between !important;
+}
+
+.card-container {
+  padding: 10px; /* Add padding between cards */
+}
+
+.custom-card {
+  width: 18rem;
+  transition: transform 0.3s; /* Smooth transition for cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for 3D effect */
+}
+
+.custom-card:hover {
+  transform: translateY(-10px); /* Slightly lift the card on hover */
 }
 
 /* Virtual showroom section */
