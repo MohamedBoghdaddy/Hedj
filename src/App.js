@@ -39,7 +39,6 @@ const App = () => {
               <Mininavbar />
               <Profile />
               <Contents />
-              <Footer />
             </>
           }
         />

@@ -72,7 +72,7 @@
 
 
 .navbar .allcategories:hover {
-  background-color: transparent; /* Remove background color on hover */
+  background-color: black; /* Remove background color on hover */
 }
 
 /* Optional: Add more specific styles for button text if needed */
@@ -130,6 +130,15 @@
   font-size: 1.5rem !important;
 }
 
+.nav-link-products {
+  cursor: pointer;
+    color: rgb(0, 0, 0);
+
+}
+
+.nav-link-products:hover {
+  background-color: #eceae6; 
+}
 .nav-link {
   cursor: pointer;
     color: rgb(0, 0, 0);
@@ -137,7 +146,7 @@
 }
 
 .nav-link:hover {
-  color: #292323 !important;
+  color: #292323 ;
 }
 .navbar .link-wish:hover {
   color: red;
