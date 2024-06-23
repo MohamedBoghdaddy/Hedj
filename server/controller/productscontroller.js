@@ -19,7 +19,7 @@ app.post('/products',async(request,response) =>{
           //  images: request.body.images,
         };
         const product = await Product.create(newProduct);
-        return response.status(201).send(book);
+        return response.status(201).send(product);
         
     } catch (error) {
         console.log(error.message);
