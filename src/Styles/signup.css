@@ -1,3 +1,4 @@
+
 @font-face {
   font-family: "Beverly";
   src: url("../Assets/Fonts/Beverly.otf") format("opentype");
@@ -62,6 +63,7 @@ body {
 .left-sign {
   background-color: #eceae6;
 }
+
 .right-sign {
   background-color: #323c43;
 }
@@ -111,7 +113,7 @@ body {
   cursor: pointer;
   position: absolute;
   right: 10px;
-  top: 36px;
+  top: 32px; /* Adjusted from 36px to 32px to move it upward */
   color: #999;
 }
 
@@ -141,9 +143,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   margin-top: 10px;
-  transition:
-    background-color 0.3s,
-    color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .left_btn {
@@ -164,21 +164,22 @@ body {
   background-color: #a9a69b;
 }
 
-.error{
-  color:#323c43;
+.error {
+  color: #323c43;
 }
+
 @media only screen and (max-width: 760px) {
   .frame-Container {
     flex-direction: column;
     width: 90%;
   }
 
-  .left,
-  .right {
+  .left-sign,
+  .right-sign {
     padding: 20px;
   }
 
-  .right h1 {
+  .right-sign h1 {
     font-size: 30px;
   }
 }

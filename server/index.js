@@ -7,6 +7,7 @@ import session from 'express-session';
 import emproute from "./routes/employeeroutes.js";
 
 const app = express();
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors({
     origin: 'http://localhost:3000', // React app's address
@@ -25,6 +26,8 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8000;
 const URL =process.env.MONGOURL;
+
+
 
 mongoose.connect(URL).then(()=>{
 
