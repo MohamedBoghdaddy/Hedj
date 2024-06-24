@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 // import Kitcard from "./Kitchen"
 import "../../Styles/Products.css";
 import axios from 'axios';
@@ -12,8 +12,12 @@ const ProductsDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+
+
+const ShowProducts =() =>{
   const [product, setProduct] = useState([]);
     const [loading, setLoading] =useState(false);
+    const {id} = useParams();
     useEffect (() => {
     setLoading(true);
     axios
@@ -28,6 +32,94 @@ const ProductsDropdown = () => {
       setLoading(false);
     })
     })
+  }
+
+
+
+
+const CreateProducts=()=>{
+const[name,setName]=useState('');
+const[description,seDescription]=useState('');
+const[category,setCategory]=useState('');
+const[price,setPrice]=useState('');
+const[images,setImages]=useState('');
+const [loading,setLoading]=useState(false);
+const navigate= useNavigate();
+const handleSaveProduct = () =>{
+const data ={
+  name,
+  description,
+  category,
+  price,
+  images,
+};
+setLoading(true);
+axios
+.post('http://localhost:3000/Products/${id}', data)
+.then(() => {
+  setLoading(false);
+  navigate('/');
+})
+.catch((error) =>{
+  setLoading(false);
+  alert('An error happend plz check the console');
+  console.log(error);
+})
+}
+
+}
+
+
+const EditProduct =() =>{
+  const[name,setName]=useState('');
+const[description,setDescription]=useState('');
+const[category,setCategory]=useState('');
+const[price,setPrice]=useState('');
+const[images,setImages]=useState('');
+const [loading,setLoading]=useState(false);
+const navigate= useNavigate();
+const{id}= useParams();
+useEffect(()=> {
+  setLoading(true);
+  axios
+.post('http://localhost:3000/Products/${id}', data)
+.then((response) => {
+  setDescription(response.data.description);
+  setName(response.data.name);
+  setCategory(response.data.category);
+  setPrice(response.data.price);
+  setImages(response.data.images);
+  setLoading(false);
+}).catch((error) =>{
+  setLoading(false);
+  alert('An error happend plz check the console');
+  console.log(error);
+})
+
+})
+
+}
+}
+const DeleteProduct =() => {
+  const [loading,setLoading]=useState(false);
+  const navigate =useNavigate();
+  const {id} = useParams();
+  const handleDeleteProducts = () => {
+    setLoading(true);
+    axios
+    .delete('http://localhost:3000/Products/${id}')
+    .then(() =>{
+      setLoading(false);
+      navigate('/')
+    })
+    .catch((error) => {
+      setLoading(false);
+      alert('An error happend check console');
+      console.log(error);
+
+    })
+  }
+}
 
 
 
@@ -67,6 +159,6 @@ const ProductsDropdown = () => {
 
     </div>
   );
-};
+
 
 export default ProductsDropdown;
