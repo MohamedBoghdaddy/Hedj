@@ -8,14 +8,13 @@ import Footer from "./Components/Homepage/Footer";
 import Profile from "./Components/dashboard/profile";
 import Contents from "./Components/dashboard/contents";
 import Cart from "./Components/Products/cart";
-import Favorites from "./Components/Products/wishlist";
+import Wishlist from "./Components/Products/wishlist";
 import Contact from "./Components/Contact/contact";
-import Kitchen from "./Components/Products/Kitchen";
 import Bedrooms from "./Components/Products/Bedrooms";
 import Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
-import Kitcard from "./Components/Products/Kitchen";
+import Kitchen from "./Components/Products/Kitchen";
 const App = () => {
   return (
     <BrowserRouter>
@@ -88,7 +87,7 @@ const App = () => {
             <>
               {" "}
               <Mininavbar />
-              <Kitcard />
+              <Cart />
             </>
           }
         />
@@ -97,7 +96,7 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Favorites />
+              <Wishlist />
             </>
           }
         />

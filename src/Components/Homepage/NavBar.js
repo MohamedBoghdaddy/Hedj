@@ -87,14 +87,13 @@ const NavBar = () => {
               onMouseLeave={() => setShowDropdown(false)}
             >
               <NavDropdown.Item
-                as={Link}
-                to="/kitchen"
+                as={Link} // Use Link from react-router-dom instead of a href
+                to="/Kitchen" // Specify the route you want to navigate to
                 className="nav-link-products"
                 onClick={handleNavCollapse}
               >
                 KITCHEN
               </NavDropdown.Item>
-
               <NavDropdown.Item
                 as={Link}
                 to="/sofas"

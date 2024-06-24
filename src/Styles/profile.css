@@ -21,7 +21,7 @@
     top: 0;
     left: 0;
     right: 0;
-    background-color: #766759;
+  background-color: #323c43;
     height: 65px;
     padding: 0 20px;
     z-index: 1;
@@ -29,7 +29,7 @@
   }
   
   .edit {
-    background: #766759;
+  background-color: #323c43;
     padding: 12px;
     border-radius: 20px;
     color: #d6cec1;
@@ -129,7 +129,7 @@
   
   
   .itemm:hover {
-    background: #766759;
+  background-color: #455662;
     color: whitesmoke;
     
   }

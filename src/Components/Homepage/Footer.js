@@ -5,8 +5,7 @@ import {
   faLinkedin,
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons";
-import { Link as RouterLink } from "react-router-dom";
-import { Link as ScrollLink } from "react-scroll";
+
 import "../../Styles/Footer.css";
 import "../../App.css";
 

@@ -8,176 +8,80 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 
-/* Global Styles */
-body {
-  color: #323c43; /* Text color */
+.cart-button{
+  background-color: #766759;
+  border-color: #766759;
+  color: #ffffff; /* Adjust the text color if needed */
+}
+.cart-button:hover {
+  background-color: #5c5048; /* Optional: Change color on hover */
+  border-color: #5c5048; /* Optional: Change border color on hover */
 }
 
-a {
-  text-decoration: none; /* No underline for links */
-  color: inherit; /* Link color same as text */
+.kitchenproduct{
+    margin-top: 20px;
+    height: 90vh !important;
 }
 
-/* Container Styles */
-.Container {
-  display: flex;
-  flex-direction: row;
-  padding: 20px; /* Padding around container */
-  margin: 0 auto; /* Center container */
-  max-width: 1200px; /* Max width for responsiveness */
-}
-.row1 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  gap: 100px;
+.item{
+    height: 450px !important ;
+    width: 95% !important;
+    margin: 20px;
 }
 
-
-/* Button Styles */
-button {
-  background-color: #766759; /* Button background */
-  color: #eceae6; /* Button text color */
-  border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px 15px; /* Padding */
-  cursor: pointer; /* Pointer on hover */
-  gap: 30px;
-  margin-right: 30px;
+.imgWrapper{
+    height: 85% !important;
+    width: 98% !important;
+}
+.resizeImg{
+    height: 350px !important;
+    width: 300px !important;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 5%;
 }
 
-button:hover {
-  background-color: #d6cec1; /* Change color on hover */
+.slider1{
+    margin-top: 30px;
+    margin-left: 10px;
+    margin-right: 20px;
+    height: 74vh !important;
+    width: 96vw !important;
 }
 
-/* Products.css */
-.container {
-  background-color: #eceae6; /* Primary background color */
-  padding: 20px; /* Padding for the container */
-  border-radius: 8px; /* Rounded corners for a softer look */
+.Slider{
+    justify-content: space-between !important;
 }
-
-.first,
-.second {
-  display: flex; /* Arrange items in a row */
-  justify-content: space-between; /* Evenly space out the items */
-  padding: 10px; /* Padding for internal spacing */
-}
-
-.first {
-  border-bottom: 1px solid #323c43; /* Divider line */
-}
-
-.second {
-  margin-top: 20px; /* Add spacing between sections */
-}
-
-li {
-  list-style: none; /* Remove default list style */
-  color: #323c43; /* Primary text color */
-  font-weight: bold; /* Emphasize text */
-}
-
-
-
-/* Card Styles */
-/* General card styles for various card-based components */
-.card {
-  background-color: #eceae6; /* Primary background color */
-  border: 1px solid #323c43; /* Border with primary text color */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1); /* Light shadow */
-}
-
-.card-title,
-.card-text {
-  color: #323c43; /* Primary text color */
-}
-
-.card .image {
-  border-radius: 10px 10px 0 0; /* Rounded corners for image top */
-  max-width: fit-content;
-}
-
-.button {
-  background-color: #766759; /* Button background color */
-  color: #eceae6; /* Button text color */
-  border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
-  padding: 10px 20px; /* Padding for buttons */
-  cursor: pointer; /* Cursor changes to pointer on hover */
-  gap: 50px;
-}
-
-.button:hover {
-  background-color: #323c43; /* Hover effect color */
-  color: #eceae6; /* Hover effect text color */
-}
-
-/* List Styles */
-ul {
-  list-style-type: none; /* No bullets */
-}
-
-ul li {
-  background-color: #d6cec1; /* Background color for list items */
-  padding: 10px; /* Padding for list items */
-  margin: 5px 0; /* Space between list items */
-  border-radius: 5px; /* Rounded corners */
-}
-
-ul li button {
-  background-color: transparent; /* Transparent button in list */
-  color: #323c43; /* Button text color */
-  border: 1px solid #766759; /* Border for the button */
-}
-
-ul li button:hover {
-  background-color: #766759; /* Change color on hover */
-  color: #eceae6; /* Change text color on hover */
-}
-
-
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .Container {
-    padding: 10px; /* Less padding for smaller screens */
-  }
-
-  
-
-  .card {
-    padding: 15px; /* Less padding for cards */
-  }
-
-  button {
-    padding: 8px 12px; /* Adjust padding for smaller screens */
-  }
-
-  .dropdown{
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    padding: 16px;
-    width: 208px;
+/*.actions{
     position: absolute;
-    left: -3.5rem;
-    top: 6rem;
-    cursor: pointer;
-  
-  }
-  .kitchenproduct{
+    top:20px;
+    right: 10px;
+    z-index:100
+}*/
+.actions .Button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px !important;
+    height: 40px !important;
+    width: 40px !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+    border-radius: 50% !important;
+    background: white !important;
     flex-direction: column;
-    flex-wrap: wrap;
-    
-  }
- 
 }
-.productItem{
-  width: 100%;
-  height: auto;
-  border: 1px solid rgba(0,0,0,0.1);
+.actions .Button:hover{
+    background-color: black !important;
 }
-.text-light{
-  color: #151111;
+.actions .Button:hover svg{
+    color: #fff !important;
+}
+
+@media(max-width:768px){
+
+    .slider1{
+        flex-direction: column;
+        flex-wrap: wrap;}
 }
 
