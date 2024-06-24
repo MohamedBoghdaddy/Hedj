@@ -1,91 +1,79 @@
-import Products from '../model/productsmodel.js'; // Ensure you have the correct file extension
+import Products from "../model/productsmodel.js";
+import asyncHandler from "express-async-handler";
+import { check, validationResult } from "express-validator";
 
 // Create product
-export const createProduct = async (request, response) => {
-    try {
-        const { name, description, category, price, images } = request.body;
-        
-        if (!name || !description || !category || !price || !images) {
-            return response.status(400).send({ message: 'Send all required fields: name, description, category, price, images' });
-        }
+export const createProduct = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-        const newProduct = {
-            name,
-            description,
-            category,
-            price,
-            images,
-        };
+  const { name, description, category, price, images } = req.body;
+  const newProduct = new Products({
+    name,
+    description,
+    category,
+    price,
+    images,
+  });
 
-        const product = await Products.create(newProduct);
-        return response.status(201).send(product);
-    } catch (error) {
-        console.log(error.message);
-        response.status(500).send({ message: error.message });
-    }
-};
+  const product = await newProduct.save();
+  res.status(201).json(product);
+});
+
+// Validation middleware for createProduct
+export const validateProduct = [
+  check("name", "Name is required").not().isEmpty(),
+  check("description", "Description is required").not().isEmpty(),
+  check("category", "Category is required").not().isEmpty(),
+  check("price", "Price is required").isNumeric(),
+  check("images", "Images is required").isArray(),
+];
 
 // Get all products
-export const getProducts = async (request, response) => {
-    try {
-        const products = await Products.find({});
-        return response.status(200).json({
-            count: products.length,
-            data: products,
-        });
-    } catch (error) {
-        console.log(error.message);
-        response.status(500).send({ message: error.message });
-    }
-};
+export const getProducts = asyncHandler(async (req, res) => {
+  const products = await Products.find({});
+  res.status(200).json({
+    count: products.length,
+    data: products,
+  });
+});
 
 // Get product by ID
-export const getProductById = async (request, response) => {
-    try {
-        const { id } = request.params;
-        const product = await Products.findById(id);
-        if (!product) {
-            return response.status(404).json({ message: 'Product not found' });
-        }
-        return response.status(200).json({ product });
-    } catch (error) {
-        console.log(error.message);
-        response.status(500).send({ message: error.message });
-    }
-};
+export const getProductById = asyncHandler(async (req, res) => {
+  const product = await Products.findById(req.params.id);
+  if (!product) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+  res.status(200).json({ product });
+});
 
 // Update product
-export const updateProduct = async (request, response) => {
-    try {
-        const { name, description, category, price, images } = request.body;
+export const updateProduct = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
-        if (!name || !description || !category || !price || !images) {
-            return response.status(400).send({ message: 'Send all required fields: name, description, category, price, images' });
-        }
+  const { name, description, category, price, images } = req.body;
+  const updatedProduct = await Products.findByIdAndUpdate(
+    req.params.id,
+    { name, description, category, price, images },
+    { new: true }
+  );
 
-        const { id } = request.params;
-        const result = await Products.findByIdAndUpdate(id, request.body, { new: true });
-        if (!result) {
-            return response.status(404).json({ message: 'Product not found' });
-        }
-        return response.status(200).send({ message: 'Product updated successfully', product: result });
-    } catch (error) {
-        console.log(error.message);
-        response.status(500).send({ message: error.message });
-    }
-};
+  if (!updatedProduct) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+  res.status(200).json({ product: updatedProduct });
+});
 
 // Delete product
-export const deleteProduct = async (request, response) => {
-    try {
-        const { id } = request.params;
-        const result = await Products.findByIdAndDelete(id);
-        if (!result) {
-            return response.status(404).json({ message: 'Product not found' });
-        }
-        return response.status(200).send({ message: 'Product deleted successfully' });
-    } catch (error) {
-        console.log(error.message);
-        response.status(500).send({ message: error.message });
-    }
-};
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const deletedProduct = await Products.findByIdAndDelete(req.params.id);
+  if (!deletedProduct) {
+    return res.status(404).json({ message: "Product not found" });
+  }
+  res.status(200).json({ message: "Product deleted successfully" });
+});

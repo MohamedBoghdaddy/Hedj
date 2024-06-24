@@ -1,7 +1,7 @@
 import React from "react";
 import "../../Styles/Products.css";
 
-const Cart = ({ cart, removeFromCart }) => {
+const Cart = ({ cart }) => {
   // Function to calculate the total number of products in the cart
   const calculateTotalProducts = () => {
     return cart.reduce((total, item) => total + (item.quantity || 1), 0);
