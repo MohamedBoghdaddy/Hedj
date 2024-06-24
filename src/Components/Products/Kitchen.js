@@ -38,62 +38,127 @@ const Kitcard = () => {
       <h1>Kitchens</h1>
       <div className="slider1">
         <Slider {...productSliderOptions} >
-          <div className="item">
+          <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/736x/c7/26/55/c726555b47cf7fae4bd96e7e1cdcee66.jpg" className="resizeImg" />
-              <div className="actions">
-                <Button><FaRegHeart /></Button>
+            </div>
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
               </div>
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
-            {/*kan fy hena divaya*/}
-              <span className="ml-2">$18000</span>
-           
           </div>
 
           <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/564x/a9/f9/93/a9f993e2c49fdea25a82cd04f783d072.jpg" className="resizeImg" />
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={5} readOnly size="small" precision={0.5}/>
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
+              </div>
+            </div>
           </div>
+
 
           <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/564x/be/bc/33/bebc33ee1bf891e8c3da7f31eab114b8.jpg" className="resizeImg" />
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={4} readOnly size="small" precision={0.5}/>
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
+              </div>
+            </div>
           </div>
+
 
           <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/564x/87/08/a7/8708a71401f1dd16393d54c106657645.jpg" className="resizeImg" />
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={3} readOnly size="small" precision={0.5} />
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
+              </div>
+            </div>
           </div>
+
 
           <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/564x/01/4b/03/014b032e788312ce4231cd61dc5f5f97.jpg" className="resizeImg" />
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={2} readOnly size="small" precision={0.5} />
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
+              </div>
+            </div>
           </div>
+
+
           <div className="item productItem">
             <div className="imgWrapper">
               <img src="https://i.pinimg.com/564x/39/34/11/393411a46bb801d10eeab69214596516.jpg" className="resizeImg" />
             </div>
-            <h4>Woody Kitchen</h4>
-            <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+            <div className="infoWrapper">
+              <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
+              <div>This kitchen has a white color scheme that is able to make the kitchen look bright and clean. </div>
+              <div style={{ fontWeight: "bolder" }}>Category: Kitchens</div>
+              <span className="price">$18000</span>
+              <div className="actionsandrating">
+                <Rating name="read-only" value={5} readOnly size="small" precision={0.5} />
+                <div className="actions">
+                  <Button><FaRegHeart /></Button>
+                </div>
+                <Button> Add to cart </Button>
+              </div>
+            </div>
           </div>
 
-      </Slider >
-    </div>
-            </div >
+        </Slider >
+      </div>
+    </div >
   )
 }
 

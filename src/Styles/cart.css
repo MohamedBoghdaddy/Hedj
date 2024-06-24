@@ -1,0 +1,30 @@
+.table thead{
+    background-color: #ececec !important;
+    border-radius: 100px;
+    overflow: hidden;
+}
+.table thead th:first-child{
+    border-top-left-radius: 15px !important ;
+    border-bottom-right-radius: 10px !important;
+}
+.table thead th:last-child{
+    border-top-right-radius: 15px !important ;
+    border-bottom-right-radius: 10px !important;
+}
+.table thead th{
+    border:0px !important;
+}
+.cartItemimgWrapper .imgWrapper{
+    
+    overflow :hidden;
+
+}
+
+.imgWrapper2{
+    height: 100px;
+    width: 100px;
+}
+.images{
+    height: 100px;
+    width: 100px;
+}

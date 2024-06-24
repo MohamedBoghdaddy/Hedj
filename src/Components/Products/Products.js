@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // import Kitcard from "./Kitchen"
 import "../../Styles/Products.css";
+import axios from 'axios';
+import { AiOutlinedEdit } from "react-icons/ai";
 
 const ProductsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,6 +11,27 @@ const ProductsDropdown = () => {
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  const [product, setProduct] = useState([]);
+    const [loading, setLoading] =useState(false);
+    useEffect (() => {
+    setLoading(true);
+    axios
+    .get("http://localhost:3000/Products")
+    .then((response) => {
+      setProduct (response. data.data);
+    setLoading(false);
+
+    })
+    .catch((error)=>{
+      console.log(error);
+      setLoading(false);
+    })
+    })
+
+
+
+
 
   return (
     <div className="dropdown">
