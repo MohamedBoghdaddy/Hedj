@@ -58,8 +58,8 @@ export const updateEmployee = async (req, res) => {
         if (role === 'admin') {
             const adminCount = await Employee.countDocuments({ role: 'admin' });
             const currentEmployee = await Employee.findById(id);
-            if (adminCount >= 2 && currentEmployee.role !== 'admin') {
-                return res.status(400).json({ error: "There can only be two admins" });
+            if (adminCount && currentEmployee.role !== 'admin') {
+                return res.status(400).json({ error: "done" });
             }
         }
 

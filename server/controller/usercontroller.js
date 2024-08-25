@@ -109,7 +109,6 @@ export const getAllUsers = async (req, res) => {
   }
 }
 // Function to update a user
-// Function to update a user
 export const updateUser = async (req, res) => {
   const { id } = req.params;
   const { name, email, password, gender } = req.body;
