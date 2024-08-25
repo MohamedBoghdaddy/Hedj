@@ -1,16 +1,20 @@
-import express from "express"
-import mongoose from "mongoose"
-import bodyParser from "body-parser"
-import dotenv  from "dotenv"
-import cors from "cors"
-import session from 'express-session';
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import cors from "cors";
+import session from "express-session";
+import connectMongoDBSession from "connect-mongodb-session"; // Assuming you use this for session storage
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
+import multer from "multer"; // <-- Import multer here
 import emproute from "./routes/employeeroutes.js";
-
 
 dotenv.config();
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "uploads/" }); // Now multer is defined
+
 const MongoDBStore = connectMongoDBSession(session);
 const JWT_SECRET = process.env.JWT_SECRET;
 const SESSION_SECRET = process.env.SESSION_SECRET;
@@ -77,6 +81,4 @@ mongoose
     process.exit(1);
   });
 
-
-
-app.use('/api', emproute);
+app.use("/api", emproute);
