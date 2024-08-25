@@ -11,7 +11,7 @@ import Cart from "./Components/Products/cart";
 import Wishlist from "./Components/Products/wishlist";
 import Contact from "./Components/Contact/contact";
 import Bedrooms from "./Components/Products/Bedrooms";
-import Products from "./Components/Products/Products";
+import { ProductsDropdown } from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 import Kitchen from "./Components/Products/Kitchen";
@@ -46,7 +46,7 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Products />
+              <ProductsDropdown />
               <Footer />
             </>
           }
