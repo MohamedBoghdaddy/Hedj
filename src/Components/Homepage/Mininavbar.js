@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navbar, Nav, Container, Form, NavLink } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -7,11 +7,17 @@ import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 
-const Mininavbar = () => {
+const MiniNavbar = () => {
   const [searchText, setSearchText] = useState("");
 
   const handleSearch = () => {
     console.log(`Searching for: ${searchText}`);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      handleSearch();
+    }
   };
 
   return (
@@ -54,7 +60,14 @@ const Mininavbar = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
-            <div className="search-button" onClick={handleSearch}>
+            <div
+              className="search-button"
+              role="button"
+              tabIndex={0}
+              onClick={handleSearch}
+              onKeyPress={handleKeyPress}
+              aria-label="Search"
+            >
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </div>
           </Form>
@@ -64,4 +77,4 @@ const Mininavbar = () => {
   );
 };
 
-export default Mininavbar;
+export default MiniNavbar;

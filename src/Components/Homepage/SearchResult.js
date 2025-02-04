@@ -1,4 +1,3 @@
-import React from "react";
 import "../../Styles/Navbar.css";
 
 function SearchResult({ result }) {

@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Button } from "react-bootstrap";
 import maram2 from "../../Assets/Images/70.jpg";
 import maram3 from "../../Assets/Images/24.jpg";
