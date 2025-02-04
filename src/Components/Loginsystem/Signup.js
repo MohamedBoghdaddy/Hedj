@@ -1,69 +1,51 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import "../../Styles/signup.css"; // Shared CSS
-import { Link } from "react-router-dom";
+import "../../Styles/signup.css";
+import { Link, useNavigate } from "react-router-dom";
 
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+    nid: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [gender, setGender] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [message, setMessage] = useState({ error: "", success: "" });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setMessage({ error: "", success: "" });
 
-    // Clear previous messages
-    setErrorMessage("");
-    setSuccessMessage("");
-
-    // Front-end validation
-    if (!name) {
-      setErrorMessage("Name is required.");
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      setErrorMessage("Please enter a valid email address.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setErrorMessage("Password must be at least 6 characters long.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
-    }
-
-    if (!gender) {
-      setErrorMessage("Gender is required.");
-      return;
-    }
+    if (!formData.name) return setMessage({ error: "Name is required." });
+    if (!validateEmail(formData.email))
+      return setMessage({ error: "Invalid email address." });
+    if (formData.password.length < 6)
+      return setMessage({ error: "Password must be at least 6 characters." });
+    if (formData.password !== formData.confirmPassword)
+      return setMessage({ error: "Passwords do not match." });
+    if (!formData.gender) return setMessage({ error: "Gender is required." });
 
     try {
-      const response = await axios.post("http://localhost:8000/api/users/Signup", {
-        name,
-        email,
-        password,
-        gender,
-      });
-
-      setSuccessMessage("Registration successful");
+      await axios.post("http://localhost:8000/api/users/Signup", formData);
+      setMessage({ success: "Registration successful" });
+      navigate("/login");
     } catch (error) {
-      console.error("Signup error:", error.response?.data || error.message);
-      setErrorMessage(error.response?.data?.message || "Signup failed");
+      setMessage({ error: error.response?.data?.message || "Signup failed" });
     }
   };
 
@@ -73,97 +55,93 @@ const Signup = () => {
         <div className="left-sign">
           <h2>Signup</h2>
           <form onSubmit={handleSignup}>
-            <div className="field">
-              <div className="field-wrapper">
-                <label htmlFor="name">Name:</label>
+            {[
+              "username",
+              "name",
+              "email",
+              "nid",
+              "firstName",
+              "middleName",
+              "lastName",
+            ].map((field) => (
+              <div className="field" key={field}>
+                <label htmlFor={field}>
+                  {field.charAt(0).toUpperCase() + field.slice(1)}:
+                </label>
                 <input
                   type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  maxLength={20}
-                  
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  maxLength={field === "email" ? 70 : 20}
                 />
               </div>
-            </div>
-            <div className="field">
-              <div className="field-wrapper">
-                <label htmlFor="email">Email:</label>
+            ))}
+
+            {["password", "confirmPassword"].map((field, index) => (
+              <div className="field password-container" key={field}>
+                <label htmlFor={field}>
+                  {index === 0 ? "Password" : "Confirm Password"}:
+                </label>
                 <input
-                  type="text"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  maxLength={70}
-                  
-                />
-              </div>
-            </div>
-            <div className="field password-container">
-              <div className="field-wrapper">
-                <label htmlFor="password">Password:</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  
+                  type={
+                    (index === 0 ? showPassword : showConfirmPassword)
+                      ? "text"
+                      : "password"
+                  }
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
                 />
                 <button
                   type="button"
                   className="show-password"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    index === 0
+                      ? setShowPassword(!showPassword)
+                      : setShowConfirmPassword(!showConfirmPassword)
+                  }
                 >
-                  <i className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                  <i
+                    className={
+                      index === 0
+                        ? showPassword
+                          ? "fas fa-eye-slash"
+                          : "fas fa-eye"
+                        : showConfirmPassword
+                          ? "fas fa-eye-slash"
+                          : "fas fa-eye"
+                    }
+                  ></i>
                 </button>
               </div>
-            </div>
-            <div className="field password-container">
-              <div className="field-wrapper">
-                <label htmlFor="confirmPassword">Confirm Password:</label>
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  
-                />
-                <button
-                  type="button"
-                  className="show-password"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  <i className={showConfirmPassword ? "fas fa-eye-slash" : "fas fa-eye"}></i>
-                </button>
-              </div>
-            </div>
+            ))}
+
             <div className="field">
               <label>Gender:</label>
               <div className="gender-container">
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={gender === "male"}
-                    onChange={(e) => setGender(e.target.value)}
-                  />
-                  Male
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={gender === "female"}
-                    onChange={(e) => setGender(e.target.value)}
-                  />
-                  Female
-                </label>
+                {["male", "female"].map((g) => (
+                  <label key={g}>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={g}
+                      checked={formData.gender === g}
+                      onChange={handleChange}
+                    />
+                    {g.charAt(0).toUpperCase() + g.slice(1)}
+                  </label>
+                ))}
               </div>
             </div>
-            {errorMessage && <div className="error">{errorMessage}</div>}
-            {successMessage && <div className="success">{successMessage}</div>}
+
+            {message.error && <div className="error">{message.error}</div>}
+            {message.success && (
+              <div className="success">{message.success}</div>
+            )}
+
             <button className="left_btn" type="submit">
               Signup
             </button>
