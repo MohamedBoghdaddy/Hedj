@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NavBar from "./Components/Homepage/NavBar";
 import Mininavbar from "./Components/Homepage/Mininavbar";
@@ -85,7 +84,6 @@ const App = () => {
           path="/cart"
           element={
             <>
-              {" "}
               <Mininavbar />
               <Cart />
             </>
