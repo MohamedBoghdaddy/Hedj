@@ -1,45 +1,34 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import "../../Styles/Products.css";
 import axios from "axios";
-import { AiOutlineEdit } from "react-icons/ai";
 
 // Dropdown Component
 const ProductsDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <div className="dropdown">
-      <button onClick={toggleDropdown} className="dropdown-toggle">
+      <button onClick={() => setIsOpen(!isOpen)} className="dropdown-toggle">
         Products
       </button>
-      <div className={`dropdown-menu ${isOpen ? "show" : ""}`}>
-        <Link to="/news2024" className="dropdown-item">
-          NEWS 2024
-        </Link>
-        <Link to="/kitchen" className="dropdown-item">
-          KITCHEN
-        </Link>
-        <Link to="/systems" className="dropdown-item">
-          SYSTEMS
-        </Link>
-        <Link to="/sofas" className="dropdown-item">
-          SOFAS
-        </Link>
-        <Link to="/day-complements" className="dropdown-item">
-          DAY COMPLEMENTS
-        </Link>
-        <Link to="/night-complements" className="dropdown-item">
-          NIGHT COMPLEMENTS
-        </Link>
-        <Link to="/outdoor" className="dropdown-item">
-          OUTDOOR
-        </Link>
-      </div>
+      {isOpen && (
+        <div className="dropdown-menu">
+          {[
+            "news2024",
+            "kitchen",
+            "systems",
+            "sofas",
+            "day-complements",
+            "night-complements",
+            "outdoor",
+          ].map((category) => (
+            <Link key={category} to={`/${category}`} className="dropdown-item">
+              {category.toUpperCase().replace("-", " ")}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -47,158 +36,141 @@ const ProductsDropdown = () => {
 // Show Products Component
 const ShowProducts = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     axios
       .get("http://localhost:3000/Products")
-      .then((response) => {
-        setProducts(response.data.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
+      .then(({ data }) => setProducts(data.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-
-  return (
+  return loading ? (
+    <div>Loading...</div>
+  ) : (
     <div className="products-container">
-      {/* Map through the products and display them */}
-      {products.map((product) => (
-        <div key={product.id}>{product.name}</div>
+      {products.map(({ id, name }) => (
+        <div key={id}>{name}</div>
       ))}
     </div>
   );
 };
 
+// Product Form Component
+const ProductForm = ({ handleSubmit, product }) => (
+  <form onSubmit={handleSubmit}>
+    {["name", "description", "category", "price", "images"].map((field) => (
+      <div key={field} className="form-group">
+        <label htmlFor={field}>
+          {field.charAt(0).toUpperCase() + field.slice(1)}:
+        </label>
+        <input
+          type="text"
+          id={field}
+          name={field}
+          value={product[field] || ""}
+          onChange={(e) =>
+            product.setProduct((prev) => ({ ...prev, [field]: e.target.value }))
+          }
+        />
+      </div>
+    ))}
+    <button type="submit" disabled={product.loading}>
+      {product.loading ? "Processing..." : "Save Product"}
+    </button>
+  </form>
+);
+
 // Create Product Component
 const CreateProduct = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [images, setImages] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [product, setProduct] = useState({
+    name: "",
+    description: "",
+    category: "",
+    price: "",
+    images: "",
+    loading: false,
+  });
   const navigate = useNavigate();
 
-  const handleSaveProduct = () => {
-    const data = { name, description, category, price, images };
-    setLoading(true);
+  const handleSaveProduct = (e) => {
+    e.preventDefault();
+    setProduct((prev) => ({ ...prev, loading: true }));
 
     axios
-      .post("http://localhost:3000/Products", data)
-      .then(() => {
-        setLoading(false);
-        navigate("/");
-      })
-      .catch((error) => {
-        setLoading(false);
-        alert("An error occurred. Please check the console.");
-        console.error(error);
-      });
+      .post("http://localhost:3000/Products", product)
+      .then(() => navigate("/"))
+      .catch(console.error)
+      .finally(() => setProduct((prev) => ({ ...prev, loading: false })));
   };
 
   return (
-    <div>
-      {/* Form for creating a product */}
-      <button onClick={handleSaveProduct} disabled={loading}>
-        Save Product
-      </button>
-    </div>
+    <ProductForm
+      handleSubmit={handleSaveProduct}
+      product={{ ...product, setProduct }}
+    />
   );
 };
 
 // Edit Product Component
 const EditProduct = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [images, setImages] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [product, setProduct] = useState({
+    name: "",
+    description: "",
+    category: "",
+    price: "",
+    images: "",
+    loading: false,
+  });
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(true);
     axios
       .get(`http://localhost:3000/Products/${id}`)
-      .then((response) => {
-        const product = response.data;
-        setName(product.name);
-        setDescription(product.description);
-        setCategory(product.category);
-        setPrice(product.price);
-        setImages(product.images);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        alert("An error occurred. Please check the console.");
-        console.error(error);
-      });
+      .then(({ data }) => setProduct({ ...data, loading: false }))
+      .catch(console.error);
   }, [id]);
 
-  const handleUpdateProduct = () => {
-    const data = { name, description, category, price, images };
-    setLoading(true);
+  const handleUpdateProduct = (e) => {
+    e.preventDefault();
+    setProduct((prev) => ({ ...prev, loading: true }));
 
     axios
-      .put(`http://localhost:3000/Products/${id}`, data)
-      .then(() => {
-        setLoading(false);
-        navigate("/");
-      })
-      .catch((error) => {
-        setLoading(false);
-        alert("An error occurred. Please check the console.");
-        console.error(error);
-      });
+      .put(`http://localhost:3000/Products/${id}`, product)
+      .then(() => navigate("/"))
+      .catch(console.error)
+      .finally(() => setProduct((prev) => ({ ...prev, loading: false })));
   };
 
   return (
-    <div>
-      {/* Form for editing a product */}
-      <button onClick={handleUpdateProduct} disabled={loading}>
-        Update Product
-      </button>
-    </div>
+    <ProductForm
+      handleSubmit={handleUpdateProduct}
+      product={{ ...product, setProduct }}
+    />
   );
 };
 
 // Delete Product Component
 const DeleteProduct = () => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const handleDeleteProduct = () => {
     setLoading(true);
-
     axios
       .delete(`http://localhost:3000/Products/${id}`)
-      .then(() => {
-        setLoading(false);
-        navigate("/");
-      })
-      .catch((error) => {
-        setLoading(false);
-        alert("An error occurred. Please check the console.");
-        console.error(error);
-      });
+      .then(() => navigate("/"))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   return (
-    <div>
-      {/* Button to delete a product */}
-      <button onClick={handleDeleteProduct} disabled={loading}>
-        Delete Product
-      </button>
-    </div>
+    <button onClick={handleDeleteProduct} disabled={loading}>
+      {loading ? "Deleting..." : "Delete Product"}
+    </button>
   );
 };
 

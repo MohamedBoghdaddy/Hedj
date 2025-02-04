@@ -1,14 +1,15 @@
-import React from "react";
-import { BiEdit } from "react-icons/bi";
+import PropTypes from "prop-types";
 
-
-const Profileheader = ({ isCollapsed }) => {
+const ProfileHeader = ({ isCollapsed }) => {
   return (
-    <div className={`proheader ${isCollapsed ? 'collapsed' : ''}`}>
-      <h2 className="profiletitle">{!isCollapsed && 'Profile'}</h2>
-     
+    <div className={`profile-header ${isCollapsed ? "collapsed" : ""}`}>
+      <h2 className="profile-title">{!isCollapsed && "Profile"}</h2>
     </div>
   );
 };
 
-export default Profileheader;
+ProfileHeader.propTypes = {
+  isCollapsed: PropTypes.bool.isRequired,
+};
+
+export default ProfileHeader;
