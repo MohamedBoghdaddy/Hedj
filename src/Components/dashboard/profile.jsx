@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import ProfileHeader from "../dashboard/ProfileHeader";
+import ProfileHeader from "../dashboard/profileheader";
 import "../../Styles/profile.css";
 import {
   BsGrid1X2Fill,
