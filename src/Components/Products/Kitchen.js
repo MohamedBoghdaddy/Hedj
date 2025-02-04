@@ -1,4 +1,3 @@
-import React from "react";
 import Slider from "react-slick";
 import "../../Styles/kitchen.css";
 import Rating from "@mui/material/Rating";

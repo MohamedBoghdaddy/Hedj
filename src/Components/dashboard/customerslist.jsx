@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import toast from 'react-hot-toast';
 import '../../Styles/lists.css';
 
 const CustomersList = () => {
   const [customers, setCustomers] = useState([]);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [ setSelectedCustomer] = useState(null);
   const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {

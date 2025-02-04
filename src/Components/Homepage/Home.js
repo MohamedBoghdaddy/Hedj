@@ -1,4 +1,3 @@
-import React from "react";
 import HeroSection from "./HeroSection";
 import StorytellingSection from "./StorytellingSection";
 import CallToActionSection from "./CallToActionSection";

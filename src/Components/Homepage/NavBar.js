@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Navbar,
   Nav,
@@ -43,14 +43,14 @@ const NavBar = () => {
       });
   };
 
-  const handleLoginModalOpen = () => {
-    setShowLoginModal(true);
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      handleSearch();
+    }
   };
 
-  const handleLoginModalClose = () => {
-    setShowLoginModal(false);
-  };
-
+  const handleLoginModalOpen = () => setShowLoginModal(true);
+  const handleLoginModalClose = () => setShowLoginModal(false);
   const handleNavCollapse = () => setExpanded(!expanded);
 
   return (
@@ -86,47 +86,25 @@ const NavBar = () => {
               onMouseEnter={() => setShowDropdown(true)}
               onMouseLeave={() => setShowDropdown(false)}
             >
-              <NavDropdown.Item
-                as={Link} // Use Link from react-router-dom instead of a href
-                to="/Kitchen" // Specify the route you want to navigate to
-                className="nav-link-products"
-                onClick={handleNavCollapse}
-              >
-                KITCHEN
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                as={Link}
-                to="/sofas"
-                className="nav-link-products"
-                onClick={handleNavCollapse}
-              >
-                SOFAS
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                as={Link}
-                to="/day-complements"
-                className="nav-link-products"
-                onClick={handleNavCollapse}
-              >
-                DAY COMPLEMENTS
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                as={Link}
-                to="/night-complements"
-                className="nav-link-products"
-                onClick={handleNavCollapse}
-              >
-                NIGHT COMPLEMENTS
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                as={Link}
-                to="/outdoor"
-                className="nav-link-products"
-                onClick={handleNavCollapse}
-              >
-                OUTDOOR
-              </NavDropdown.Item>
+              {[
+                { route: "/Kitchen", label: "KITCHEN" },
+                { route: "/sofas", label: "SOFAS" },
+                { route: "/day-complements", label: "DAY COMPLEMENTS" },
+                { route: "/night-complements", label: "NIGHT COMPLEMENTS" },
+                { route: "/outdoor", label: "OUTDOOR" },
+              ].map(({ route, label }) => (
+                <NavDropdown.Item
+                  key={route}
+                  as={Link}
+                  to={route}
+                  className="nav-link-products"
+                  onClick={handleNavCollapse}
+                >
+                  {label}
+                </NavDropdown.Item>
+              ))}
             </NavDropdown>
+
             <Nav.Link
               as={Link}
               to="/contact"
@@ -143,6 +121,7 @@ const NavBar = () => {
             >
               Dashboard
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               to="/wishlist"
@@ -151,15 +130,25 @@ const NavBar = () => {
             >
               <FontAwesomeIcon icon={faHeart} />
             </Nav.Link>
+
             <Nav.Link
               className="nav-link"
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 handleLoginModalOpen();
                 handleNavCollapse();
               }}
+              onKeyPress={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleLoginModalOpen();
+                }
+              }}
+              aria-label="Login"
             >
               <FontAwesomeIcon icon={faUser} />
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               to="/cart"
@@ -170,6 +159,7 @@ const NavBar = () => {
               <span className="count">0</span>
             </Nav.Link>
           </Nav>
+
           <Form className="d-flex">
             <Form.Control
               type="text"
@@ -178,7 +168,14 @@ const NavBar = () => {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
-            <div className="search-button" onClick={handleSearch}>
+            <div
+              className="search-button"
+              role="button"
+              tabIndex={0}
+              onClick={handleSearch}
+              onKeyPress={handleKeyPress}
+              aria-label="Search"
+            >
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </div>
           </Form>

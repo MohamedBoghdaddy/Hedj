@@ -1,4 +1,3 @@
-import React from "react";
 import Conheader from "./conheader";
 import "../../Styles/contents.css";
 import Report from "./report";
