@@ -3,7 +3,6 @@ import "../../Styles/contents.css";
 import Report from "./report";
 import Employeelist from "./employeelist";
 import Customerslist from "./customerslist";
-import Footer from '../Homepage/Footer'; // Adjust the path as needed
 
 
 

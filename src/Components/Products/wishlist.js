@@ -1,4 +1,3 @@
-import React from "react";
 import "../../Styles/wishlist.css"; // Import your CSS file for styling
 
 const Wishlist = ({ items }) => {
