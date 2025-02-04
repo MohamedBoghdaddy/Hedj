@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@ap.cx/react-fullpage": "^0.3.0",
@@ -19,28 +19,20 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "assert": "^2.1.0",
     "axios": "^1.7.2",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
-    "browserify-zlib": "^0.2.0",
-    "buffer": "^6.0.3",
     "chart.js": "^4.4.3",
-    "crypto-browserify": "^3.12.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
     "express-session": "^1.18.0",
     "express-validator": "^7.1.0",
-    "https-browserify": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mdb-react-ui-kit": "^8.0.0",
     "mongodb": "^6.7.0",
     "mongoose": "^8.3.4",
-    "path-browserify": "^1.0.1",
-    "querystring-es3": "^0.2.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.2",
     "react-chartjs-2": "^5.2.0",
@@ -52,12 +44,8 @@
     "react-scripts": "5.0.1",
     "react-scroll": "^1.9.0",
     "react-slick": "^0.30.2",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
     "styled-components": "^6.1.11",
     "swiper": "^11.1.4",
-    "url": "^0.11.3",
-    "util": "^0.12.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -65,14 +53,22 @@
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=8192 react-scripts build",
     "test": "cross-env NODE_OPTIONS=--max_old_space_size=8192 react-scripts test",
     "eject": "react-scripts eject",
+    "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "react-app/jest",
+      "eslint:recommended"
+    ],
+    "rules": {
+      "no-unused-vars": "warn",
+      "react/jsx-uses-react": "off",
+      "react/react-in-jsx-scope": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -88,6 +84,10 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "gh-pages": "^6.1.1",
     "nodemon": "^3.1.4",
     "prettier": "3.2.5"
