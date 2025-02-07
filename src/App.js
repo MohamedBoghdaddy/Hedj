@@ -1,24 +1,30 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import NavBar from "./Components/Homepage/NavBar";
 import Mininavbar from "./Components/Homepage/Mininavbar";
 import Home from "./Components/Homepage/Home";
 import Slideshow from "./Components/Homepage/Slideshow";
 import Footer from "./Components/Homepage/Footer";
-import Profile from "./Components/dashboard/profile";
-import Contents from "./Components/dashboard/contents";
+import Profile from "./Components/dashboard/Sidebar";
 import Cart from "./Components/Products/cart";
 import Wishlist from "./Components/Products/wishlist";
 import Contact from "./Components/Contact/contact";
 import Bedrooms from "./Components/Products/Bedrooms";
-import { ProductsDropdown } from "./Components/Products/Products";
+import  Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 import Kitchen from "./Components/Products/Kitchen";
+import Sidebar from "./Components/dashboard/Sidebar";
+import Setting from "./Components/dashboard/Setting";
+import Reports from "./Components/dashboard/Report";
+import Employees from "./Components/dashboard/EmployeeList";
+import Customers from "./Components/dashboard/CustomersList";
+import Dashboard from "./Components/dashboard/Dashboard";
+
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path="/" element={<main />} /> */}
         <Route
           path="/"
           element={
@@ -35,8 +41,54 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Profile />
-              <Contents />
+              <Sidebar />
+              <Dashboard />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Setting"
+          element={
+            <>
+              <ToastContainer />
+              <Mininavbar />
+              <Setting />
+              <Sidebar />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Reports"
+          element={
+            <>
+              <Mininavbar />
+              <Reports />
+              <Sidebar />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Employees"
+          element={
+            <>
+              <Mininavbar />
+              <Employees />
+              <Sidebar />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Customers"
+          element={
+            <>
+              <Mininavbar />
+              <Customers />
+              <Sidebar />
+              <Footer />
             </>
           }
         />
@@ -45,7 +97,7 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <ProductsDropdown />
+              <Products />
               <Footer />
             </>
           }
@@ -77,15 +129,6 @@ const App = () => {
               <Mininavbar />
               <Cart />
               <Footer />
-            </>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <>
-              <Mininavbar />
-              <Cart />
             </>
           }
         />
