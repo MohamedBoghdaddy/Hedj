@@ -1,183 +1,58 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { ShopContext } from "../../context/productContext";
+import { Button } from "react-bootstrap";
 import "../../Styles/Products.css";
-import axios from "axios";
 
-// Dropdown Component
-const ProductsDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const Products = () => {
+  const { addToCart, addToWishlist } = useContext(ShopContext);
+
+  const products = [
+    {
+      id: 1,
+      name: "Classic Sofa",
+      price: 12000,
+      image: "https://example.com/sofa.jpg",
+      description: "Comfortable and stylish sofa for your living room.",
+    },
+    {
+      id: 2,
+      name: "Dining Table",
+      price: 18000,
+      image: "https://example.com/table.jpg",
+      description: "Modern dining table set for a perfect family dinner.",
+    },
+    {
+      id: 3,
+      name: "Office Chair",
+      price: 5000,
+      image: "https://example.com/chair.jpg",
+      description: "Ergonomic office chair for comfort and productivity.",
+    },
+  ];
 
   return (
-    <div className="dropdown">
-      <button onClick={() => setIsOpen(!isOpen)} className="dropdown-toggle">
-        Products
-      </button>
-      {isOpen && (
-        <div className="dropdown-menu">
-          {[
-            "news2024",
-            "kitchen",
-            "systems",
-            "sofas",
-            "day-complements",
-            "night-complements",
-            "outdoor",
-          ].map((category) => (
-            <Link key={category} to={`/${category}`} className="dropdown-item">
-              {category.toUpperCase().replace("-", " ")}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Show Products Component
-const ShowProducts = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/Products")
-      .then(({ data }) => setProducts(data.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  return loading ? (
-    <div>Loading...</div>
-  ) : (
-    <div className="products-container">
-      {products.map(({ id, name }) => (
-        <div key={id}>{name}</div>
-      ))}
-    </div>
-  );
-};
-
-// Product Form Component
-const ProductForm = ({ handleSubmit, product }) => (
-  <form onSubmit={handleSubmit}>
-    {["name", "description", "category", "price", "images"].map((field) => (
-      <div key={field} className="form-group">
-        <label htmlFor={field}>
-          {field.charAt(0).toUpperCase() + field.slice(1)}:
-        </label>
-        <input
-          type="text"
-          id={field}
-          name={field}
-          value={product[field] || ""}
-          onChange={(e) =>
-            product.setProduct((prev) => ({ ...prev, [field]: e.target.value }))
-          }
-        />
+    <div className="product-container">
+      <h2>Our Products</h2>
+      <div className="product-list">
+        {products.map((product) => (
+          <div key={product.id} className="product-card">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="product-image"
+            />
+            <h4>{product.name}</h4>
+            <p>{product.description}</p>
+            <p>Price: ${product.price.toLocaleString()}</p>
+            <Button onClick={() => addToCart(product)}>Add to Cart</Button>
+            <Button onClick={() => addToWishlist(product)}>
+              Add to Wishlist
+            </Button>
+          </div>
+        ))}
       </div>
-    ))}
-    <button type="submit" disabled={product.loading}>
-      {product.loading ? "Processing..." : "Save Product"}
-    </button>
-  </form>
-);
-
-// Create Product Component
-const CreateProduct = () => {
-  const [product, setProduct] = useState({
-    name: "",
-    description: "",
-    category: "",
-    price: "",
-    images: "",
-    loading: false,
-  });
-  const navigate = useNavigate();
-
-  const handleSaveProduct = (e) => {
-    e.preventDefault();
-    setProduct((prev) => ({ ...prev, loading: true }));
-
-    axios
-      .post("http://localhost:3000/Products", product)
-      .then(() => navigate("/"))
-      .catch(console.error)
-      .finally(() => setProduct((prev) => ({ ...prev, loading: false })));
-  };
-
-  return (
-    <ProductForm
-      handleSubmit={handleSaveProduct}
-      product={{ ...product, setProduct }}
-    />
+    </div>
   );
 };
 
-// Edit Product Component
-const EditProduct = () => {
-  const [product, setProduct] = useState({
-    name: "",
-    description: "",
-    category: "",
-    price: "",
-    images: "",
-    loading: false,
-  });
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3000/Products/${id}`)
-      .then(({ data }) => setProduct({ ...data, loading: false }))
-      .catch(console.error);
-  }, [id]);
-
-  const handleUpdateProduct = (e) => {
-    e.preventDefault();
-    setProduct((prev) => ({ ...prev, loading: true }));
-
-    axios
-      .put(`http://localhost:3000/Products/${id}`, product)
-      .then(() => navigate("/"))
-      .catch(console.error)
-      .finally(() => setProduct((prev) => ({ ...prev, loading: false })));
-  };
-
-  return (
-    <ProductForm
-      handleSubmit={handleUpdateProduct}
-      product={{ ...product, setProduct }}
-    />
-  );
-};
-
-// Delete Product Component
-const DeleteProduct = () => {
-  const [loading, setLoading] = useState(false);
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const handleDeleteProduct = () => {
-    setLoading(true);
-    axios
-      .delete(`http://localhost:3000/Products/${id}`)
-      .then(() => navigate("/"))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  };
-
-  return (
-    <button onClick={handleDeleteProduct} disabled={loading}>
-      {loading ? "Deleting..." : "Delete Product"}
-    </button>
-  );
-};
-
-export {
-  ProductsDropdown,
-  ShowProducts,
-  CreateProduct,
-  EditProduct,
-  DeleteProduct,
-};
+export default Products;
