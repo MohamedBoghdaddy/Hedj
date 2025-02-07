@@ -1,67 +1,38 @@
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
-import AddToFavorites from "./wishlist";
-import Grey from "../../Assets/Images/70.jpg";
-import modern from "../../Assets/Images/73.jpg";
-import double from "../../Assets/Images/74.jpg";
+import { useContext } from "react";
+import { ShopContext } from "../../context/productContext";
+import { Button } from "react-bootstrap";
 import "../../Styles/Products.css";
 
-function Bedrooms({ addToCart }) {
-  const handleAddToCart = (name, price) => {
-    const item = { name, price, quantity: 1 }; // Define item to add
-    addToCart(item); // Add item to the cart
-  };
+const Bedrooms = () => {
+  const { addToCart, addToWishlist } = useContext(ShopContext);
+
+  const products = [
+    { id: 1, name: "Modern Bedroom", price: 18000, image: "bedroom1.jpg" },
+    { id: 2, name: "Grey Bedroom", price: 20000, image: "bedroom2.jpg" },
+    { id: 3, name: "Double Bedroom", price: 23000, image: "bedroom3.jpg" },
+  ];
 
   return (
     <div className="Container">
       <div className="main-container">
         <div className="form-container">
           <div className="row1">
-            <Card className="card">
-              <Card.Img className="image" src={Grey} alt="Second slide" />
-              <Card.Body>
-                <Card.Title>modern Bedroom</Card.Title>
-                <Card.Text className="card-text">Price : 18,000$</Card.Text>
-                <Button className="button" onClick={handleAddToCart}>
-                  Add to Cart
+            {products.map((product) => (
+              <div key={product.id} className="product-card">
+                <img src={product.image} alt={product.name} />
+                <h4>{product.name}</h4>
+                <p>Price: ${product.price.toLocaleString()}</p>
+                <Button onClick={() => addToCart(product)}>Add to Cart</Button>
+                <Button onClick={() => addToWishlist(product)}>
+                  Add to Wishlist
                 </Button>
-                <Link to="/Favourites">
-                  <Button className="button">Add to Favorites</Button>
-                </Link>{" "}
-              </Card.Body>
-            </Card>
-            <Card className="card">
-              <Card.Img className="image" src={modern} alt="Second slide" />
-              <Card.Body>
-                <Card.Title>Grey Bedroom</Card.Title>
-                <Card.Text className="card-text">Price : 20,000$</Card.Text>
-                <Button className="button" onClick={handleAddToCart}>
-                  Add to Cart
-                </Button>
-                <Button className="button" onClick={AddToFavorites}>
-                  Favorite
-                </Button>
-              </Card.Body>
-            </Card>
-            <Card className="card">
-              <Card.Img className="image" src={double} alt="Second slide" />
-              <Card.Body>
-                <Card.Title>double Bedroom</Card.Title>
-                <Card.Text className="card-text">Price : 23,000$</Card.Text>
-                <Button className="button" onClick={handleAddToCart}>
-                  Add to Cart
-                </Button>
-                <Button className="button" onClick={AddToFavorites}>
-                  Favorite
-                </Button>
-              </Card.Body>
-            </Card>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Bedrooms;
