@@ -1,13 +1,30 @@
-import mongoose from "mongoose";
+import express from "express";
+import {
+  createProduct,
+  getProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  addToCart,
+  checkout,
+  validateProduct,
+} from "../controllers/productsController.js";
+import {
+  isAdminOrEmployee,
+  isAuthenticated,
+} from "../middlewares/authMiddleware.js";
 
-const productSchema = mongoose.Schema({
-  name: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, required: true },
-  price: { type: Number, required: true },
-  images: { type: [String], required: true },
-});
+const router = express.Router();
 
-const Products = mongoose.model("Products", productSchema);
+// Public Routes
+router.get("/", getProducts);
+router.get("/:id", getProductById);
+router.post("/cart/add", isAuthenticated, addToCart);
+router.post("/cart/checkout", isAuthenticated, checkout);
 
-export default Products;
+// Admin & Employee Routes
+router.post("/create", isAdminOrEmployee, validateProduct, createProduct);
+router.put("/update/:id", isAdminOrEmployee, validateProduct, updateProduct);
+router.delete("/delete/:id", isAdminOrEmployee, deleteProduct);
+
+export default router;
