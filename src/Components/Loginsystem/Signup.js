@@ -120,19 +120,22 @@ const Signup = () => {
             ))}
 
             <div className="field">
-              <label>Gender:</label>
+              <label htmlFor="gender">Gender:</label>
               <div className="gender-container">
                 {["male", "female"].map((g) => (
-                  <label key={g}>
+                  <div key={g}>
                     <input
                       type="radio"
+                      id={g} // Explicitly associate label with input
                       name="gender"
                       value={g}
                       checked={formData.gender === g}
                       onChange={handleChange}
                     />
-                    {g.charAt(0).toUpperCase() + g.slice(1)}
-                  </label>
+                    <label htmlFor={g}>
+                      {g.charAt(0).toUpperCase() + g.slice(1)}
+                    </label>
+                  </div>
                 ))}
               </div>
             </div>
