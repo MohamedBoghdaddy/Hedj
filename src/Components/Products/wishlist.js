@@ -1,53 +1,44 @@
-import "../../Styles/wishlist.css"; // Import your CSS file for styling
+import { useContext } from "react";
+import { ShopContext } from "../../context/productContext";
+import "../../Styles/wishlist.css";
 
-const Wishlist = ({ items }) => {
+const Wishlist = () => {
+  const { wishlistItems, addToCart, removeFromWishlist } =
+    useContext(ShopContext);
+
   return (
     <div className="wishlistContainer">
-      {items && items.length === 0 ? (
+      {wishlistItems.length === 0 ? (
         <div className="emptyWishlistContainer">
           <i className="material-icons" id="emptyWishlist">
             favorite_border
           </i>
-          <div id="yourWishlist">WISHLIST IS EMPTY.</div>
-          <div>You don't have any products in the wishlist yet.</div>
-          <div>
-            You will find a lot of interesting products on our "Shop" page.
-          </div>
-          <a href="index.html">
-            <button id="returnButton">RETURN TO SHOP</button>
+          <div id="yourWishlist">Your Wishlist is Empty.</div>
+          <a href="/products">
+            <button id="returnButton">Continue Shopping</button>
           </a>
         </div>
       ) : (
         <div className="fullWishlistContainer">
-          {items &&
-            items.map((item, index) => (
-              <div key={index} className="wishlistItemContainer">
-                <div className="wishlistImageContainer">
-                  <img src={item.image} alt={item.name} />
-                </div>
-                <div className="wishlistTexts">
-                  <a href={item.link} id="websiteLink">
-                    {item.category}
-                  </a>
-                  <div style={{ fontWeight: "bold" }}>{item.name}</div>
-                  <div>
-                    <s>{item.originalPrice}</s>{" "}
-                    <span style={{ color: "red" }}>{item.discountedPrice}</span>
-                  </div>
-                  <div id="insideInfo">
-                    <p>{item.description}</p>
-                  </div>
-                </div>
-                <div className="buttonContainer">
-                  <button id="viewButton">
-                    <span id="viewMessage">View</span>
-                    <span className="material-icons-outlined" id="eyeIcon">
-                      visibility
-                    </span>
-                  </button>
+          {wishlistItems.map((item) => (
+            <div key={item.id} className="wishlistItemContainer">
+              <div className="wishlistImageContainer">
+                <img src={item.image} alt={item.name} />
+              </div>
+              <div className="wishlistTexts">
+                <div className="wishlistTitle">{item.name}</div>
+                <div className="wishlistPrice">
+                  Price: ${item.price.toFixed(2)}
                 </div>
               </div>
-            ))}
+              <div className="buttonContainer">
+                <button onClick={() => addToCart(item)}>Add to Cart</button>
+                <button onClick={() => removeFromWishlist(item.id)}>
+                  Remove
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
