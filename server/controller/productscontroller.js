@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { check, validationResult } from "express-validator";
-import Product from "../models/productsmodel.js";
+import Product from "../model/productsmodel.js";
 
 // Validation middleware for product operations
 export const validateProduct = [
