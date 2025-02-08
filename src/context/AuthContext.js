@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
           const response = await axios.get(
             `${
-              process.env.REACT_APP_API_URL || "http://localhost:4000"
+              process.env.REACT_APP_API_URL || "http://localhost:8000"
             }/api/users/checkAuth`,
             {
               withCredentials: true,
