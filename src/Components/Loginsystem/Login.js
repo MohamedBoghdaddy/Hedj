@@ -1,50 +1,20 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useLogin } from "../../hooks/useLogin";
 import "../../Styles/login.css"; // Adjust the path as needed
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    // Clear previous error message
-    setError("");
-
-    // Front-end validation
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (!password) {
-      setError("Password is required.");
-      return;
-    }
-
-    try {
-      const response = await axios.post('http://localhost:8000/api/users/login', { email, password });
-      console.log('Login successful:', response.data);
-      // Redirect to dashboard or another page if needed
-      navigate('/');
-    } catch (error) {
-      if (error.response && error.response.data) {
-        setError(error.response.data.message); // Assuming your backend sends an error message
-      } else {
-        setError('An error occurred. Please try again.');
-      }
-    }
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    showPassword,
+    setShowPassword,
+    errorMessage,
+    successMessage,
+    isLoading,
+    handleLogin,
+  } = useLogin();
 
   return (
     <div className="main-container">
@@ -56,11 +26,11 @@ const Login = () => {
               <div className="field-wrapper">
                 <label htmlFor="email">Email:</label>
                 <input
-                  type="text"
+                  type="email"
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  
+                  required
                 />
               </div>
             </div>
@@ -72,20 +42,23 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  
+                  required
                 />
                 <button
                   type="button"
                   className="show-password"
                   onClick={() => setShowPassword(!showPassword)}
                 >
-                  <i className="fas fa-eye"></i>
+                  <i
+                    className={showPassword ? "fas fa-eye-slash" : "fas fa-eye"}
+                  ></i>
                 </button>
               </div>
             </div>
-            {error && <div className="error">{error}</div>}
-            <button className="left_btn" type="submit">
-              Login
+            {errorMessage && <div className="error">{errorMessage}</div>}
+            {successMessage && <div className="success">{successMessage}</div>}
+            <button className="left_btn" type="submit" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>
@@ -93,7 +66,7 @@ const Login = () => {
         <div className="right-login">
           <h1>Don't have an account?</h1>
           <Link to="/signup">
-            <button className="right_btn" type="button">
+            <button className="right_btn" type="button" disabled={isLoading}>
               Signup
             </button>
           </Link>
