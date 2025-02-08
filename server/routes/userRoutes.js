@@ -10,13 +10,23 @@ import {
   searchUsers,
   upload,
 } from "../controller/usercontroller.js";
+import { isAuthenticated } from "../middleware/AuthMiddleware.js";
+
+
 
 const router = express.Router();
 
 // Authentication Routes
-router.post("/register", registerUser);
+router.post("/signup", registerUser); // Ensure it is lowercase
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+
+router.put(
+  "/update/:userId",
+  isAuthenticated,
+  upload.single("photoFile"),
+  updateUser
+); // apply upload middleware here
 
 // User Management Routes
 router.get("/users", getAllUsers);
