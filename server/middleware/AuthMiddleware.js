@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
-import User from "../models/UserModel.js";
-import Employee from "../models/EmployeeModel.js";
+import User from "../model/usermodel.js";
+import Employee from "../model/employeemodel.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware to check if user is authenticated
+// ✅ Middleware to check if user is authenticated
 export const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.header("Authorization");
@@ -26,8 +26,31 @@ export const isAuthenticated = async (req, res, next) => {
   }
 };
 
-// Middleware to check if user is an admin or employee
-export const isAdminOrEmployee = async (req, res, next) => {
+// ✅ Middleware to check if user is a regular user (not an admin or employee)
+export const verifyUser = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization");
+    if (!token)
+      return res
+        .status(401)
+        .json({ message: "Access denied. No token provided." });
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(403).json({ message: "Access forbidden. Users only." });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(403).json({ message: "Forbidden access." });
+  }
+};
+
+// ✅ Middleware to check if user is an admin or employee
+export const verifyAdminOrEmployee = async (req, res, next) => {
   try {
     const token = req.header("Authorization");
     if (!token)
