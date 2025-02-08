@@ -7,7 +7,6 @@ import {
   FaShoppingCart,
   FaBoxes,
   FaTools,
-  FaTrash,
   FaEye,
   FaEdit,
 } from "react-icons/fa";
@@ -19,14 +18,19 @@ import axios from "axios";
 const Sidebar = () => {
   const { state } = useAuthContext();
   const { user, isAuthenticated } = state;
+
+  // Profile photo state
   const [profilePhoto, setProfilePhoto] = useState(user?.profilePhoto || null);
   const [image, setImage] = useState(null);
   const [scale, setScale] = useState(1.2);
   const [rotate, setRotate] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [error, setError] = useState("");
+
   const editorRef = useRef(null);
 
+  // Load profile photo from localStorage or user data
   useEffect(() => {
     const savedProfilePhoto = localStorage.getItem("profilePhoto");
     if (savedProfilePhoto) {
@@ -36,40 +40,49 @@ const Sidebar = () => {
     }
   }, [user]);
 
+  // Toggle edit mode
   const toggleEdit = () => {
     setIsEditing((prev) => !prev);
     setImage(null);
   };
 
+  // Handle file selection
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setImage(file);
-      localStorage.removeItem("profilePhoto");
+      setError(""); // Clear previous errors
+      localStorage.removeItem("profilePhoto"); // Clear previous photo from localStorage
     }
   };
 
+  // Handle saving the cropped image
   const handleSave = async () => {
     if (editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
       const dataUrl = canvas.toDataURL();
-      const blob = await fetch(dataUrl).then((res) => res.blob());
-      const formData = new FormData();
-      formData.append("photoFile", blob, "profile-photo.png");
 
       try {
+        // Convert to Blob for backend upload
+        const blob = await fetch(dataUrl).then((res) => res.blob());
+        const formData = new FormData();
+        formData.append("photoFile", blob, "profile-photo.png");
+
+        // Upload to backend
         const response = await axios.put(
-          `http://localhost:4000/api/users/update/${user._id}`,
+          `http://localhost:8000/api/users/update/${user._id}`,
           formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
-        const newProfilePhoto = response.data.user.profilePhoto;
-        setProfilePhoto(newProfilePhoto);
-        localStorage.setItem("profilePhoto", newProfilePhoto);
-        setImage(null);
+
+        // Update state with backend response
+        const updatedProfilePhoto = response.data.user.profilePhoto;
+        setProfilePhoto(updatedProfilePhoto);
+        localStorage.setItem("profilePhoto", updatedProfilePhoto);
         setIsEditing(false);
       } catch (error) {
         console.error("Error uploading profile photo:", error);
+        setError("Failed to upload profile photo. Please try again.");
       }
     }
   };
@@ -80,30 +93,39 @@ const Sidebar = () => {
         <h2>
           {isAuthenticated && user ? `Welcome, ${user.username}` : "Guest"}
         </h2>
+
         {isAuthenticated && (
           <div className="profile-photo-section">
-            {profilePhoto ? (
+            {profilePhoto || isEditing ? (
               <>
                 <img
-                  src={`http://localhost:4000${profilePhoto}`}
+                  src={`http://localhost:8000${profilePhoto}`}
                   alt="Profile"
                   className="profile-photo"
                 />
                 <div className="icon-buttons">
-                  <button onClick={toggleEdit}>
-                    <FaEdit />
+                  <button onClick={toggleEdit} style={{ cursor: "pointer" }}>
+                    <FaEdit /> {/* Toggle Edit Icon */}
                   </button>
-                  <button onClick={() => setShowPreview(true)}>
-                    <FaEye />
+                  <button
+                    onClick={() => setShowPreview(true)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <FaEye /> {/* Preview Icon */}
                   </button>
                 </div>
               </>
             ) : (
               <p>No Profile Photo</p>
             )}
+
             {isEditing && (
               <>
-                <input type="file" onChange={handleImageChange} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
                 {image && (
                   <div className="avatar-editor">
                     <AvatarEditor
@@ -116,6 +138,7 @@ const Sidebar = () => {
                       color={[255, 255, 255, 0.6]}
                       scale={scale}
                       rotate={rotate}
+                      style={{ boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)" }}
                     />
                     <div className="controls">
                       <input
@@ -135,6 +158,8 @@ const Sidebar = () => {
                 )}
               </>
             )}
+
+            {error && <p className="error-message">{error}</p>}
           </div>
         )}
       </div>
@@ -145,9 +170,10 @@ const Sidebar = () => {
         </Modal.Header>
         <Modal.Body className="text-center">
           <img
-            src={`http://localhost:4000${profilePhoto}`}
+            src={`http://localhost:8000${profilePhoto}`}
             alt="Profile Preview"
             className="img-fluid"
+            style={{ maxWidth: "100%", borderRadius: "50%" }}
           />
         </Modal.Body>
       </Modal>
@@ -171,6 +197,26 @@ const Sidebar = () => {
         <li>
           <Link to="/analytics">
             <FaChartLine /> Analytics
+          </Link>
+        </li>
+        <li>
+          <Link to="/settings">
+            <FaTools /> Settings
+          </Link>
+        </li>
+        <li>
+          <Link to="/employees">
+            <FaTools /> Employees
+          </Link>
+        </li>
+        <li>
+          <Link to="/customers">
+            <FaTools /> Custormers
+          </Link>
+        </li>
+        <li>
+          <Link to="/Reports">
+            <FaTools /> Reports
           </Link>
         </li>
         <li>
