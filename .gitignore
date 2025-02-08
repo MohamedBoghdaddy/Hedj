@@ -19,7 +19,7 @@ client/node_modules
 .env.development.local
 .env.test.local
 .env.production.local
-./server/.env
+../server/.env
 .env
 
 npm-debug.log*
