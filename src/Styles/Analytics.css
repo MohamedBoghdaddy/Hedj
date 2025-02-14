@@ -1,0 +1,133 @@
+/* General Styling */
+.analytic-container {
+  padding: 20px;
+  background-color: #f7f9fb;
+  border-radius: 8px;
+  margin-top: 55px;
+  margin-left: 15%;
+  margin-right: auto;
+  width: 80%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart Container */
+.chart-container {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Centered Spinner */
+.centered-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+/* Reports Container */
+.report-container {
+  margin-top: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.report-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+/* Report Card */
+.report-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 15px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.report-card:hover {
+  transform: scale(1.05);
+}
+
+/* Report Icon */
+.report-icon {
+  font-size: 50px;
+  color: #3498db;
+  margin-bottom: 10px;
+}
+
+/* Report Info */
+.report-info {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.report-info h4 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.report-info p {
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+/* Download Button */
+.download-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s;
+}
+
+.download-btn:hover {
+  background-color: #2980b9;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .analytics-container {
+    width: 90%;
+  }
+
+  .report-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .analytic-container {
+    padding: 15px;
+    margin-left: 25%;
+  }
+
+  .report-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .report-card {
+    width: 100%;
+  }
+}
