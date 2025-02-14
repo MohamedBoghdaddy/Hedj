@@ -57,6 +57,15 @@
 .actions .Button:hover svg{
     color: #fff !important;
 }
+.slick-dots {
+  bottom: 10px !important; /* Moves dots higher */
+}
+
+@media (max-width: 768px) {
+  .slick-dots {
+    bottom: 15px !important; /* Adjust for mobile */
+  }
+}
 
 @media(max-width:768px){
 
