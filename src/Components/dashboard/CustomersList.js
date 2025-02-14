@@ -1,27 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BsPerson, BsSearch, BsThreeDotsVertical } from "react-icons/bs";
-import axios from "axios";
-import "../../Styles/dashboard.css";
+import useDashboard from "../../hooks/useDashboard";
+import "../../Styles/Customer.css";
 
 const CustomersList = () => {
-  const [customers, setCustomers] = useState([]);
+  const { state } = useDashboard(); // Get customers from context
+
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const { data } = await axios.get("/api/customers");
-        setCustomers(data);
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
-    };
-    fetchCustomers();
-  }, []);
-
-  const filteredCustomers = customers.filter((customer) =>
-    customer.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter customers based on search query
+  const filteredCustomers =
+    state.customers?.filter((customer) =>
+      customer.name.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
   return (
     <div className="customers-container">
@@ -37,17 +28,22 @@ const CustomersList = () => {
           />
         </div>
       </div>
+
       <div className="customers-list">
-        {filteredCustomers.map((customer) => (
-          <div key={customer.id} className="customer-card">
-            <BsPerson className="customer-icon" />
-            <div className="customer-info">
-              <h4>{customer.name}</h4>
-              <p>{customer.email}</p>
+        {filteredCustomers.length > 0 ? (
+          filteredCustomers.map((customer) => (
+            <div key={customer.id} className="customer-card">
+              <BsPerson className="customer-icon" />
+              <div className="customer-info">
+                <h4>{customer.name}</h4>
+                <p>{customer.email}</p>
+              </div>
+              <BsThreeDotsVertical className="options-icon" />
             </div>
-            <BsThreeDotsVertical className="options-icon" />
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No customers found.</p>
+        )}
       </div>
     </div>
   );
