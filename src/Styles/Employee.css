@@ -1,0 +1,170 @@
+/* Employee List Container */
+.employee-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f7f9fb;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 70px;
+  margin-left: 22%;
+}
+
+/* Header Styling */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px 10px;
+  border: 2px solid #bdc3c7;
+  transition: border-color 0.3s;
+}
+
+.search-bar:hover,
+.search-bar:focus-within {
+  border-color: #3498db;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 14px;
+  width: 180px;
+}
+
+.search-icon {
+  color: #7f8c8d;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Employee List */
+.employee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Employee Card */
+.employee-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.employee-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.employee-icon {
+  font-size: 30px;
+  color: #3498db;
+  margin-right: 15px;
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-info h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.employee-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #7f8c8d;
+}
+
+/* Role Badge */
+.role-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 20px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+/* Role Colors */
+.role-badge.Admin {
+  background: #e74c3c;
+  color: white;
+}
+
+.role-badge.Manager {
+  background: #f39c12;
+  color: white;
+}
+
+.role-badge.Employee {
+  background: #2ecc71;
+  color: white;
+}
+
+/* Options Icon */
+.options-icon {
+  font-size: 18px;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.options-icon:hover {
+  color: #3498db;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #bdc3c7;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .employee-container {
+    max-width: 90%;
+    padding: 15px;
+    margin-left: 20%;
+    max-width: 80%;
+  }
+
+  .search-bar input {
+    width: 150px;
+    font-size: 12px;
+  }
+
+  .employee-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .employee-icon {
+    margin-bottom: 10px;
+  }
+
+  .options-icon {
+    align-self: flex-end;
+  }
+}
