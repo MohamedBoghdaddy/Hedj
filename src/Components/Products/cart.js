@@ -9,7 +9,7 @@ const Cart = () => {
 
   return (
     <section className="section">
-      <div className="container">
+      <div className="Cart-container">
         <h3 className="hd mb-0 mt-5">Your Cart</h3>
         <p>
           You have <b>{Object.keys(cartItems).length}</b> items in your cart.
