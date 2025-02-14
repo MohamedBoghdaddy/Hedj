@@ -1,45 +1,39 @@
-import { useEffect, useState } from "react";
 import {
   BsGraphUp,
   BsCartCheck,
   BsPeople,
   BsClipboardData,
 } from "react-icons/bs";
-import axios from "axios";
+import useDashboard from "../../hooks/useDashboard";
 import "../../Styles/dashboard.css";
 import Chart from "react-apexcharts";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({
+  const { state } = useDashboard(); // Get dashboard data from context
+
+  // Extract stats from context state
+  const stats = state.analytics || {
     totalSales: 0,
     totalOrders: 0,
     totalCustomers: 0,
     totalReports: 0,
-  });
-  const [chartData, setChartData] = useState({ series: [], options: {} });
+    salesTrend: [],
+    salesMonths: [],
+  };
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const { data } = await axios.get("/api/dashboard/stats");
-        setStats(data);
-        setChartData({
-          series: [{ name: "Sales", data: data.salesTrend }],
-          options: {
-            chart: { type: "line" },
-            xaxis: { categories: data.salesMonths },
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
-      }
-    };
-    fetchStats();
-  }, []);
+  // Chart Data for Sales Trend
+  const chartData = {
+    series: [{ name: "Sales", data: stats.salesTrend || [] }],
+    options: {
+      chart: { type: "line" },
+      xaxis: { categories: stats.salesMonths || [] },
+    },
+  };
 
   return (
     <div className="dashboard-container">
       <h2>Dashboard Overview</h2>
+
       <div className="stats-container">
         <div className="stat-card">
           <BsGraphUp className="stat-icon" />
@@ -62,6 +56,7 @@ const Dashboard = () => {
           <p>Reports Generated</p>
         </div>
       </div>
+
       <div className="chart-container">
         <h3>Sales Trend</h3>
         <Chart
