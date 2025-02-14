@@ -1,8 +1,6 @@
 import Slider from "react-slick";
 import "../../Styles/kitchen.css";
 import Rating from "@mui/material/Rating";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaRegHeart } from "react-icons/fa";
 import { Button } from "react-bootstrap";
 import "../../Styles/Products.css"; // Import the CSS
@@ -45,9 +43,6 @@ const Kitchen = () => {
                 alt="Woody Kitchen"
               />
             </div>
-            <Button className="fav">
-              <FontAwesomeIcon icon={faHeart} />
-            </Button>
             <div className="infoWrapper">
               <h5 style={{ fontWeight: "bolder" }}>Woody Kitchen</h5>
               <div>
