@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import {
   FaCouch,
   FaChartLine,
-  FaShoppingCart,
-  FaBoxes,
   FaTools,
   FaEye,
   FaEdit,
+  FaUsers,
 } from "react-icons/fa";
-import { Modal } from "react-bootstrap";
-import "../../Styles/dashboard.css";
+import { BsPersonCircle } from "react-icons/bs";
+import { Modal, Button } from "react-bootstrap";
+import "../../Styles/Sidebar.css";
 import { useAuthContext } from "../../context/AuthContext";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ const Sidebar = () => {
   const { state } = useAuthContext();
   const { user, isAuthenticated } = state;
 
-  // Profile photo state
+  // Profile state
   const [profilePhoto, setProfilePhoto] = useState(user?.profilePhoto || null);
   const [image, setImage] = useState(null);
   const [scale, setScale] = useState(1.2);
@@ -35,7 +35,7 @@ const Sidebar = () => {
     const savedProfilePhoto = localStorage.getItem("profilePhoto");
     if (savedProfilePhoto) {
       setProfilePhoto(savedProfilePhoto);
-    } else if (user && user.profilePhoto) {
+    } else if (user?.profilePhoto) {
       setProfilePhoto(user.profilePhoto);
     }
   }, [user]);
@@ -52,11 +52,11 @@ const Sidebar = () => {
     if (file) {
       setImage(file);
       setError(""); // Clear previous errors
-      localStorage.removeItem("profilePhoto"); // Clear previous photo from localStorage
+      localStorage.removeItem("profilePhoto"); // Remove previous image
     }
   };
 
-  // Handle saving the cropped image
+  // Handle profile photo upload
   const handleSave = async () => {
     if (editorRef.current) {
       const canvas = editorRef.current.getImageScaledToCanvas();
@@ -75,7 +75,7 @@ const Sidebar = () => {
           { headers: { "Content-Type": "multipart/form-data" } }
         );
 
-        // Update state with backend response
+        // Update profile state
         const updatedProfilePhoto = response.data.user.profilePhoto;
         setProfilePhoto(updatedProfilePhoto);
         localStorage.setItem("profilePhoto", updatedProfilePhoto);
@@ -89,11 +89,13 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
+      {/* Sidebar Header */}
       <div className="sidebar-header">
         <h2>
           {isAuthenticated && user ? `Welcome, ${user.username}` : "Guest"}
         </h2>
 
+        {/* Profile Section */}
         {isAuthenticated && (
           <div className="profile-photo-section">
             {profilePhoto || isEditing ? (
@@ -104,13 +106,10 @@ const Sidebar = () => {
                   className="profile-photo"
                 />
                 <div className="icon-buttons">
-                  <button onClick={toggleEdit} style={{ cursor: "pointer" }}>
-                    <FaEdit /> {/* Toggle Edit Icon */}
+                  <button onClick={toggleEdit}>
+                    <FaEdit /> {/* Edit Icon */}
                   </button>
-                  <button
-                    onClick={() => setShowPreview(true)}
-                    style={{ cursor: "pointer" }}
-                  >
+                  <button onClick={() => setShowPreview(true)}>
                     <FaEye /> {/* Preview Icon */}
                   </button>
                 </div>
@@ -149,10 +148,15 @@ const Sidebar = () => {
                         value={scale}
                         onChange={(e) => setScale(parseFloat(e.target.value))}
                       />
-                      <button onClick={() => setRotate((prev) => prev + 90)}>
+                      <Button
+                        variant="secondary"
+                        onClick={() => setRotate((prev) => prev + 90)}
+                      >
                         Rotate
-                      </button>
-                      <button onClick={handleSave}>Save Profile Photo</button>
+                      </Button>
+                      <Button variant="success" onClick={handleSave}>
+                        Save Photo
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -164,6 +168,7 @@ const Sidebar = () => {
         )}
       </div>
 
+      {/* Profile Photo Preview Modal */}
       <Modal show={showPreview} onHide={() => setShowPreview(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Profile Photo Preview</Modal.Title>
@@ -178,45 +183,31 @@ const Sidebar = () => {
         </Modal.Body>
       </Modal>
 
+      {/* Sidebar Menu */}
       <ul className="sidebar-menu">
+        <li>
+          <Link to="/Reports">
+            <FaChartLine /> Analytics
+          </Link>
+        </li>
+        <li>
+          <Link to="/customers">
+            <BsPersonCircle/> Customers
+          </Link>
+        </li>
+        <li>
+          <Link to="/employees">
+            <BsPersonCircle/> Employees
+          </Link>
+        </li>
         <li>
           <Link to="/products">
             <FaCouch /> Products
           </Link>
         </li>
         <li>
-          <Link to="/orders">
-            <FaShoppingCart /> Orders
-          </Link>
-        </li>
-        <li>
-          <Link to="/inventory">
-            <FaBoxes /> Inventory
-          </Link>
-        </li>
-        <li>
-          <Link to="/analytics">
-            <FaChartLine /> Analytics
-          </Link>
-        </li>
-        <li>
-          <Link to="/settings">
-            <FaTools /> Settings
-          </Link>
-        </li>
-        <li>
-          <Link to="/employees">
-            <FaTools /> Employees
-          </Link>
-        </li>
-        <li>
-          <Link to="/customers">
-            <FaTools /> Custormers
-          </Link>
-        </li>
-        <li>
-          <Link to="/Reports">
-            <FaTools /> Reports
+          <Link to="/Profile">
+            <FaUsers /> Profile
           </Link>
         </li>
         <li>
