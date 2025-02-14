@@ -10,7 +10,7 @@ import Cart from "./Components/Products/cart";
 import Wishlist from "./Components/Products/wishlist";
 import Contact from "./Components/Contact/contact";
 import Bedrooms from "./Components/Products/Bedrooms";
-import  Products from "./Components/Products/Products";
+import Products from "./Components/Products/Products";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 import Kitchen from "./Components/Products/Kitchen";
@@ -20,6 +20,9 @@ import Reports from "./Components/dashboard/Report";
 import Employees from "./Components/dashboard/EmployeeList";
 import Customers from "./Components/dashboard/CustomersList";
 import Dashboard from "./Components/dashboard/Dashboard";
+import DayComplement from "./Components/Products/DayComplement";
+import NightComplement from "./Components/Products/NighComplement";
+import Outdoor from "./Components/Products/Outdoor";
 
 const App = () => {
   return (
@@ -53,8 +56,8 @@ const App = () => {
             <>
               <ToastContainer />
               <Mininavbar />
-              <Setting />
               <Sidebar />
+              <Setting />
               <Footer />
             </>
           }
@@ -64,8 +67,19 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Reports />
               <Sidebar />
+              <Reports />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Profile"
+          element={
+            <>
+              <Mininavbar />
+              <Sidebar />
+              <Profile />
               <Footer />
             </>
           }
@@ -75,8 +89,8 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Employees />
               <Sidebar />
+              <Employees />
               <Footer />
             </>
           }
@@ -86,8 +100,19 @@ const App = () => {
           element={
             <>
               <Mininavbar />
-              <Customers />
               <Sidebar />
+              <Customers />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Settings"
+          element={
+            <>
+              <Mininavbar />
+              <Sidebar />
+              <Setting />
               <Footer />
             </>
           }
@@ -97,17 +122,38 @@ const App = () => {
           element={
             <>
               <Mininavbar />
+              <Sidebar />
               <Products />
               <Footer />
             </>
           }
         />
         <Route
-          path="/Bedrooms"
+          path="/Bedroom"
           element={
             <>
               <Mininavbar />
               <Bedrooms />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/NightComplement"
+          element={
+            <>
+              <Mininavbar />
+              <NightComplement />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/DayComplement"
+          element={
+            <>
+              <Mininavbar />
+              <DayComplement />
               <Footer />
             </>
           }
@@ -118,6 +164,16 @@ const App = () => {
             <>
               <Mininavbar />
               <Kitchen />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/Outdoor"
+          element={
+            <>
+              <Mininavbar />
+              <Outdoor />
               <Footer />
             </>
           }
@@ -138,6 +194,7 @@ const App = () => {
             <>
               <Mininavbar />
               <Wishlist />
+              <Footer />
             </>
           }
         />
