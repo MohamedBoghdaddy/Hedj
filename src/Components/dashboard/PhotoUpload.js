@@ -1,8 +1,10 @@
-import  { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-
+import { toast } from "react-toastify";
+import useDashboard from "../../hooks/useDashboard";
+import "../../Styles/Profile.css"
 const PhotoUpload = ({ onUpload }) => {
+  const { uploadPhoto } = useDashboard(); // Use DashboardContext function
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -13,28 +15,19 @@ const PhotoUpload = ({ onUpload }) => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("photo", file);
+    if (!file) {
+      setErrorMessage("Please select a file to upload.");
+      return;
+    }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setUploadStatus("File uploaded successfully");
-      setErrorMessage(""); // Clear any previous error messages
-      onUpload(response.data.file.filename); // Pass the uploaded file path to the parent
+      const uploadedFilePath = await uploadPhoto(file); // Use uploadPhoto from context
+      setUploadStatus("File uploaded successfully!");
+      setErrorMessage(""); // Clear previous errors
+      if (onUpload) onUpload(uploadedFilePath); // Pass uploaded photo path
     } catch (error) {
       setUploadStatus("File upload failed");
-      setErrorMessage(
-        error.response?.data?.error ||
-          "An unexpected error occurred during file upload"
-      );
+      setErrorMessage("An error occurred during file upload.");
       console.error("Error uploading file:", error);
     }
   };

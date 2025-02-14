@@ -1,29 +1,33 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { BsPersonCircle, BsPencilSquare } from "react-icons/bs";
-import "../../Styles/dashboard.css";
+import useDashboard from "../../hooks/useDashboard";
+import { toast } from "react-toastify";
+import "../../Styles/Profile.css";
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { state, fetchProfile, updateProfile } = useDashboard();
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
+  // Load profile data when the component mounts
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data } = await axios.get("/api/users/profile");
-        setUser(data);
-        setFormData({
-          name: data.name,
-          email: data.email,
-          phone: data.phone || "",
-        });
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-      }
-    };
-    fetchUser();
-  }, []);
+    fetchProfile();
+  }, [fetchProfile]);
+
+  // Set form data when profile is available
+  useEffect(() => {
+    if (state.profile) {
+      setFormData({
+        name: state.profile.name || "",
+        email: state.profile.email || "",
+        phone: state.profile.phone || "",
+      });
+    }
+  }, [state.profile]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -35,10 +39,11 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put("/api/users/profile", formData);
-      setUser({ ...user, ...formData });
+      await updateProfile(formData); // Use updateProfile from DashboardContext
+      toast.success("Profile updated successfully.");
       setIsEditing(false);
     } catch (error) {
+      toast.error("Error updating profile.");
       console.error("Error updating profile:", error);
     }
   };
@@ -46,7 +51,7 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <h2>My Profile</h2>
-      {user ? (
+      {state.profile ? (
         <div className="profile-card">
           <BsPersonCircle className="profile-icon" />
           {isEditing ? (
@@ -73,9 +78,9 @@ const Profile = () => {
             </div>
           ) : (
             <div className="profile-info">
-              <h3>{user.name}</h3>
-              <p>Email: {user.email}</p>
-              <p>Phone: {user.phone || "N/A"}</p>
+              <h3>{state.profile.name}</h3>
+              <p>Email: {state.profile.email}</p>
+              <p>Phone: {state.profile.phone || "N/A"}</p>
               <button onClick={handleEditToggle} className="edit-button">
                 <BsPencilSquare /> Edit
               </button>
