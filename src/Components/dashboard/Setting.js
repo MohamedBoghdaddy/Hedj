@@ -1,274 +1,160 @@
-import  { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Button, Form, Table } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Notification from "../dashboard/Notification";
-import { DashboardContext } from "../../context/DashboardContext";
+import useDashboard from "../../hooks/useDashboard";
 import { useAuthContext } from "../../context/AuthContext";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-
+import "../../Styles/Settings.css";
 const Setting = () => {
-  const { user } = useAuthContext();
-  const {
-    fetchWorkspacesByUserId,
-    fetchDocuments,
-    addCollaboratorToWorkspace,
-    documents,
-    workspaces,
-    selectedWorkspace,
-    setSelectedWorkspace,
-    fetchCollaborators,
-  } = useContext(DashboardContext);
+  const { user, updateUser } = useAuthContext();
+  const { state, fetchProfile, handleUpdateProfile, fetchDashboardData } =
+    useDashboard();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [collaboratorSearch, setCollaboratorSearch] = useState("");
-  const [collaborators, setCollaborators] = useState([]);
-  const [notification] = useState(null);
-  const [filteredDocuments, setFilteredDocuments] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("Viewer");
-  const { workspaceId } = useParams();
+  // Local state for profile updates
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+  });
 
-  
-  // Fetch workspaces and collaborators on component mount
+  // Fetch Profile Data on Mount
   useEffect(() => {
-    if (user?.id) {
-      fetchWorkspacesByUserId(user._id);
+    fetchDashboardData(); // Load all dashboard data
+    if (user?._id) {
+      fetchProfile(); // Fetch user profile
     }
-    if (workspaceId && fetchCollaborators) {
-      fetchCollaborators(workspaceId)
-        .then((collaborators) => {
-          if (collaborators.length === 0) {
-            toast.info("No collaborators found for this workspace.");
-          } else {
-            setCollaborators(collaborators);
-          }
-        })
-        .catch((error) => {
-          toast.error("Error fetching collaborators.");
-          console.error("Error fetching collaborators:", error);
-        });
-    }
-  }, [user, workspaceId, fetchWorkspacesByUserId, fetchCollaborators]);
+  }, [fetchDashboardData, user]);
 
-  // Filter documents based on search term
+  // Sync Profile State with Context
   useEffect(() => {
-    if (searchTerm.length >= 3) {
-      const filtered = documents.filter((doc) =>
-        doc.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredDocuments(filtered);
-    } else {
-      setFilteredDocuments(documents);
+    if (state.profile) {
+      setProfile({
+        name: state.profile.name || "",
+        email: state.profile.email || "",
+        password: "", // Password remains empty for security reasons
+        role: state.profile.role || "",
+      });
     }
-  }, [searchTerm, documents]);
+  }, [state.profile]);
 
-  // Handle workspace selection
-  const handleWorkspaceSelection = (workspace) => {
-    setSelectedWorkspace(workspace);
-    fetchDocuments(workspace._id);
-    handleFetchCollaborators(workspace._id);
+  // Handle input changes
+  const handleChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  // Search collaborators based on username
-  const handleCollaboratorSearch = async () => {
+  // Handle profile update
+  const handleSubmitProfileUpdate = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:4000/api/users/search?username=${collaboratorSearch}`
-      );
-      setCollaborators(response.data || []);
+      await handleUpdateProfile(profile);
+      updateUser(profile); // Update global user state
+      toast.success("Profile updated successfully.");
     } catch (error) {
-      toast.error("Error fetching collaborators.");
-    }
-  };
-
-  // Fetch collaborators for a workspace
-  const handleFetchCollaborators = async (workspaceId) => {
-    try {
-      // Ensure workspaceId is valid
-      if (!workspaceId || !workspaceId.match(/^[0-9a-fA-F]{24}$/)) {
-        throw new Error("Invalid workspace ID");
-      }
-
-      const response = await axios.get(
-        `http://localhost:4000/api/workspaces/${workspaceId}/collaborators`,
-        { withCredentials: true }
-      );
-      if (response.data && Array.isArray(response.data)) {
-        if (response.data.length === 0) {
-          toast.info("No collaborators found for this workspace.");
-          setCollaborators([]); // Reset or handle as per requirement
-        } else {
-          setCollaborators(response.data);
-        }
-      } else {
-        console.error("No valid data received for collaborators");
-        setCollaborators([]); // Reset or handle as per requirement
-      }
-    } catch (error) {
-      console.error("Error fetching collaborators:", error);
-      toast.error("Failed to fetch collaborators.");
-      setCollaborators([]); // Reset or handle as per requirement
-    }
-  };
-
-  // Add collaborator to workspace
-  const handleAddCollaborator = async (collaborator) => {
-    if (!collaborator || !collaborator._id) {
-      toast.error("Collaborator ID is missing.");
-      return;
-    }
-
-    try {
-      await addCollaboratorToWorkspace(collaborator);
-      toast.success(`${collaborator.username} added as ${selectedRole}.`);
-      handleFetchCollaborators(selectedWorkspace._id);
-    } catch (error) {
-      toast.error(error.message || "Error adding collaborator.");
-      console.error("Error adding collaborator:", error);
+      toast.error("Error updating profile.");
+      console.error("Error updating profile:", error);
     }
   };
 
   return (
-    <div className="workspace-container">
-      {notification && (
-        <Notification type={notification.type} message={notification.message} />
-      )}
+    <div className="settings-container">
+      <h2>Settings</h2>
 
-      {/* Workspace selection */}
-      <h3>Select a Workspace</h3>
-      {Array.isArray(workspaces) && workspaces.length > 0 ? (
-        <div className="workspace-list">
-          {workspaces.map((workspace) => (
-            <button
-              key={workspace._id}
-              onClick={() => handleWorkspaceSelection(workspace)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleWorkspaceSelection(workspace);
-                }
-              }}
-              className={`workspace-item ${
-                selectedWorkspace?._id === workspace._id ? "selected" : ""
-              }`}
-            >
-              {workspace.name}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <p>No workspaces available.</p>
-      )}
+      {/* Profile Update Section */}
+      <h3>Profile Information</h3>
+      <Form>
+        <Form.Group controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="name"
+            value={profile.name}
+            onChange={handleChange}
+          />
+        </Form.Group>
 
-      {/* Documents list */}
-      {selectedWorkspace && (
+        <Form.Group controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            value={profile.email}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="password"
+            value={profile.password}
+            onChange={handleChange}
+            placeholder="Enter new password (optional)"
+          />
+        </Form.Group>
+
+        <Form.Group controlId="role">
+          <Form.Label>Role</Form.Label>
+          <Form.Control
+            as="select"
+            name="role"
+            value={profile.role}
+            onChange={handleChange}
+          >
+            <option value="Admin">Admin</option>
+            <option value="Manager">Manager</option>
+            <option value="Employee">Employee</option>
+          </Form.Control>
+        </Form.Group>
+
+        <Button
+          variant="primary"
+          onClick={handleSubmitProfileUpdate}
+          className="mt-3"
+        >
+          Update Profile
+        </Button>
+      </Form>
+
+      {/* Settings Section */}
+      {state.settings ? (
         <>
-          <h4>Documents in Workspace: {selectedWorkspace.name}</h4>
-
-          <Form className="mb-3">
-            <Form.Group controlId="search" className="mb-3">
-              <Form.Label>Search Documents</Form.Label>
-              <div className="search-bar">
-                <Form.Control
-                  type="text"
-                  placeholder="Search by document name"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <FontAwesomeIcon icon={faSearch} className="search-icon" />
-              </div>
-            </Form.Group>
-          </Form>
-
+          <h3>General Settings</h3>
           <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Name</th>
-              </tr>
-            </thead>
             <tbody>
-              {filteredDocuments.length > 0 ? (
-                filteredDocuments.map((document) => (
-                  <tr key={document._id}>
-                    <td>{document.name}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td>No documents found</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-
-          {/* Collaborator search and add */}
-          <Form className="mt-3">
-            <Form.Group controlId="collaboratorSearch">
-              <Form.Label>Search for Collaborators</Form.Label>
-              <div className="search-bar">
-                <Form.Control
-                  type="text"
-                  placeholder="Enter username"
-                  value={collaboratorSearch}
-                  onChange={(e) => setCollaboratorSearch(e.target.value)}
-                />
-                <Button onClick={handleCollaboratorSearch} className="ms-2">
-                  <FontAwesomeIcon icon={faSearch} /> Search
-                </Button>
-              </div>
-            </Form.Group>
-          </Form>
-
-          {/* Collaborator Role Selection */}
-          <Form.Group controlId="collaboratorRoleSelect" className="mb-3">
-            <Form.Label>Select Role</Form.Label>
-            <Form.Control
-              as="select"
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-            >
-              <option value="Viewer">Viewer</option>
-              <option value="Editor">Editor</option>
-              <option value="Admin">Admin</option>
-            </Form.Control>
-          </Form.Group>
-
-          <h5>Collaborators</h5>
-          <Table striped bordered hover>
-            <thead>
               <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Actions</th>
+                <td>Mode</td>
+                <td>{state.settings.mode}</td>
               </tr>
-            </thead>
-            <tbody>
-              {collaborators.length > 0 ? (
-                collaborators.map((collaborator, index) => (
-                  <tr key={collaborator._id || `collaborator-${index}`}>
-                    <td>{collaborator.username}</td>
-                    <td>{collaborator.email}</td>
-                    <td>
-                      <Button
-                        variant="success"
-                        onClick={() => handleAddCollaborator(collaborator)}
-                      >
-                        Add as {selectedRole}
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3">No collaborators found</td>
-                </tr>
-              )}
+              <tr>
+                <td>Notifications</td>
+                <td>{state.settings.notifications ? "Enabled" : "Disabled"}</td>
+              </tr>
             </tbody>
           </Table>
         </>
+      ) : (
+        <p>No settings available.</p>
       )}
+
+      {/* Analytics Section */}
+      <h3>Business Analytics</h3>
+      <Table striped bordered hover>
+        <tbody>
+          <tr>
+            <td>Products</td>
+            <td>{state.products?.length || 0}</td>
+          </tr>
+          <tr>
+            <td>Customers</td>
+            <td>{state.customers?.length || 0}</td>
+          </tr>
+          <tr>
+            <td>Employees</td>
+            <td>{state.employees?.length || 0}</td>
+          </tr>
+        </tbody>
+      </Table>
     </div>
   );
 };
