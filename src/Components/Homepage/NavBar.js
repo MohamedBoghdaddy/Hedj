@@ -13,13 +13,16 @@ import {
   faCartShopping,
   faUser,
   faHeart,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../Styles/Navbar.css";
 import Login from "../Loginsystem/Login";
+import { useAuthContext } from "../../context/AuthContext";
+import { useLogout } from "../../hooks/useLogout.js";
 import SearchResultsList from "../Homepage/SearchResult";
 
 const NavBar = () => {
@@ -28,6 +31,11 @@ const NavBar = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const { state } = useAuthContext();
+  const navigate = useNavigate();
+
+  const { user, isAuthenticated } = state;
+  const { logout } = useLogout();
 
   const handleSearch = () => {
     fetch("https://jsonplaceholder.typicode.com/users")
@@ -52,6 +60,10 @@ const NavBar = () => {
   const handleLoginModalOpen = () => setShowLoginModal(true);
   const handleLoginModalClose = () => setShowLoginModal(false);
   const handleNavCollapse = () => setExpanded(!expanded);
+  const handleLogout = async () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <Navbar expand="lg" className="navbar" variant="dark" expanded={expanded}>
@@ -88,10 +100,10 @@ const NavBar = () => {
             >
               {[
                 { route: "/Kitchen", label: "KITCHEN" },
-                { route: "/sofas", label: "SOFAS" },
-                { route: "/day-complements", label: "DAY COMPLEMENTS" },
-                { route: "/night-complements", label: "NIGHT COMPLEMENTS" },
-                { route: "/outdoor", label: "OUTDOOR" },
+                { route: "/Bedroom", label: "Bedroom" },
+                { route: "/DayComplement", label: "DAY COMPLEMENTS" },
+                { route: "/NightComplement", label: "NIGHT COMPLEMENTS" },
+                { route: "/Outdoor", label: "OUTDOOR" },
               ].map(({ route, label }) => (
                 <NavDropdown.Item
                   key={route}
@@ -131,23 +143,39 @@ const NavBar = () => {
               <FontAwesomeIcon icon={faHeart} />
             </Nav.Link>
 
-            <Nav.Link
-              className="nav-link"
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                handleLoginModalOpen();
-                handleNavCollapse();
-              }}
-              onKeyPress={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
+            {isAuthenticated && user ? (
+              <Nav.Link
+                className="nav-link"
+                role="button"
+                tabIndex="0"
+                onClick={handleLogout}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleLogout();
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+              </Nav.Link>
+            ) : (
+              <Nav.Link
+                className="nav-link"
+                role="button"
+                tabIndex="0"
+                onClick={() => {
                   handleLoginModalOpen();
-                }
-              }}
-              aria-label="Login"
-            >
-              <FontAwesomeIcon icon={faUser} />
-            </Nav.Link>
+                  handleNavCollapse();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleLoginModalOpen();
+                    handleNavCollapse();
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </Nav.Link>
+            )}
 
             <Nav.Link
               as={Link}

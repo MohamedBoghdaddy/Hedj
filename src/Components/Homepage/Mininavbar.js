@@ -1,17 +1,28 @@
 import { useState } from "react";
-import { Navbar, Nav, Container, Form, NavLink } from "react-bootstrap";
+import { Navbar, Nav, Container, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMagnifyingGlass,
+  faUser,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../Styles/Navbar.css";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
+import { useLogout } from "../../hooks/useLogout.js";
 
 const MiniNavbar = () => {
   const [searchText, setSearchText] = useState("");
+  const { state } = useAuthContext();
+  const { logout } = useLogout();
+  const { user, isAuthenticated } = state;
 
   const handleSearch = () => {
-    console.log(`Searching for: ${searchText}`);
+    if (searchText.trim() !== "") {
+      console.log(`Searching for: ${searchText}`);
+    }
   };
 
   const handleKeyPress = (event) => {
@@ -20,22 +31,31 @@ const MiniNavbar = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
-    <Navbar expand="lg" className="navbar">
+    <Navbar expand="lg" className="mini-navbar navbar-light">
       <Container fluid>
-        <Navbar.Brand as={NavLink} to="/" className="navbar-brand">
+        {/* Logo */}
+        <Navbar.Brand as={Link} to="/" className="navbar-brand">
           <img
             src={logo}
             alt="Company Logo"
-            style={{ width: "60px", height: "auto" }}
-          />
+            style={{ width: "80px", height: "57px", top: 0 }}
+          />{" "}
         </Navbar.Brand>
+
+        {/* Navbar Toggle */}
         <Navbar.Toggle
           aria-controls="navbarScroll"
           className="navbar-toggler"
         />
-        <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
-          <Nav className="navbar-nav" navbarScroll>
+
+        {/* Navbar Links */}
+        <Navbar.Collapse id="navbarScroll">
+          <Nav className="ms-auto mini-navbar-nav">
             <Link to="/" className="nav-link">
               HOME
             </Link>
@@ -45,31 +65,40 @@ const MiniNavbar = () => {
             <Link to="/contact" className="nav-link">
               Contact Us
             </Link>
-            <Link to="/login" className="nav-link">
-              Login
-            </Link>
-            <Link to="/signup" className="nav-link">
-              Signup
-            </Link>
+
+            {isAuthenticated && user ? (
+              <Link to="/" className="nav-link" onClick={handleLogout}>
+                <FontAwesomeIcon icon={faSignOutAlt} /> Logout
+              </Link>
+            ) : (
+              <>
+                <Link to="/login" className="nav-link">
+                  <FontAwesomeIcon icon={faUser} /> Login
+                </Link>
+                <Link to="/signup" className="nav-link">
+                  Signup
+                </Link>
+              </>
+            )}
           </Nav>
-          <Form className="d-flex">
+
+          {/* Search Bar */}
+          <Form className="d-flex mini-navbar-search">
             <Form.Control
               type="text"
               placeholder="Search"
-              className="form-control"
+              className="search-input"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={handleKeyPress}
             />
-            <div
+            <button
               className="search-button"
-              role="button"
-              tabIndex={0}
               onClick={handleSearch}
-              onKeyPress={handleKeyPress}
               aria-label="Search"
             >
               <FontAwesomeIcon icon={faMagnifyingGlass} />
-            </div>
+            </button>
           </Form>
         </Navbar.Collapse>
       </Container>
