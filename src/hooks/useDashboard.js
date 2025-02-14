@@ -5,7 +5,7 @@ const useDashboard = () => {
   const context = useContext(DashboardContext);
 
   if (!context) {
-    throw new Error("useDashboard must be used within an DashboardPrpvider");
+    throw new Error("useDashboard must be used within an DashboardProvider");
   }
 
   return context;
