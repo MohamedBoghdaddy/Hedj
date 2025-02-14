@@ -1,0 +1,134 @@
+/* Customers Container */
+.customers-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f7f9fb;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 70px;
+}
+
+/* Header */
+.customers-container .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.customers-container h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  font-size: 18px;
+  color: #7f8c8d;
+  margin-right: 8px;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #2c3e50;
+  width: 180px;
+}
+
+.search-bar input::placeholder {
+  color: #95a5a6;
+}
+
+/* Customers List */
+.customers-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+/* Customer Card */
+.customer-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.customer-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Customer Icon */
+.customer-icon {
+  font-size: 24px;
+  color: #3498db;
+  margin-right: 10px;
+}
+
+/* Customer Info */
+.customer-info h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.customer-info p {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 5px 0 0;
+}
+
+/* Options Icon */
+.options-icon {
+  font-size: 18px;
+  color: #95a5a6;
+  margin-left: auto;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.options-icon:hover {
+  color: #2c3e50;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #7f8c8d;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .customers-container {
+    padding: 15px;
+    margin-left:22%;
+    width:80%;
+  }
+
+  .search-bar input {
+    width: 150px;
+  }
+
+  .customer-card {
+    padding: 12px;
+  }
+}
