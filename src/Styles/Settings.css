@@ -1,0 +1,107 @@
+/* General Container */
+.settings-container {
+  padding: 25px;
+  background-color: #f4f6f9;
+  border-radius: 10px;
+  margin-top: 50px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Headings */
+.settings-container h2,
+.settings-container h3 {
+  text-align: center;
+  font-size: 22px;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+/* Form Styling */
+.settings-container form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.settings-container form .form-group {
+  margin-bottom: 15px;
+}
+
+.settings-container form label {
+  font-weight: 600;
+  color: #34495e;
+}
+
+.settings-container form input,
+.settings-container form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.settings-container form input:focus,
+.settings-container form select:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Update Profile Button */
+.settings-container .btn-primary {
+  width: 100%;
+  background-color: #3498db;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.settings-container .btn-primary:hover {
+  background-color: #2980b9;
+}
+
+/* Tables */
+.settings-container table {
+  width: 100%;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.settings-container table td {
+  padding: 12px;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 15px;
+  color: #34495e;
+}
+
+/* Role Dropdown */
+.settings-container select {
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .settings-container form {
+    padding: 15px;
+  }
+
+  .settings-container .btn-primary {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
