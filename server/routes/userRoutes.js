@@ -9,6 +9,7 @@ import {
   deleteUser,
   searchUsers,
   upload,
+  getUsersByRole,
 } from "../controller/usercontroller.js";
 import { isAuthenticated } from "../middleware/AuthMiddleware.js";
 
@@ -33,6 +34,7 @@ router.get("/users", getAllUsers);
 router.get("/users/:userId", getUser);
 router.put("/users/:userId", upload.single("profilePhoto"), updateUser);
 router.delete("/users/:userId", deleteUser);
+router.get("/filter", getUsersByRole); // GET users filtered by role
 
 // Search Route
 router.get("/search", searchUsers);
