@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { Navbar, Nav, Container, Form } from "react-bootstrap";
+import { Navbar, Nav, Container, Form, NavDropdown } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMagnifyingGlass,
+  faCartShopping,
   faUser,
+  faHeart,
   faSignOutAlt,
+
 } from "@fortawesome/free-solid-svg-icons";
 import "../../Styles/Navbar.css";
 import logo from "../../Assets/Images/eco-logo.png";
@@ -18,6 +21,8 @@ const MiniNavbar = () => {
   const { state } = useAuthContext();
   const { logout } = useLogout();
   const { user, isAuthenticated } = state;
+  const [expanded, setExpanded] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleSearch = () => {
     if (searchText.trim() !== "") {
@@ -30,6 +35,7 @@ const MiniNavbar = () => {
       handleSearch();
     }
   };
+  const handleNavCollapse = () => setExpanded(!expanded);
 
   const handleLogout = async () => {
     await logout();
@@ -62,6 +68,31 @@ const MiniNavbar = () => {
             <Link to="/dashboard" className="nav-link">
               Dashboard
             </Link>
+            <NavDropdown
+              title="Products"
+              id="basic-nav-dropdown"
+              show={showDropdown}
+              onMouseEnter={() => setShowDropdown(true)}
+              onMouseLeave={() => setShowDropdown(false)}
+            >
+              {[
+                { route: "/Kitchen", label: "KITCHEN" },
+                { route: "/Bedroom", label: "Bedroom" },
+                { route: "/DayComplement", label: "DAY COMPLEMENTS" },
+                { route: "/NightComplement", label: "NIGHT COMPLEMENTS" },
+                { route: "/Outdoor", label: "OUTDOOR" },
+              ].map(({ route, label }) => (
+                <NavDropdown.Item
+                  key={route}
+                  as={Link}
+                  to={route}
+                  className="nav-link-products"
+                  onClick={handleNavCollapse}
+                >
+                  {label}
+                </NavDropdown.Item>
+              ))}
+            </NavDropdown>
             <Link to="/contact" className="nav-link">
               Contact Us
             </Link>
@@ -81,7 +112,23 @@ const MiniNavbar = () => {
               </>
             )}
           </Nav>
-
+          <Nav.Link
+            as={Link}
+            to="/wishlist"
+            className="link-wish"
+            onClick={handleNavCollapse}
+          >
+            <FontAwesomeIcon icon={faHeart} />
+          </Nav.Link>
+          <Nav.Link
+            as={Link}
+            to="/cart"
+            className="nav-link"
+            onClick={handleNavCollapse}
+          >
+            <FontAwesomeIcon icon={faCartShopping} />
+            <span className="count">0</span>
+          </Nav.Link>
           {/* Search Bar */}
           <Form className="d-flex mini-navbar-search">
             <Form.Control

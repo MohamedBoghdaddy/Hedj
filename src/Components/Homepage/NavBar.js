@@ -16,7 +16,6 @@ import {
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { Link as ScrollLink } from "react-scroll";
 import logo from "../../Assets/Images/eco-logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../Styles/Navbar.css";
@@ -46,9 +45,7 @@ const NavBar = () => {
         );
         setSearchResults(results);
       })
-      .catch((error) => {
-        console.error("Error fetching search results:", error);
-      });
+      .catch((error) => console.error("Error fetching search results:", error));
   };
 
   const handleKeyPress = (event) => {
@@ -66,31 +63,37 @@ const NavBar = () => {
   };
 
   return (
-    <Navbar expand="lg" className="navbar" variant="dark" expanded={expanded}>
+    <Navbar
+      expand="lg"
+      className="custom-navbar"
+      variant="dark"
+      expanded={expanded}
+    >
       <Container fluid>
+        {/* ✅ Brand Logo */}
         <Navbar.Brand as={Link} to="/" className="navbar-brand">
-          <img
-            src={logo}
-            alt="Company Logo"
-            style={{ width: "80px", height: "auto", top: 0 }}
-          />
+          <img src={logo} alt="Company Logo" className="nav-logo" />
         </Navbar.Brand>
+
+        {/* ✅ Toggler */}
         <Navbar.Toggle
           aria-controls="basic-navbar-nav"
           className="navbar-toggler"
           onClick={handleNavCollapse}
         />
+
         <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
           <Nav className="navbar-nav ms-auto" navbarScroll>
-            <ScrollLink
-              to="hero-section"
-              smooth
+            <Nav.Link
+              as={Link}
+              to="/"
               className="nav-link"
               onClick={handleNavCollapse}
             >
               Home
-            </ScrollLink>
+            </Nav.Link>
 
+            {/* ✅ Dropdown for Products */}
             <NavDropdown
               title="Products"
               id="basic-nav-dropdown"
@@ -100,7 +103,7 @@ const NavBar = () => {
             >
               {[
                 { route: "/Kitchen", label: "KITCHEN" },
-                { route: "/Bedroom", label: "Bedroom" },
+                { route: "/Bedroom", label: "BEDROOM" },
                 { route: "/DayComplement", label: "DAY COMPLEMENTS" },
                 { route: "/NightComplement", label: "NIGHT COMPLEMENTS" },
                 { route: "/Outdoor", label: "OUTDOOR" },
@@ -125,6 +128,7 @@ const NavBar = () => {
             >
               Contact Us
             </Nav.Link>
+
             <Nav.Link
               as={Link}
               to="/dashboard"
@@ -134,6 +138,7 @@ const NavBar = () => {
               Dashboard
             </Nav.Link>
 
+            {/* ✅ Wishlist */}
             <Nav.Link
               as={Link}
               to="/wishlist"
@@ -143,44 +148,28 @@ const NavBar = () => {
               <FontAwesomeIcon icon={faHeart} />
             </Nav.Link>
 
+            {/* ✅ Auth Section */}
             {isAuthenticated && user ? (
-              <Nav.Link
-                className="nav-link"
-                role="button"
-                tabIndex="0"
-                onClick={handleLogout}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleLogout();
-                  }
-                }}
-              >
+              <Nav.Link className="nav-link" onClick={handleLogout}>
                 <FontAwesomeIcon icon={faSignOutAlt} /> Logout
               </Nav.Link>
             ) : (
               <Nav.Link
                 className="nav-link"
-                role="button"
-                tabIndex="0"
                 onClick={() => {
                   handleLoginModalOpen();
                   handleNavCollapse();
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleLoginModalOpen();
-                    handleNavCollapse();
-                  }
                 }}
               >
                 <FontAwesomeIcon icon={faUser} />
               </Nav.Link>
             )}
 
+            {/* ✅ Cart */}
             <Nav.Link
               as={Link}
               to="/cart"
-              className="nav-link"
+              className="nav-link cart-link"
               onClick={handleNavCollapse}
             >
               <FontAwesomeIcon icon={faCartShopping} />
@@ -188,7 +177,8 @@ const NavBar = () => {
             </Nav.Link>
           </Nav>
 
-          <Form className="d-flex">
+          {/* ✅ Search Bar */}
+          <Form className="search-container">
             <Form.Control
               type="text"
               placeholder="Search"
@@ -202,7 +192,6 @@ const NavBar = () => {
               tabIndex={0}
               onClick={handleSearch}
               onKeyPress={handleKeyPress}
-              aria-label="Search"
             >
               <FontAwesomeIcon icon={faMagnifyingGlass} />
             </div>
@@ -211,10 +200,11 @@ const NavBar = () => {
         </Navbar.Collapse>
       </Container>
 
+      {/* ✅ Login Modal */}
       <Modal show={showLoginModal} onHide={handleLoginModalClose} centered>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
-          <Login /> {/* Render your existing login component here */}
+          <Login />
         </Modal.Body>
       </Modal>
     </Navbar>
