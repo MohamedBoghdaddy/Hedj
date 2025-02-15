@@ -21,6 +21,7 @@ const initialState = {
   products: [],
   customers: [],
   employees: [],
+  admins: [],
   profile: null,
   reports: [],
   loading: true,
@@ -61,15 +62,16 @@ export const DashboardProvider = ({ children }) => {
         productsRes,
         customersRes,
         employeesRes,
+        adminsRes,
         reportsRes,
         profileRes,
       ] = await Promise.allSettled([
-        axios.get("http://localhost:8000/api/analytics"),
+        axios.get("http://localhost:8000/api/Analytics"),
         axios.get("http://localhost:8000/api/settings"),
         axios.get("http://localhost:8000/api/products"),
-        axios.get("http://localhost:8000/api/customers"),
-        axios.get("http://localhost:8000/api/employees"),
-        axios.get("http://localhost:8000/api/reports"),
+        axios.get("http://localhost:8000/api/users/filter?role=customer"),
+        axios.get("http://localhost:8000/api/users/filter?role=employee"),
+        axios.get("http://localhost:8000/api/users/filter?role=admin"),
         user?._id
           ? axios.get(`http://localhost:8000/api/users/${user._id}`)
           : Promise.resolve({ status: "fulfilled", value: { data: null } }),
@@ -90,6 +92,7 @@ export const DashboardProvider = ({ children }) => {
             customersRes.status === "fulfilled" ? customersRes.value.data : [],
           employees:
             employeesRes.status === "fulfilled" ? employeesRes.value.data : [],
+          admins: adminsRes.status === "fulfilled" ? adminsRes.value.data : [],
           reports:
             reportsRes.status === "fulfilled" ? reportsRes.value.data : [],
           profile:
@@ -109,7 +112,7 @@ export const DashboardProvider = ({ children }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get("/api/dashboard/stats");
+        const { data } = await axios.get("/api/Analystics");
         setChartData({
           series: [{ name: "Sales", data: data.salesTrend }],
           options: {
@@ -187,37 +190,24 @@ export const DashboardProvider = ({ children }) => {
       console.error("Error uploading file:", error);
     }
   };
-  const uploadPhoto = async (file) => {
-    const formData = new FormData();
-    formData.append("photo", file);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      return response.data.file.filename; // Return uploaded file path
-    } catch (error) {
-      throw new Error("Failed to upload photo");
-    }
-  };
-  // ✅ Fetch Reports Separately
+  // Fetch Reports Separately
   const fetchReports = useCallback(async () => {
     try {
-      const { data } = await axios.get("http://localhost:8000/api/reports");
+      const { data } = await axios.get(
+        "http://localhost:8000/api/Analytics"
+      );
       dispatch({ type: "FETCH_SUCCESS", payload: { reports: data } });
     } catch (error) {
       console.error("Error fetching reports:", error);
       dispatch({ type: "FETCH_ERROR", payload: "Failed to load reports" });
     }
   }, []);
+
   // Handle report download
   const handleDownloadReport = (reportId) => {
     window.open(
-      `http://localhost:8000/api/reports/download/${reportId}`,
+      `http://localhost:8000/api/Analytics/download/${reportId}`,
       "_blank"
     );
   };
@@ -241,7 +231,6 @@ export const DashboardProvider = ({ children }) => {
       filterCustomers,
       chartData,
       uploadStatus,
-      uploadPhoto,
       errorMessage,
     }),
     [
