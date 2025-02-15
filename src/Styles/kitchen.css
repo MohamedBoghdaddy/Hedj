@@ -1,28 +1,27 @@
-.kitchenproduct{
+.kitchenproduct {
     margin-top: 20px;
     height: 90vh !important;
 }
 
-.item{
-    height: 550px !important ;
+.item {
+    height: 550px !important;
     width: 95% !important;
     margin: 20px;
 }
 
-.imgWrapper{
+.imgWrapper {
     height: 62% !important;
     width: 98% !important;
 }
-.resizeImg{
+
+.resizeImg {
     height: 320px !important;
     width: 325px !important;
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px;
     border-radius: 5%;
 }
 
-.slider1{
+.slider1 {
     margin-top: 20px;
     margin-left: 10px;
     margin-right: 20px;
@@ -30,69 +29,43 @@
     width: 96vw !important;
 }
 
-.Slider{
-    justify-content: space-between !important;
-}
-/*.actions{
-    position: absolute;
-    top:20px;
-    right: 10px;
-    z-index:100
-}*/
-.actions .Button{
+/* ✅ Actions & Buttons */
+.actions .Button {
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 40px !important;
     height: 40px !important;
     width: 40px !important;
-    border: 1px solid rgba(0,0,0,0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
     border-radius: 50% !important;
     background: white !important;
-    flex-direction: column;
+    transition: background 0.3s ease-in-out;
 }
-.actions .Button:hover{
+
+.actions .Button:hover {
     background-color: black !important;
 }
-.actions .Button:hover svg{
+
+.actions .Button:hover svg {
     color: #fff !important;
 }
+
+/* ✅ Slider Dots Position */
 .slick-dots {
-  bottom: 10px !important; /* Moves dots higher */
+    bottom: 10px !important;
 }
 
 @media (max-width: 768px) {
-  .slick-dots {
-    bottom: 15px !important; /* Adjust for mobile */
-  }
+    .slick-dots {
+        bottom: 15px !important;
+    }
 }
 
-@media(max-width:768px){
-
-    .slider1{
+/* ✅ Responsive */
+@media (max-width: 768px) {
+    .slider1 {
         flex-direction: column;
-        flex-wrap: wrap;}
-}
-
-.infoWrapper{
-    padding: 5px !important;
-}
-
-.actions{
-    margin-left: 20px;
-}
-
-.actionsandrating{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.Button{
-    background-color: black;
-}
-
-.btn-primary {
-    --bs-btn-bg: #303132;
-    --bs-btn-border-color: none;
+        flex-wrap: wrap;
+    }
 }
