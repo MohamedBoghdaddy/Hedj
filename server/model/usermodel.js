@@ -12,17 +12,25 @@ const UserSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["customer", "employee", "admin"],
+      default: "customer", // Default to customer if not specified
     },
+
+    department: {
+      type: String,
+      required: function () {
+        return this.role === "employee"; // Department is required for employees
+      },
+    },
+
     receiveNotifications: {
       type: Boolean,
       default: true,
     },
+
     profilePhoto: {
       type: String,
     },
-    
   },
   { timestamps: true }
 );

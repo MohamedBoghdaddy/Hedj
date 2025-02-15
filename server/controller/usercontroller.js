@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import User from "../model/usermodel.js";
+import asyncHandler from "express-async-handler";
 
 dotenv.config();
 
@@ -204,3 +205,29 @@ export const checkAuth = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+
+// ✅ Get Users Based on Role
+const getUsersByRole = asyncHandler(async (req, res) => {
+  try {
+    const { role } = req.query; // Extract role from query parameters
+
+    if (!role || !["customer", "employee", "admin"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    const users = await User.find({ role });
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: `No ${role}s found` });
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users by role:", error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+});
+
+export { getUsersByRole };
