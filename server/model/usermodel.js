@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     firstName: { type: String, required: true },
     middleName: { type: String },
     lastName: { type: String, required: true },
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }], // ✅ Wishlist Array
 
     role: {
       type: String,

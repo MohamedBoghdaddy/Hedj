@@ -47,7 +47,7 @@ export const ShopContextProvider = ({ children }) => {
     });
 
     // 🔹 Save to Backend
-    axios.post(`${API_URL}/api/cart`, { item }).catch(console.error);
+    axios.post(`${API_URL}/api/cart/add`, { item }).catch(console.error);
   }, []);
 
   // ✅ Remove Item from Cart

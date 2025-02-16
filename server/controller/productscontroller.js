@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import { check, validationResult } from "express-validator";
 import Product from "../model/productsmodel.js";
+import User from "../model/usermodel.js";
 
 // Validation middleware for product operations
 export const validateProduct = [
@@ -121,3 +122,44 @@ export const checkout = asyncHandler(async (req, res) => {
   req.session.cart = [];
   res.status(200).json({ message: "Purchase successful" });
 });
+
+
+// ✅ Add to Wishlist Function
+export const addToWishlist = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.user?._id; // Ensure user is authenticated
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized. Please log in." });
+    }
+
+    // ✅ Check if Product Exists
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // ✅ Find User & Update Wishlist
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Prevent Duplicate Wishlist Entries
+    if (user.wishlist.includes(productId)) {
+      return res.status(400).json({ message: "Product already in wishlist" });
+    }
+
+    user.wishlist.push(productId);
+    await user.save();
+
+    return res.status(200).json({
+      message: "Product added to wishlist successfully",
+      wishlist: user.wishlist,
+    });
+  } catch (error) {
+    console.error("❌ Error adding to wishlist:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

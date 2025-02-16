@@ -8,6 +8,7 @@ import {
   addToCart,
   checkout,
   validateProduct,
+  addToWishlist,
 } from "../controller/productscontroller.js";
 import {
   verifyAdminOrEmployee,
@@ -33,5 +34,6 @@ router.delete("/delete/:id", verifyAdminOrEmployee, deleteProduct); // Delete pr
 // ✅ User Routes (Requires Authentication)
 router.post("/cart/add", verifyUser, addToCart); // Add product to cart
 router.post("/cart/checkout", verifyUser, checkout); // Checkout & Purchase
+router.post("/wishlist", verifyUser, addToWishlist); // ✅ Add to Wishlist API
 
 export default router;
