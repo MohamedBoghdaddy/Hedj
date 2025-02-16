@@ -1,25 +1,41 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
 export const ShopContext = createContext(null);
 
-const getDefaultCart = () => {
-  let cart = {};
-  return cart;
+// ✅ Helper function to get stored items from localStorage
+const getStoredData = (key, defaultValue) => {
+  const storedData = localStorage.getItem(key);
+  return storedData ? JSON.parse(storedData) : defaultValue;
 };
 
-export const ShopContextProvider = (props) => {
+// ✅ Initialize Cart & Wishlist
+const getDefaultCart = () => getStoredData("cartItems", {});
+const getDefaultWishlist = () => getStoredData("wishlistItems", []);
+
+// ✅ Backend API URL (Adjust for local or production)
+const API_URL = process.env.REACT_APP_API_URL || "https://hedj.onrender.com";
+
+export const ShopContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(getDefaultCart());
-  const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistItems, setWishlistItems] = useState(getDefaultWishlist());
   const [purchaseHistory, setPurchaseHistory] = useState([]);
 
-  const getTotalCartAmount = () => {
-    return Object.values(cartItems).reduce(
+  // ✅ Save Cart & Wishlist to localStorage on changes
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
+  }, [cartItems, wishlistItems]);
+
+  // ✅ Get Total Cart Amount
+  const getTotalCartAmount = () =>
+    Object.values(cartItems).reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
-  };
 
-  const addToCart = (item) => {
+  // ✅ Add Item to Cart
+  const addToCart = useCallback((item) => {
     setCartItems((prev) => {
       const newCart = { ...prev };
       if (newCart[item.id]) {
@@ -29,9 +45,13 @@ export const ShopContextProvider = (props) => {
       }
       return newCart;
     });
-  };
 
-  const removeFromCart = (itemId) => {
+    // 🔹 Save to Backend
+    axios.post(`${API_URL}/api/cart`, { item }).catch(console.error);
+  }, []);
+
+  // ✅ Remove Item from Cart
+  const removeFromCart = useCallback((itemId) => {
     setCartItems((prev) => {
       const newCart = { ...prev };
       if (newCart[itemId].quantity > 1) {
@@ -41,21 +61,42 @@ export const ShopContextProvider = (props) => {
       }
       return newCart;
     });
-  };
 
-  const addToWishlist = (item) => {
-    setWishlistItems((prev) => [...prev, item]);
-  };
+    // 🔹 Remove from Backend
+    axios.delete(`${API_URL}/api/cart/${itemId}`).catch(console.error);
+  }, []);
 
-  const removeFromWishlist = (itemId) => {
+  // ✅ Add Item to Wishlist (Avoid Duplicates)
+  const addToWishlist = useCallback((item) => {
+    setWishlistItems((prev) => {
+      if (!prev.some((wishlistItem) => wishlistItem.id === item.id)) {
+        return [...prev, item];
+      }
+      return prev;
+    });
+
+    // 🔹 Save to Backend
+    axios.post(`${API_URL}/api/wishlist`, { item }).catch(console.error);
+  }, []);
+
+  // ✅ Remove Item from Wishlist
+  const removeFromWishlist = useCallback((itemId) => {
     setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
-  };
 
-  const checkout = () => {
+    // 🔹 Remove from Backend
+    axios.delete(`${API_URL}/api/wishlist/${itemId}`).catch(console.error);
+  }, []);
+
+  // ✅ Checkout & Clear Cart
+  const checkout = useCallback(() => {
     setPurchaseHistory([...purchaseHistory, ...Object.values(cartItems)]);
     setCartItems(getDefaultCart());
-  };
 
+    // 🔹 Send Purchase Data to Backend
+    axios.post(`${API_URL}/api/checkout`, { cartItems }).catch(console.error);
+  }, [cartItems]);
+
+  // ✅ Context Value (Memoized for Optimization)
   const contextValue = {
     cartItems,
     wishlistItems,
@@ -69,8 +110,6 @@ export const ShopContextProvider = (props) => {
   };
 
   return (
-    <ShopContext.Provider value={contextValue}>
-      {props.children}
-    </ShopContext.Provider>
+    <ShopContext.Provider value={contextValue}>{children}</ShopContext.Provider>
   );
 };

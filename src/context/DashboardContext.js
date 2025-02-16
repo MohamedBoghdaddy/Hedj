@@ -11,10 +11,13 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
 
-// Create Context
+// ✅ Backend API Base URL (Render)
+const API_URL = "https://hedj.onrender.com";
+
+// ✅ Create Context
 export const DashboardContext = createContext();
 
-// Initial State
+// ✅ Initial State
 const initialState = {
   analytics: null,
   settings: null,
@@ -28,7 +31,7 @@ const initialState = {
   error: null,
 };
 
-// Reducer Function
+// ✅ Reducer Function
 const dashboardReducer = (state, action) => {
   switch (action.type) {
     case "FETCH_SUCCESS":
@@ -42,7 +45,7 @@ const dashboardReducer = (state, action) => {
   }
 };
 
-// Provider Component
+// ✅ Provider Component
 export const DashboardProvider = ({ children }) => {
   const { state: authState } = useAuthContext();
   const { user, isAuthenticated } = authState;
@@ -51,7 +54,7 @@ export const DashboardProvider = ({ children }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Fetch Dashboard Data
+  // ✅ Fetch Dashboard Data
   const fetchDashboardData = useCallback(async () => {
     if (!isAuthenticated || !user) return;
 
@@ -63,17 +66,16 @@ export const DashboardProvider = ({ children }) => {
         customersRes,
         employeesRes,
         adminsRes,
-        reportsRes,
         profileRes,
       ] = await Promise.allSettled([
-        axios.get("http://localhost:8000/api/Analytics"),
-        axios.get("http://localhost:8000/api/settings"),
-        axios.get("http://localhost:8000/api/products"),
-        axios.get("http://localhost:8000/api/users/filter?role=customer"),
-        axios.get("http://localhost:8000/api/users/filter?role=employee"),
-        axios.get("http://localhost:8000/api/users/filter?role=admin"),
+        axios.get(`${API_URL}/api/analytics`),
+        axios.get(`${API_URL}/api/settings`),
+        axios.get(`${API_URL}/api/products`),
+        axios.get(`${API_URL}/api/users/filter?role=customer`),
+        axios.get(`${API_URL}/api/users/filter?role=employee`),
+        axios.get(`${API_URL}/api/users/filter?role=admin`),
         user?._id
-          ? axios.get(`http://localhost:8000/api/users/${user._id}`)
+          ? axios.get(`${API_URL}/api/users/${user._id}`)
           : Promise.resolve({ status: "fulfilled", value: { data: null } }),
       ]);
 
@@ -93,8 +95,6 @@ export const DashboardProvider = ({ children }) => {
           employees:
             employeesRes.status === "fulfilled" ? employeesRes.value.data : [],
           admins: adminsRes.status === "fulfilled" ? adminsRes.value.data : [],
-          reports:
-            reportsRes.status === "fulfilled" ? reportsRes.value.data : [],
           profile:
             profileRes.status === "fulfilled" ? profileRes.value.data : null,
         },
@@ -108,11 +108,11 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [isAuthenticated, user]);
 
-  // Fetch sales stats and update chart data
+  // ✅ Fetch Chart Data (Sales Analytics)
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get("/api/Analystics");
+        const { data } = await axios.get(`${API_URL}/api/analytics`);
         setChartData({
           series: [{ name: "Sales", data: data.salesTrend }],
           options: {
@@ -127,13 +127,11 @@ export const DashboardProvider = ({ children }) => {
     fetchStats();
   }, []);
 
-  // Fetch profile information
+  // ✅ Fetch Profile Information
   const fetchProfile = useCallback(async () => {
     try {
       if (user?._id) {
-        const response = await axios.get(
-          `http://localhost:8000/api/users/${user._id}`
-        );
+        const response = await axios.get(`${API_URL}/api/users/${user._id}`);
         dispatch({ type: "UPDATE_PROFILE", payload: response.data });
       }
     } catch (error) {
@@ -149,11 +147,11 @@ export const DashboardProvider = ({ children }) => {
     }
   }, [fetchDashboardData, fetchProfile, user]);
 
-  // Handle profile updates
+  // ✅ Handle Profile Updates
   const handleUpdateProfile = async (updatedProfile) => {
     try {
       await axios.put(
-        `http://localhost:8000/api/users/update/${user._id}`,
+        `${API_URL}/api/users/update/${user._id}`,
         updatedProfile
       );
       dispatch({ type: "UPDATE_PROFILE", payload: updatedProfile });
@@ -164,19 +162,15 @@ export const DashboardProvider = ({ children }) => {
     }
   };
 
-  // Handle file upload
+  // ✅ Handle File Upload
   const handleUpload = async (file) => {
     const formData = new FormData();
     formData.append("photo", file);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const response = await axios.post(`${API_URL}/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setUploadStatus("File uploaded successfully");
       setErrorMessage("");
       fetchProfile(); // Refresh profile after upload
@@ -191,12 +185,10 @@ export const DashboardProvider = ({ children }) => {
     }
   };
 
-  // Fetch Reports Separately
+  // ✅ Fetch Reports Separately
   const fetchReports = useCallback(async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:8000/api/Analytics"
-      );
+      const { data } = await axios.get(`${API_URL}/api/analytics`);
       dispatch({ type: "FETCH_SUCCESS", payload: { reports: data } });
     } catch (error) {
       console.error("Error fetching reports:", error);
@@ -204,21 +196,19 @@ export const DashboardProvider = ({ children }) => {
     }
   }, []);
 
-  // Handle report download
+  // ✅ Handle Report Download
   const handleDownloadReport = (reportId) => {
-    window.open(
-      `http://localhost:8000/api/Analytics/download/${reportId}`,
-      "_blank"
-    );
+    window.open(`${API_URL}/api/analytics/download/${reportId}`, "_blank");
   };
 
-  // Filter customers based on search query
+  // ✅ Filter Customers based on Search Query
   const filterCustomers = (customers, searchQuery) => {
     return customers.filter((customer) =>
       customer.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   };
 
+  // ✅ Context Value (Memoized for Optimization)
   const contextValue = useMemo(
     () => ({
       state,
@@ -254,7 +244,7 @@ export const DashboardProvider = ({ children }) => {
   );
 };
 
-// Prop types validation
+// ✅ Prop Types Validation
 DashboardProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

@@ -9,37 +9,54 @@ import jwt from "jsonwebtoken";
 import multer from "multer";
 import helmet from "helmet";
 import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Import Routes
 import employeeRoutes from "./routes/employeeroutes.js";
 import productRoutes from "./routes/productsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
-import path from "path";
-import { fileURLToPath } from "url";
 
+// ✅ Convert __dirname for ES Module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load Environment Variables
 dotenv.config();
 
+// ✅ Initialize Express App
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
 const MongoDBStore = connectMongoDBSession(session);
-const { JWT_SECRET, SESSION_SECRET, MONGO_URL, NODE_ENV, CORS_ORIGIN } =
-  process.env;
-const PORT = process.env.PORT || 8000;
 
-// 🌍 Define if Running Locally or in Production
+// ✅ Load Environment Variables with Defaults
+const {
+  JWT_SECRET = "default_jwt_secret",
+  SESSION_SECRET = "default_session_secret",
+  MONGO_URL = "mongodb://localhost:27017/hedj",
+  NODE_ENV = "development",
+  CORS_ORIGIN = "http://localhost:3000",
+  PORT = 8000,
+} = process.env;
+
+// 🌍 Check if Running in Production
 const isProduction = NODE_ENV === "production";
-const allowedOrigins = [CORS_ORIGIN || "http://localhost:3000"];
+
+// ✅ Define Allowed Origins for CORS
+const allowedOrigins = [
+  CORS_ORIGIN, // ✅ Render Frontend URL from .env
+  "http://localhost:3000", // ✅ Local Frontend
+];
 
 if (!MONGO_URL) {
   console.error("❌ MongoDB connection string (MONGO_URL) is missing.");
   process.exit(1);
 }
 
-// Configure MongoDB session store
+// ✅ Configure MongoDB Session Store
 const store = new MongoDBStore({
   uri: MONGO_URL,
   collection: "sessions",
@@ -51,12 +68,12 @@ store.on("error", (error) => {
 
 // 🔒 Security & Middleware
 app.use(helmet()); // Security headers
-app.use(morgan(isProduction ? "tiny" : "dev")); // Use less logging in production
+app.use(morgan(isProduction ? "tiny" : "dev")); // Reduce logs in production
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// 🔗 CORS Setup
+// 🔗 CORS Setup (Supports Multiple Origins)
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -117,15 +134,15 @@ const connectDB = async () => {
   }
 };
 
-// Call function to connect to DB
+// ✅ Call function to connect to DB
 connectDB();
 
-// 📌 Routes
-app.use("/api/employees", employeeRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/analytics", analyticsRoutes);
-app.use("/api/settings", settingsRoutes);
+// 📌 API Routes (Versioned)
+app.use("/api/v1/employees", employeeRoutes);
+app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
+app.use("/api/v1/settings", settingsRoutes);
 
 // 📂 Serve Static Files (Uploads)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
