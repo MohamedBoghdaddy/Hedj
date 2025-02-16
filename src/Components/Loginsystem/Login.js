@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { useLogin } from "../../hooks/useLogin";
 import "../../Styles/login.css"; // Adjust the path as needed
@@ -19,9 +20,11 @@ const Login = () => {
   return (
     <div className="main-container">
       <div className="login-container">
+        {/* 🔹 Left Side - Login Form */}
         <div className="left-login">
           <h2>Login</h2>
           <form onSubmit={handleLogin}>
+            {/* ✅ Email Field */}
             <div className="field">
               <div className="field-wrapper">
                 <label htmlFor="email">Email:</label>
@@ -34,6 +37,8 @@ const Login = () => {
                 />
               </div>
             </div>
+
+            {/* ✅ Password Field with Show/Hide Toggle */}
             <div className="field password-container">
               <div className="field-wrapper">
                 <label htmlFor="password">Password:</label>
@@ -55,14 +60,19 @@ const Login = () => {
                 </button>
               </div>
             </div>
+
+            {/* ✅ Error & Success Messages */}
             {errorMessage && <div className="error">{errorMessage}</div>}
             {successMessage && <div className="success">{successMessage}</div>}
+
+            {/* ✅ Login Button */}
             <button className="left_btn" type="submit" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </button>
           </form>
         </div>
 
+        {/* 🔹 Right Side - Signup Prompt */}
         <div className="right-login">
           <h1>Don't have an account?</h1>
           <Link to="/signup">

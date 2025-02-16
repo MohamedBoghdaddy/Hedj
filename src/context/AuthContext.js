@@ -10,6 +10,8 @@ import axios from "axios";
 
 const AuthContext = createContext();
 
+const API_URL = "https://hedj.onrender.com"; // ✅ Use Render backend in production
+
 const initialState = {
   user: null,
   isAuthenticated: false,
@@ -53,18 +55,13 @@ export const AuthProvider = ({ children }) => {
             ?.split("=")[1] || localStorage.getItem("token");
 
         if (token) {
-          const response = await axios.get(
-            `${
-              process.env.REACT_APP_API_URL || "http://localhost:8000"
-            }/api/users/checkAuth`,
-            {
-              withCredentials: true,
-            }
-          );
+          const response = await axios.get(`${API_URL}/api/users/checkAuth`, {
+            withCredentials: true,
+          });
           const { user } = response.data;
+
           if (user) {
             dispatch({ type: "USER_LOADED", payload: user });
-            // Ensure the token is set for future requests
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             localStorage.setItem("user", JSON.stringify({ token, user }));
           } else {
@@ -106,13 +103,11 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGOUT_SUCCESS" });
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders
   const contextValue = useMemo(
     () => ({ state, dispatch, logout }),
     [state, logout]
   );
 
-  // Log only if the state changes significantly (optional)
   useEffect(() => {
     if (!state.loading) {
       console.log("AuthProvider state has changed:", state);
@@ -126,7 +121,7 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useAuthContext must be used within an AuthProvider");
   }
   return context;
