@@ -11,8 +11,13 @@ import PropTypes from "prop-types";
 import { useAuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
 
-// ✅ Backend API Base URL (Render)
-const API_URL = "https://hedj.onrender.com";
+// ✅ Define API Base URL (Uses Environment Variable or Defaults to Render Backend)
+
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://hedj.onrender.com");
 
 // ✅ Create Context
 export const DashboardContext = createContext();
@@ -54,6 +59,14 @@ export const DashboardProvider = ({ children }) => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // ✅ Set Global Axios Authorization Header
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }, []);
+
   // ✅ Fetch Dashboard Data
   const fetchDashboardData = useCallback(async () => {
     if (!isAuthenticated || !user) return;
@@ -68,14 +81,22 @@ export const DashboardProvider = ({ children }) => {
         adminsRes,
         profileRes,
       ] = await Promise.allSettled([
-        axios.get(`${API_URL}/api/analytics`),
-        axios.get(`${API_URL}/api/settings`),
-        axios.get(`${API_URL}/api/products`),
-        axios.get(`${API_URL}/api/users/filter?role=customer`),
-        axios.get(`${API_URL}/api/users/filter?role=employee`),
-        axios.get(`${API_URL}/api/users/filter?role=admin`),
+        axios.get(`${API_URL}/api/analytics`, { withCredentials: true }),
+        axios.get(`${API_URL}/api/settings`, { withCredentials: true }),
+        axios.get(`${API_URL}/api/products`, { withCredentials: true }),
+        axios.get(`${API_URL}/api/users/filter?role=customer`, {
+          withCredentials: true,
+        }),
+        axios.get(`${API_URL}/api/users/filter?role=employee`, {
+          withCredentials: true,
+        }),
+        axios.get(`${API_URL}/api/users/filter?role=admin`, {
+          withCredentials: true,
+        }),
         user?._id
-          ? axios.get(`${API_URL}/api/users/${user._id}`)
+          ? axios.get(`${API_URL}/api/users/${user._id}`, {
+              withCredentials: true,
+            })
           : Promise.resolve({ status: "fulfilled", value: { data: null } }),
       ]);
 
@@ -112,7 +133,9 @@ export const DashboardProvider = ({ children }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/analytics`);
+        const { data } = await axios.get(`${API_URL}/api/analytics`, {
+          withCredentials: true,
+        });
         setChartData({
           series: [{ name: "Sales", data: data.salesTrend }],
           options: {
@@ -131,7 +154,9 @@ export const DashboardProvider = ({ children }) => {
   const fetchProfile = useCallback(async () => {
     try {
       if (user?._id) {
-        const response = await axios.get(`${API_URL}/api/users/${user._id}`);
+        const response = await axios.get(`${API_URL}/api/users/${user._id}`, {
+          withCredentials: true,
+        });
         dispatch({ type: "UPDATE_PROFILE", payload: response.data });
       }
     } catch (error) {
@@ -152,7 +177,10 @@ export const DashboardProvider = ({ children }) => {
     try {
       await axios.put(
         `${API_URL}/api/users/update/${user._id}`,
-        updatedProfile
+        updatedProfile,
+        {
+          withCredentials: true,
+        }
       );
       dispatch({ type: "UPDATE_PROFILE", payload: updatedProfile });
       toast.success("Profile updated successfully.");
@@ -170,6 +198,7 @@ export const DashboardProvider = ({ children }) => {
     try {
       const response = await axios.post(`${API_URL}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
       setUploadStatus("File uploaded successfully");
       setErrorMessage("");
@@ -188,7 +217,9 @@ export const DashboardProvider = ({ children }) => {
   // ✅ Fetch Reports Separately
   const fetchReports = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API_URL}/api/analytics`);
+      const { data } = await axios.get(`${API_URL}/api/analytics`, {
+        withCredentials: true,
+      });
       dispatch({ type: "FETCH_SUCCESS", payload: { reports: data } });
     } catch (error) {
       console.error("Error fetching reports:", error);

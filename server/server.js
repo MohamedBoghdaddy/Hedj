@@ -28,7 +28,7 @@ dotenv.config();
 
 // ✅ Extract Environment Variables
 const {
-  PORT,
+  PORT = 8000,
   MONGO_URL,
   JWT_SECRET,
   SESSION_SECRET,
@@ -60,6 +60,9 @@ store.on("error", (error) => {
   console.error("❌ Session store error:", error);
 });
 
+// ✅ Allowed Origins for CORS
+const allowedOrigins = [CORS_ORIGIN, "http://localhost:3000"];
+
 // 🔒 Security Middleware
 app.use(helmet()); // Secure headers
 app.use(morgan(isProduction ? "tiny" : "dev")); // Log requests
@@ -70,25 +73,36 @@ app.use(cookieParser());
 // 🔗 CORS Configuration
 app.use(
   cors({
-    origin: CORS_ORIGIN, // ✅ Only allow requests from Netlify frontend
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("❌ CORS Policy Violation: Request Blocked"));
+      }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
 );
 
 // 🛠️ Session Configuration
+// 🔗 CORS Configuration (Allow Multiple Origins)
 app.use(
-  session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store,
-    cookie: {
-      httpOnly: true,
-      secure: isProduction, // Secure cookies only in production
-      sameSite: "strict",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+  cors({
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "https://hedj.netlify.app", // ✅ Deployed frontend
+        "http://localhost:3000", // ✅ Local frontend for development
+      ];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // ✅ Allow request
+      } else {
+        callback(new Error("CORS Policy Violation: Not Allowed"));
+      }
     },
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // ✅ Allows cookies (important for authentication)
   })
 );
 

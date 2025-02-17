@@ -8,9 +8,14 @@ import {
 } from "react";
 import axios from "axios";
 
-const AuthContext = createContext();
 
-const API_URL = "https://hedj.onrender.com"; // ✅ Use Render backend in production
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://hedj.onrender.com");
+
+const AuthContext = createContext();
 
 const initialState = {
   user: null,
@@ -48,22 +53,25 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = useCallback(async () => {
     if (!state.isAuthenticated && state.loading) {
       try {
-        const token =
-          document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("token="))
-            ?.split("=")[1] || localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
         if (token) {
+          // ✅ Validate user session
           const response = await axios.get(`${API_URL}/api/users/checkAuth`, {
-            withCredentials: true,
+            withCredentials: true, // ✅ Send cookies
+            headers: { Authorization: `Bearer ${token}` },
           });
+
           const { user } = response.data;
 
           if (user) {
             dispatch({ type: "USER_LOADED", payload: user });
+
+            // ✅ Store user data in localStorage
+            localStorage.setItem("user", JSON.stringify(user));
+
+            // ✅ Ensure Authorization header is set
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-            localStorage.setItem("user", JSON.stringify({ token, user }));
           } else {
             dispatch({ type: "AUTH_ERROR" });
           }
@@ -79,26 +87,26 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedUser && storedToken) {
       try {
-        const { token, user } = JSON.parse(storedUser);
-        if (user && token) {
-          dispatch({ type: "LOGIN_SUCCESS", payload: user });
-          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        } else {
-          checkAuth(); // Fallback to server check if no valid local data
-        }
+        const user = JSON.parse(storedUser);
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${storedToken}`;
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
         dispatch({ type: "AUTH_ERROR" });
       }
     } else {
-      checkAuth(); // Check server-side if no user is in local storage
+      checkAuth();
     }
   }, [checkAuth]);
 
   const logout = useCallback(() => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     axios.defaults.headers.common["Authorization"] = null;
     dispatch({ type: "LOGOUT_SUCCESS" });
   }, []);
@@ -107,12 +115,6 @@ export const AuthProvider = ({ children }) => {
     () => ({ state, dispatch, logout }),
     [state, logout]
   );
-
-  useEffect(() => {
-    if (!state.loading) {
-      console.log("AuthProvider state has changed:", state);
-    }
-  }, [state.isAuthenticated, state.user, state.loading, state]);
 
   return (
     <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>

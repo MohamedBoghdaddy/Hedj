@@ -2,7 +2,12 @@ import { useState, useCallback } from "react";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext";
 
-const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://hedj.onrender.com");
+
 
 export const useLogin = () => {
   const [email, setEmail] = useState("");
@@ -22,22 +27,25 @@ export const useLogin = () => {
 
       try {
         const response = await axios.post(
-          `${apiUrl}/api/users/login`,
+          `${API_URL}/api/users/login`,
           { email, password },
-          { withCredentials: true }
+          {
+            withCredentials: true, // ✅ Allows backend to set cookies
+            headers: { "Content-Type": "application/json" },
+          }
         );
 
         const { token, user } = response.data;
 
         if (token && user) {
-          // Store token and user in localStorage
+          // ✅ Store token & user in localStorage
           localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify({ token, user }));
+          localStorage.setItem("user", JSON.stringify(user));
 
-          // Set Authorization header
+          // ✅ Set Authorization header globally
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // Dispatch login success
+          // ✅ Dispatch login success
           dispatch({ type: "LOGIN_SUCCESS", payload: user });
 
           setSuccessMessage("Login successful");

@@ -2,7 +2,12 @@ import { useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext";
 
-const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:8000";
+
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://hedj.onrender.com");
 
 export const useSignup = () => {
   const [username, setUsername] = useState("");
@@ -34,7 +39,7 @@ export const useSignup = () => {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/api/users/signup`,
+        `${API_URL}/api/users/signup`,
         {
           username,
           email,

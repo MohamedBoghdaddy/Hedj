@@ -3,29 +3,48 @@ import axios from "axios";
 
 export const ShopContext = createContext(null);
 
+// ✅ Backend API Base URL
+
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:8000"
+    : "https://hedj.onrender.com");
+
 // ✅ Helper function to get stored items from localStorage
 const getStoredData = (key, defaultValue) => {
-  const storedData = localStorage.getItem(key);
-  return storedData ? JSON.parse(storedData) : defaultValue;
+  try {
+    const storedData = localStorage.getItem(key);
+    return storedData ? JSON.parse(storedData) : defaultValue;
+  } catch (error) {
+    console.error(`Error parsing localStorage data for ${key}:`, error);
+    return defaultValue;
+  }
 };
 
 // ✅ Initialize Cart & Wishlist
 const getDefaultCart = () => getStoredData("cartItems", {});
 const getDefaultWishlist = () => getStoredData("wishlistItems", []);
 
-// ✅ Backend API URL (Adjust for local or production)
-const API_URL = process.env.REACT_APP_API_URL || "https://hedj.onrender.com";
-
+// ✅ Shop Context Provider
 export const ShopContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(getDefaultCart());
   const [wishlistItems, setWishlistItems] = useState(getDefaultWishlist());
   const [purchaseHistory, setPurchaseHistory] = useState([]);
 
-  // ✅ Save Cart & Wishlist to localStorage on changes
+  // ✅ Save Cart & Wishlist to localStorage when changed
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
     localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
   }, [cartItems, wishlistItems]);
+
+  // ✅ Set Global Authorization Header for API Requests
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }, []);
 
   // ✅ Get Total Cart Amount
   const getTotalCartAmount = () =>
@@ -35,7 +54,7 @@ export const ShopContextProvider = ({ children }) => {
     );
 
   // ✅ Add Item to Cart
-  const addToCart = useCallback((item) => {
+  const addToCart = useCallback(async (item) => {
     setCartItems((prev) => {
       const newCart = { ...prev };
       if (newCart[item.id]) {
@@ -46,12 +65,19 @@ export const ShopContextProvider = ({ children }) => {
       return newCart;
     });
 
-    // 🔹 Save to Backend
-    axios.post(`${API_URL}/api/cart/add`, { item }).catch(console.error);
+    try {
+      await axios.post(
+        `${API_URL}/api/cart/add`,
+        { item },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+    }
   }, []);
 
   // ✅ Remove Item from Cart
-  const removeFromCart = useCallback((itemId) => {
+  const removeFromCart = useCallback(async (itemId) => {
     setCartItems((prev) => {
       const newCart = { ...prev };
       if (newCart[itemId].quantity > 1) {
@@ -62,12 +88,17 @@ export const ShopContextProvider = ({ children }) => {
       return newCart;
     });
 
-    // 🔹 Remove from Backend
-    axios.delete(`${API_URL}/api/cart/${itemId}`).catch(console.error);
+    try {
+      await axios.delete(`${API_URL}/api/cart/${itemId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
+    }
   }, []);
 
   // ✅ Add Item to Wishlist (Avoid Duplicates)
-  const addToWishlist = useCallback((item) => {
+  const addToWishlist = useCallback(async (item) => {
     setWishlistItems((prev) => {
       if (!prev.some((wishlistItem) => wishlistItem.id === item.id)) {
         return [...prev, item];
@@ -75,25 +106,44 @@ export const ShopContextProvider = ({ children }) => {
       return prev;
     });
 
-    // 🔹 Save to Backend
-    axios.post(`${API_URL}/api/wishlist`, { item }).catch(console.error);
+    try {
+      await axios.post(
+        `${API_URL}/api/wishlist/add`,
+        { item },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Error adding item to wishlist:", error);
+    }
   }, []);
 
   // ✅ Remove Item from Wishlist
-  const removeFromWishlist = useCallback((itemId) => {
+  const removeFromWishlist = useCallback(async (itemId) => {
     setWishlistItems((prev) => prev.filter((item) => item.id !== itemId));
 
-    // 🔹 Remove from Backend
-    axios.delete(`${API_URL}/api/wishlist/${itemId}`).catch(console.error);
+    try {
+      await axios.delete(`${API_URL}/api/wishlist/remove/${itemId}`, {
+        withCredentials: true,
+      });
+    } catch (error) {
+      console.error("Error removing item from wishlist:", error);
+    }
   }, []);
 
   // ✅ Checkout & Clear Cart
-  const checkout = useCallback(() => {
+  const checkout = useCallback(async () => {
     setPurchaseHistory([...purchaseHistory, ...Object.values(cartItems)]);
     setCartItems(getDefaultCart());
 
-    // 🔹 Send Purchase Data to Backend
-    axios.post(`${API_URL}/api/checkout`, { cartItems }).catch(console.error);
+    try {
+      await axios.post(
+        `${API_URL}/api/checkout`,
+        { cartItems },
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.error("Error during checkout:", error);
+    }
   }, [cartItems]);
 
   // ✅ Context Value (Memoized for Optimization)
