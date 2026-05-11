@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { commerceApi } from "../../services/api";
 import "../../Styles/admin-dashboard.css";
-
-const API_URL =
-  process.env.REACT_APP_API_URL ??
-  (typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:8000"
-    : "https://hedj.onrender.com");
-
-const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 const CHART_DATA = [
   { month: "Jan", value: 0.5, amount: "$38k" },
@@ -59,16 +51,37 @@ const Dashboard = () => {
     totalOrders: 124,
     totalCustomers: 890,
     pendingQuotes: 12,
+    lowStockCount: 1,
   });
-  const [loading, setLoading] = useState(false);
+  const [recentOrders, setRecentOrders] = useState(RECENT_ORDERS);
+  const [alerts, setAlerts] = useState(ALERTS);
+  const [collections, setCollections] = useState(REV_COLLECTIONS);
+  const [chartData, setChartData] = useState(CHART_DATA);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/admin/dashboard`, { withCredentials: true });
-        if (res.data) setStats(res.data);
+        const data = await commerceApi.getDashboard();
+        setStats(data);
+        if (data.recentOrders?.length) setRecentOrders(data.recentOrders);
+        if (data.notifications?.length) setAlerts(data.notifications);
+        if (data.revenueByCollection?.length) setCollections(data.revenueByCollection);
+        if (data.salesTrend?.length && data.salesMonths?.length) {
+          setChartData(
+            data.salesMonths.map((month, index) => ({
+              month,
+              value: Math.max(0.12, Number(data.salesTrend[index] || 0) / 80000),
+              amount: `$${Math.round(Number(data.salesTrend[index] || 0) / 1000)}k`,
+            }))
+          );
+        }
+        setError("");
       } catch {
-        // use seed stats silently
+        setError("Dashboard data is using local demo fallback.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchStats();
@@ -101,6 +114,9 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+
+      {loading && <div className="kitchen-state">Loading dashboard...</div>}
+      {error && <div className="kitchen-state">{error}</div>}
 
       {/* KPI Cards */}
       <div className="kpi-grid">
@@ -136,7 +152,7 @@ const Dashboard = () => {
           <div className="dash-card-body">
             <div style={{ position: "relative" }}>
               <div className="chart-bars">
-                {CHART_DATA.map(d => (
+                {chartData.map(d => (
                   <div
                     key={d.month}
                     className="chart-bar"
@@ -148,7 +164,7 @@ const Dashboard = () => {
                 ))}
               </div>
               <div className="chart-x-labels">
-                {CHART_DATA.map(d => (
+                {chartData.map(d => (
                   <span key={d.month} className="chart-x-label">{d.month}</span>
                 ))}
               </div>
@@ -173,7 +189,7 @@ const Dashboard = () => {
           </div>
           <div className="rev-collection">
             <p className="rev-title">Revenue by Collection</p>
-            {REV_COLLECTIONS.map(c => (
+            {collections.map(c => (
               <div className="rev-row" key={c.name}>
                 <div className="rev-dot" style={{ background: c.color }} />
                 <div className="rev-bar-wrap">
@@ -208,17 +224,17 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {RECENT_ORDERS.map(o => (
+                {recentOrders.map(o => (
                   <tr key={o.id}>
                     <td><span className="order-id">{o.id}</span></td>
                     <td>
                       <div className="customer-cell">
                         <div className="customer-initials">{o.initials}</div>
-                        <span>{o.customer}</span>
+                        <span>{o.customerName || o.customer}</span>
                       </div>
                     </td>
-                    <td style={{ fontWeight: 500 }}>{o.amount}</td>
-                    <td><span className={`badge-status ${o.statusClass}`}>{o.status}</span></td>
+                    <td style={{ fontWeight: 500 }}>{o.amountLabel || o.amount}</td>
+                    <td><span className={`badge-status ${o.statusClass || "badge-amber"}`}>{String(o.status || "new").replace(/-/g, " ")}</span></td>
                     <td>
                       <button className="action-dot-btn">
                         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>more_horiz</span>
@@ -238,12 +254,12 @@ const Dashboard = () => {
             <div className="alert-dot" />
           </div>
           <div className="dash-card-body alerts-card" style={{ padding: "16px 20px" }}>
-            {ALERTS.map((a, i) => (
-              <div key={i} className={`alert-item alert-${a.type}`}>
+            {alerts.map((a, i) => (
+              <div key={a.id || i} className={`alert-item alert-${a.type}`}>
                 <p className="alert-tag">{a.tag}</p>
                 <p className="alert-name">{a.name}</p>
                 <p className="alert-desc">{a.desc}</p>
-                {a.action && <button className="alert-action">{a.action}</button>}
+                {a.action && <button className="alert-action" type="button" onClick={() => navigate("/admin/products")}>{a.action}</button>}
                 {a.time && <p className="alert-time">{a.time}</p>}
               </div>
             ))}

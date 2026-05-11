@@ -28,6 +28,10 @@
   cursor: pointer;
   transition: border-color 150ms, box-shadow 150ms;
   position: relative;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
 }
 .kanban-card:hover { border-color: var(--color-admin-active); }
 .kanban-card.active { border: 2px solid var(--color-primary); box-shadow: 0 0 0 4px rgba(0,0,0,0.04); }

@@ -24,7 +24,7 @@ const Setting = () => {
     if (user?._id) {
       fetchProfile(); // Fetch user profile
     }
-  }, [fetchDashboardData, user]);
+  }, [fetchDashboardData, fetchProfile, user]);
 
   // Sync Profile State with Context
   useEffect(() => {

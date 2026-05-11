@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { toast } from "react-toastify";
 import useDashboard from "../../hooks/useDashboard";
-import "../../Styles/Profile.css"
+import "../../Styles/profile.css";
 const PhotoUpload = ({ onUpload }) => {
-  const { uploadPhoto } = useDashboard(); // Use DashboardContext function
+  const { handleUpload: uploadPhoto } = useDashboard(); // Use DashboardContext function
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");

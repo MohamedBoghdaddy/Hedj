@@ -1,17 +1,44 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BsPersonBadge, BsSearch, BsThreeDotsVertical } from "react-icons/bs";
-import useDashboard from "../../hooks/useDashboard";
+import { commerceApi } from "../../services/api";
 import "../../Styles/Employee.css";
 
 const EmployeeList = () => {
-  const { state } = useDashboard(); // Get employees from DashboardContext
+  const [employees, setEmployees] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Filter employees based on search query
-  const filteredEmployees =
-    state.employees?.filter((employee) =>
-      employee.name.toLowerCase().includes(searchQuery.toLowerCase())
-    ) || [];
+  useEffect(() => {
+    let mounted = true;
+
+    const loadEmployees = async () => {
+      try {
+        const data = await commerceApi.getEmployees();
+        if (mounted) {
+          setEmployees(data);
+          setError("");
+        }
+      } catch {
+        if (mounted) setError("Employees could not be loaded.");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadEmployees();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const filteredEmployees = useMemo(
+    () =>
+      employees.filter((employee) =>
+        employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [employees, searchQuery]
+  );
 
   return (
     <div className="employee-container">
@@ -23,30 +50,33 @@ const EmployeeList = () => {
             type="text"
             placeholder="Search employees..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(event) => setSearchQuery(event.target.value)}
           />
         </div>
       </div>
 
-      <div className="employee-list">
-        {filteredEmployees.length > 0 ? (
-          filteredEmployees.map((employee) => (
-            <div key={employee._id} className="employee-card">
-              <BsPersonBadge className="employee-icon" />
-              <div className="employee-info">
-                <h4>{employee.name}</h4>
-                <p>{employee.email}</p>
-                <span className={`role-badge ${employee.role}`}>
-                  {employee.role}
-                </span>
+      {loading && <p className="no-results">Loading employees...</p>}
+      {!loading && error && <p className="no-results">{error}</p>}
+
+      {!loading && !error && (
+        <div className="employee-list">
+          {filteredEmployees.length > 0 ? (
+            filteredEmployees.map((employee) => (
+              <div key={employee.id || employee._id} className="employee-card">
+                <BsPersonBadge className="employee-icon" />
+                <div className="employee-info">
+                  <h4>{employee.name}</h4>
+                  <p>{employee.email}</p>
+                  <span className={`role-badge ${employee.role}`}>{employee.role}</span>
+                </div>
+                <BsThreeDotsVertical className="options-icon" />
               </div>
-              <BsThreeDotsVertical className="options-icon" />
-            </div>
-          ))
-        ) : (
-          <p className="no-results">No employees found.</p>
-        )}
-      </div>
+            ))
+          ) : (
+            <p className="no-results">No employees found.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -173,7 +173,7 @@ export const DashboardProvider = ({ children }) => {
   }, [fetchDashboardData, fetchProfile, user]);
 
   // ✅ Handle Profile Updates
-  const handleUpdateProfile = async (updatedProfile) => {
+  const handleUpdateProfile = useCallback(async (updatedProfile) => {
     try {
       await axios.put(
         `${API_URL}/api/users/update/${user._id}`,
@@ -188,10 +188,10 @@ export const DashboardProvider = ({ children }) => {
       toast.error("Error updating profile.");
       console.error("Error updating profile:", error);
     }
-  };
+  }, [user]);
 
   // ✅ Handle File Upload
-  const handleUpload = async (file) => {
+  const handleUpload = useCallback(async (file) => {
     const formData = new FormData();
     formData.append("photo", file);
 
@@ -212,7 +212,7 @@ export const DashboardProvider = ({ children }) => {
       );
       console.error("Error uploading file:", error);
     }
-  };
+  }, [fetchProfile]);
 
   // ✅ Fetch Reports Separately
   const fetchReports = useCallback(async () => {
@@ -228,9 +228,9 @@ export const DashboardProvider = ({ children }) => {
   }, []);
 
   // ✅ Handle Report Download
-  const handleDownloadReport = (reportId) => {
+  const handleDownloadReport = useCallback((reportId) => {
     window.open(`${API_URL}/api/analytics/download/${reportId}`, "_blank");
-  };
+  }, []);
 
   // ✅ Filter Customers based on Search Query
   const filterCustomers = (customers, searchQuery) => {

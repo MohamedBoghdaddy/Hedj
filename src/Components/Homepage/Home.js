@@ -1,5 +1,6 @@
 import { useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ShopContext } from "../../context/productContext";
 import "../../Styles/home-premium.css";
 
@@ -79,6 +80,18 @@ const Home = () => {
     }
   };
 
+  const openWithKeyboard = (event, path) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      navigate(path);
+    }
+  };
+
+  const handleBestSellerAdd = async (product) => {
+    await addToCart({ ...product, id: product.id });
+    toast.success(`${product.name} added to cart.`);
+  };
+
   return (
     <div style={{ background: "var(--color-background)" }}>
 
@@ -133,7 +146,15 @@ const Home = () => {
         </div>
         <div className="collections-bento">
           {COLLECTIONS.map(({ label, sub, path, img }) => (
-            <div className="col-card" key={label} onClick={() => navigate(path)}>
+            <div
+              className="col-card"
+              key={label}
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate(path)}
+              onKeyDown={(event) => openWithKeyboard(event, path)}
+              aria-label={`Open ${label} collection`}
+            >
               <img src={img} alt={label} />
               <div className="col-card-overlay">
                 <h3>{label}</h3>
@@ -167,7 +188,7 @@ const Home = () => {
                 <img src={p.img} alt={p.name} />
                 <button
                   className="bs-card-add"
-                  onClick={() => addToCart({ ...p, id: p.id })}
+                  onClick={() => handleBestSellerAdd(p)}
                   title="Add to cart"
                 >
                   <span className="material-symbols-outlined">add_shopping_cart</span>

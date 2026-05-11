@@ -1,24 +1,28 @@
-import { useContext, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ShopContext } from "../../context/productContext";
 import "../../Styles/cart.css";
 
 const STEPS = ["Customer Info", "Delivery", "Payment"];
 
 const Cart = () => {
-  const { cartItems, removeFromCart, getTotalCartAmount } = useContext(ShopContext);
-  const navigate    = useNavigate();
+  const { cartItems, addToCart, removeFromCart, getTotalCartAmount } = useContext(ShopContext);
+  const navigate = useNavigate();
   const [promo, setPromo] = useState("");
 
-  const items      = Object.values(cartItems);
-  const subtotal   = getTotalCartAmount();
-  const install    = subtotal > 0 ? 450 : 0;
-  const tax        = Math.round(subtotal * 0.082);
-  const total      = subtotal + install + tax;
+  const items = Object.values(cartItems);
+  const subtotal = getTotalCartAmount();
+  const install = subtotal > 0 ? 450 : 0;
+  const tax = Math.round(subtotal * 0.082);
+  const total = subtotal + install + tax;
 
-  const handleQtyIncrease = (item) => {
-    // re-add the item (increases quantity in context)
-    const { addToCart } = require("../../context/productContext");
+  const applyPromo = () => {
+    if (!promo.trim()) {
+      toast.error("Enter a promo code first.");
+      return;
+    }
+    toast.success("Promo code saved for checkout review.");
   };
 
   return (
@@ -26,16 +30,15 @@ const Cart = () => {
       <div className="cart-inner">
         <h1 className="cart-page-title">Cart &amp; Checkout</h1>
 
-        {/* Stepper */}
         <div className="checkout-stepper">
-          {STEPS.map((label, i) => (
-            <>
-              {i > 0 && <div key={`div-${i}`} className="step-divider" />}
-              <div key={label} className={`step-item${i === 0 ? " active" : ""}`}>
-                <span className="step-num">{i + 1}</span>
+          {STEPS.map((label, index) => (
+            <Fragment key={label}>
+              {index > 0 && <div className="step-divider" />}
+              <div className={`step-item${index === 0 ? " active" : ""}`}>
+                <span className="step-num">{index + 1}</span>
                 <span className="step-label">{label}</span>
               </div>
-            </>
+            </Fragment>
           ))}
         </div>
 
@@ -48,13 +51,11 @@ const Cart = () => {
           </div>
         ) : (
           <div className="cart-layout">
-
-            {/* Cart items */}
             <div>
               <div className="cart-items-section">
                 <h2 className="cart-section-title">Your Selection</h2>
                 <div className="cart-items-list">
-                  {items.map(item => (
+                  {items.map((item) => (
                     <div className="cart-item" key={item.id}>
                       <div className="cart-item-img">
                         {item.img ? (
@@ -72,16 +73,16 @@ const Cart = () => {
                             )}
                           </div>
                           <span className="cart-item-price">
-                            ${(item.price * item.quantity).toLocaleString()}
+                            ${(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
                           </span>
                         </div>
                         <div className="cart-item-bottom">
                           <div className="qty-stepper">
-                            <button onClick={() => removeFromCart(item.id)}>−</button>
+                            <button type="button" onClick={() => removeFromCart(item.id)}>-</button>
                             <span>{item.quantity}</span>
-                            <button onClick={() => {}}>+</button>
+                            <button type="button" onClick={() => addToCart({ ...item, quantity: 1 })}>+</button>
                           </div>
-                          <button className="cart-remove-btn" onClick={() => removeFromCart(item.id)}>
+                          <button className="cart-remove-btn" type="button" onClick={() => removeFromCart(item.id)}>
                             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
                             Remove
                           </button>
@@ -93,7 +94,6 @@ const Cart = () => {
               </div>
             </div>
 
-            {/* Order Summary */}
             <aside>
               <div className="order-summary-box">
                 <h3 className="order-summary-title">Order Summary</h3>
@@ -120,7 +120,7 @@ const Cart = () => {
 
                 <p className="order-delivery-note">
                   <span className="material-symbols-outlined" style={{ fontSize: 16 }}>schedule</span>
-                  Estimated Delivery: 8–12 weeks
+                  Estimated Delivery: 8-12 weeks
                 </p>
 
                 <div className="promo-row">
@@ -128,15 +128,15 @@ const Cart = () => {
                     type="text"
                     placeholder="Promo Code"
                     value={promo}
-                    onChange={e => setPromo(e.target.value)}
+                    onChange={(event) => setPromo(event.target.value)}
                   />
-                  <button>Apply</button>
+                  <button type="button" onClick={applyPromo}>Apply</button>
                 </div>
 
-                <button className="btn-hedj-primary checkout-cta" onClick={() => navigate("/checkout")}>
+                <button className="btn-hedj-primary checkout-cta" type="button" onClick={() => navigate("/checkout")}>
                   Secure Checkout
                 </button>
-                <button className="quote-cta" onClick={() => navigate("/contact")}>
+                <button className="quote-cta" type="button" onClick={() => navigate("/contact")}>
                   Request Quote for Project
                 </button>
 

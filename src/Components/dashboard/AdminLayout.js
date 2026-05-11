@@ -12,7 +12,7 @@ const NAV = [
   { icon: "groups",         label: "Customers",  path: "/admin/customers" },
   { icon: "badge",          label: "Employees",  path: "/admin/employees" },
   { icon: "leaderboard",    label: "Leads",      path: "/admin/leads" },
-  { icon: "request_quote",  label: "Quotes",     path: "/admin/leads" },
+  { icon: "request_quote",  label: "Quotes",     path: "/admin/quotes" },
   { icon: "analytics",      label: "Analytics",  path: "/admin/analytics" },
   { icon: "event_seat",     label: "Showroom",   path: "/contact" },
   { icon: "settings",       label: "Settings",   path: "/admin/settings" },
@@ -22,7 +22,7 @@ const AdminLayout = ({ children }) => {
   const location   = useLocation();
   const navigate   = useNavigate();
   const { state }  = useAuthContext();
-  const { user, isAuthenticated } = state;
+  const { user } = state;
   const { logout } = useLogout();
   const [search, setSearch] = useState("");
 
@@ -99,10 +99,10 @@ const AdminLayout = ({ children }) => {
               <span className="material-symbols-outlined">shopping_bag</span>
             </Link>
             <div className="admin-topbar-divider" />
-            <div className="admin-topbar-brand" onClick={handleLogout}>
+            <button className="admin-topbar-brand" type="button" onClick={handleLogout}>
               <span className="material-symbols-outlined">account_circle</span>
               <span>Hedj Commerce</span>
-            </div>
+            </button>
           </div>
         </header>
 

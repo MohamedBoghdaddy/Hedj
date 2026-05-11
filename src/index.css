@@ -1,4 +1,5 @@
 @import './Styles/design-system.css';
+@import './Styles/admin-pages.css';
 
 *, *::before, *::after {
   box-sizing: border-box;

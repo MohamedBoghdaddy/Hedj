@@ -39,6 +39,10 @@ import Customers from "./Components/dashboard/CustomersList";
 import Orders from "./Components/dashboard/Orders";
 import Leads from "./Components/dashboard/Leads";
 import Analytics from "./Components/dashboard/Analytics";
+import AdminProducts from "./Components/dashboard/AdminProducts";
+import Quotes from "./Components/dashboard/Quotes";
+import OrderDetail from "./Components/dashboard/OrderDetail";
+import CustomerDetail from "./Components/dashboard/CustomerDetail";
 
 const App = () => {
   return (
@@ -72,11 +76,14 @@ const App = () => {
         <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
         <Route path="/admin/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
         <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
+        <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetail /></AdminLayout>} />
         <Route path="/admin/customers" element={<AdminLayout><Customers /></AdminLayout>} />
+        <Route path="/admin/customers/:customerId" element={<AdminLayout><CustomerDetail /></AdminLayout>} />
         <Route path="/admin/leads" element={<AdminLayout><Leads /></AdminLayout>} />
+        <Route path="/admin/quotes" element={<AdminLayout><Quotes /></AdminLayout>} />
         <Route path="/admin/analytics" element={<AdminLayout><Analytics /></AdminLayout>} />
         <Route path="/admin/employees" element={<AdminLayout><Employees /></AdminLayout>} />
-        <Route path="/admin/products" element={<AdminLayout><Products /></AdminLayout>} />
+        <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
         <Route path="/admin/settings" element={<AdminLayout><Setting /></AdminLayout>} />
         <Route path="/admin/reports" element={<AdminLayout><Reports /></AdminLayout>} />
 

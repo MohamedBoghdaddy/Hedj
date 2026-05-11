@@ -6,13 +6,6 @@ import { ShopContext } from "../../context/productContext";
 import { useContext } from "react";
 import "../../Styles/navbar-premium.css";
 
-const NAV_LINKS = [
-  { label: "Collections", path: "/collections" },
-  { label: "Products",    path: "/products" },
-  { label: "Showroom",    path: "/contact" },
-  { label: "Contact",     path: "/contact" },
-];
-
 const COLLECTION_LINKS = [
   { label: "Kitchens",         path: "/Kitchen" },
   { label: "Bedrooms",         path: "/Bedroom" },
