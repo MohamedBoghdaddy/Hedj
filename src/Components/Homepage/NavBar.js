@@ -1,213 +1,143 @@
 import { useState } from "react";
-import {
-  Navbar,
-  Nav,
-  Container,
-  Form,
-  NavDropdown,
-  Modal,
-} from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faMagnifyingGlass,
-  faCartShopping,
-  faUser,
-  faHeart,
-  faSignOutAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
-import logo from "../../Assets/Images/eco-logo.png";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../../Styles/Navbar.css";
-import Login from "../Loginsystem/Login";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLogout } from "../../hooks/useLogout.js";
-import SearchResultsList from "../Homepage/SearchResult";
+import { ShopContext } from "../../context/productContext";
+import { useContext } from "react";
+import "../../Styles/navbar-premium.css";
+
+const NAV_LINKS = [
+  { label: "Collections", path: "/collections" },
+  { label: "Products",    path: "/products" },
+  { label: "Showroom",    path: "/contact" },
+  { label: "Contact",     path: "/contact" },
+];
+
+const COLLECTION_LINKS = [
+  { label: "Kitchens",         path: "/Kitchen" },
+  { label: "Bedrooms",         path: "/Bedroom" },
+  { label: "Outdoor",          path: "/Outdoor" },
+  { label: "Day Complements",  path: "/DayComplement" },
+  { label: "Night Complements",path: "/NightComplement" },
+];
 
 const NavBar = () => {
-  const [searchText, setSearchText] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [expanded, setExpanded] = useState(false);
-  const { state } = useAuthContext();
-  const navigate = useNavigate();
-
+  const [mobileOpen, setMobileOpen]     = useState(false);
+  const [collectionsOpen, setCollOpen]  = useState(false);
+  const { state }   = useAuthContext();
   const { user, isAuthenticated } = state;
-  const { logout } = useLogout();
+  const { logout }  = useLogout();
+  const navigate    = useNavigate();
+  const location    = useLocation();
+  const { cartItems } = useContext(ShopContext);
 
-  const handleSearch = () => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((json) => {
-        const results = json.filter((user) =>
-          user.name.toLowerCase().includes(searchText.toLowerCase())
-        );
-        setSearchResults(results);
-      })
-      .catch((error) => console.error("Error fetching search results:", error));
-  };
+  const cartCount = Object.values(cartItems || {}).reduce(
+    (sum, item) => sum + (item.quantity || 0), 0
+  );
 
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      handleSearch();
-    }
-  };
+  const handleLogout = () => { logout(); navigate("/"); };
 
-  const handleLoginModalOpen = () => setShowLoginModal(true);
-  const handleLoginModalClose = () => setShowLoginModal(false);
-  const handleNavCollapse = () => setExpanded(!expanded);
-  const handleLogout = async () => {
-    logout();
-    navigate("/");
-  };
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + "/");
 
   return (
-    <Navbar
-      expand="lg"
-      className="custom-navbar"
-      variant="dark"
-      expanded={expanded}
-    >
-      <Container fluid>
-        {/* ✅ Brand Logo */}
-        <Navbar.Brand as={Link} to="/" className="navbar-brand">
-          <img src={logo} alt="Company Logo" className="nav-logo" />
-        </Navbar.Brand>
+    <nav className="hedj-navbar">
+      <div className="nav-inner">
 
-        {/* ✅ Toggler */}
-        <Navbar.Toggle
-          aria-controls="basic-navbar-nav"
-          className="navbar-toggler"
-          onClick={handleNavCollapse}
-        />
+        {/* Brand */}
+        <Link to="/" className="nav-brand">Hedj Commerce</Link>
 
-        <Navbar.Collapse id="navbarScroll" className="navbar-collapse">
-          <Nav className="navbar-nav ms-auto" navbarScroll>
-            <Nav.Link
-              as={Link}
-              to="/"
-              className="nav-link"
-              onClick={handleNavCollapse}
+        {/* Desktop nav links */}
+        <ul className={`nav-links${mobileOpen ? " open" : ""}`}>
+          {/* Collections dropdown */}
+          <li
+            className={`nav-dropdown${collectionsOpen ? " open" : ""}`}
+            onMouseEnter={() => setCollOpen(true)}
+            onMouseLeave={() => setCollOpen(false)}
+          >
+            <a
+              href="#collections"
+              className={isActive("/collections") || isActive("/Kitchen") ? "active" : ""}
+              onClick={(e) => { e.preventDefault(); setCollOpen(!collectionsOpen); }}
             >
-              Home
-            </Nav.Link>
-
-            {/* ✅ Dropdown for Products */}
-            <NavDropdown
-              title="Products"
-              id="basic-nav-dropdown"
-              show={showDropdown}
-              onMouseEnter={() => setShowDropdown(true)}
-              onMouseLeave={() => setShowDropdown(false)}
-            >
-              {[
-                { route: "/Kitchen", label: "KITCHEN" },
-                { route: "/Bedroom", label: "BEDROOM" },
-                { route: "/DayComplement", label: "DAY COMPLEMENTS" },
-                { route: "/NightComplement", label: "NIGHT COMPLEMENTS" },
-                { route: "/Outdoor", label: "OUTDOOR" },
-              ].map(({ route, label }) => (
-                <NavDropdown.Item
-                  key={route}
-                  as={Link}
-                  to={route}
-                  className="nav-link-products"
-                  onClick={handleNavCollapse}
-                >
+              Collections
+            </a>
+            <div className="nav-dropdown-menu">
+              {COLLECTION_LINKS.map(({ label, path }) => (
+                <Link key={path} to={path} onClick={() => { setMobileOpen(false); setCollOpen(false); }}>
                   {label}
-                </NavDropdown.Item>
+                </Link>
               ))}
-            </NavDropdown>
-
-            <Nav.Link
-              as={Link}
-              to="/contact"
-              className="nav-link"
-              onClick={handleNavCollapse}
-            >
-              Contact Us
-            </Nav.Link>
-
-            <Nav.Link
-              as={Link}
-              to="/dashboard"
-              className="nav-link"
-              onClick={handleNavCollapse}
-            >
-              Dashboard
-            </Nav.Link>
-
-            {/* ✅ Wishlist */}
-            <Nav.Link
-              as={Link}
-              to="/wishlist"
-              className="link-wish"
-              onClick={handleNavCollapse}
-            >
-              <FontAwesomeIcon icon={faHeart} />
-            </Nav.Link>
-
-            {/* ✅ Auth Section */}
-            {isAuthenticated && user ? (
-              <Nav.Link className="nav-link" onClick={handleLogout}>
-                <FontAwesomeIcon icon={faSignOutAlt} /> Logout
-              </Nav.Link>
-            ) : (
-              <Nav.Link
-                className="nav-link"
-                onClick={() => {
-                  handleLoginModalOpen();
-                  handleNavCollapse();
-                }}
-              >
-                <FontAwesomeIcon icon={faUser} />
-              </Nav.Link>
-            )}
-
-            {/* ✅ Cart */}
-            <Nav.Link
-              as={Link}
-              to="/cart"
-              className="nav-link cart-link"
-              onClick={handleNavCollapse}
-            >
-              <FontAwesomeIcon icon={faCartShopping} />
-              <span className="count">0</span>
-            </Nav.Link>
-          </Nav>
-
-          {/* ✅ Search Bar */}
-          <Form className="search-container">
-            <Form.Control
-              type="text"
-              placeholder="Search"
-              className="form-control"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-            <div
-              className="search-button"
-              role="button"
-              tabIndex={0}
-              onClick={handleSearch}
-              onKeyPress={handleKeyPress}
-            >
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
             </div>
-          </Form>
-          {searchText && <SearchResultsList results={searchResults} />}
-        </Navbar.Collapse>
-      </Container>
+          </li>
 
-      {/* ✅ Login Modal */}
-      <Modal show={showLoginModal} onHide={handleLoginModalClose} centered>
-        <Modal.Header closeButton></Modal.Header>
-        <Modal.Body>
-          <Login />
-        </Modal.Body>
-      </Modal>
-    </Navbar>
+          <li>
+            <Link
+              to="/products"
+              className={isActive("/products") ? "active" : ""}
+              onClick={() => setMobileOpen(false)}
+            >Products</Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              className={isActive("/contact") ? "active" : ""}
+              onClick={() => setMobileOpen(false)}
+            >Virtual Showroom</Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              onClick={() => setMobileOpen(false)}
+            >Contact</Link>
+          </li>
+
+          {/* Dashboard link for admins */}
+          {isAuthenticated && user && (
+            <li>
+              <Link
+                to="/dashboard"
+                className={isActive("/dashboard") || isActive("/admin") ? "active" : ""}
+                onClick={() => setMobileOpen(false)}
+              >Dashboard</Link>
+            </li>
+          )}
+        </ul>
+
+        {/* Actions */}
+        <div className="nav-actions">
+          <Link to="/wishlist" className="nav-icon-btn" title="Wishlist">
+            <span className="material-symbols-outlined">favorite</span>
+          </Link>
+
+          <Link to="/cart" className="nav-icon-btn" title="Cart">
+            <span className="material-symbols-outlined">shopping_bag</span>
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
+
+          {isAuthenticated && user ? (
+            <button className="nav-icon-btn nav-user-pill" onClick={handleLogout} title="Logout">
+              <span className="material-symbols-outlined">account_circle</span>
+            </button>
+          ) : (
+            <Link to="/Login" className="nav-icon-btn" title="Login">
+              <span className="material-symbols-outlined">account_circle</span>
+            </Link>
+          )}
+
+          {/* Mobile hamburger */}
+          <button
+            className="nav-toggle"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span style={{ transform: mobileOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
+            <span style={{ opacity: mobileOpen ? 0 : 1 }} />
+            <span style={{ transform: mobileOpen ? "rotate(-45deg) translate(5px, -5px)" : "none" }} />
+          </button>
+        </div>
+
+      </div>
+    </nav>
   );
 };
 

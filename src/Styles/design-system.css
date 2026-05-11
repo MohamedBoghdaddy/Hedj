@@ -1,0 +1,288 @@
+/* ============================================
+   HEDJ COMMERCE OS — DESIGN SYSTEM
+   CSS Custom Properties & Typography Classes
+   ============================================ */
+
+:root {
+  /* ---- Color Tokens ---- */
+  --color-background:           #FCF9F4;
+  --color-surface:              #FCF9F4;
+  --color-surface-lowest:       #FFFFFF;
+  --color-surface-low:          #F6F3EE;
+  --color-surface-container:    #F0EDE8;
+  --color-surface-high:         #EBE8E3;
+  --color-surface-highest:      #E5E2DD;
+  --color-surface-variant:      #E5E2DD;
+  --color-surface-dim:          #DCDAD5;
+
+  --color-on-background:        #1C1C19;
+  --color-on-surface:           #1C1C19;
+  --color-on-surface-variant:   #45464D;
+
+  --color-primary:              #000000;
+  --color-primary-container:    #131B2E;
+  --color-on-primary:           #FFFFFF;
+  --color-on-primary-container: #7C839B;
+  --color-primary-fixed:        #DAE2FD;
+  --color-primary-fixed-dim:    #BEC6E0;
+  --color-inverse-primary:      #BEC6E0;
+
+  --color-secondary:            #645D58;
+  --color-secondary-container:  #EAE1DA;
+  --color-on-secondary-container: #6A635E;
+
+  --color-tertiary:             #A8864F;
+  --color-on-tertiary-container: #A07E48;
+  --color-tertiary-fixed:       #FFDEAD;
+  --color-tertiary-fixed-dim:   #E8C184;
+
+  --color-outline:              #76777D;
+  --color-outline-variant:      #C6C6CD;
+
+  --color-error:                #BA1A1A;
+  --color-error-container:      #FFDAD6;
+  --color-on-error-container:   #93000A;
+
+  /* Admin sidebar */
+  --color-admin-bg:             #0F172A;
+  --color-admin-hover:          #1E293B;
+  --color-admin-active:         #D97706;
+  --color-admin-border:         #1E2A3A;
+
+  /* ---- Typography ---- */
+  --font-serif:   'Noto Serif', Georgia, serif;
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* ---- Font Sizes ---- */
+  --text-h1:        clamp(32px, 5vw, 48px);
+  --text-h2:        clamp(24px, 4vw, 36px);
+  --text-h3:        24px;
+  --text-body-lg:   18px;
+  --text-body-md:   16px;
+  --text-body-sm:   14px;
+  --text-label:     12px;
+
+  /* ---- Spacing ---- */
+  --space-xs:   4px;
+  --space-sm:   12px;
+  --space-md:   24px;
+  --space-lg:   48px;
+  --space-xl:   80px;
+  --space-gutter: 24px;
+
+  /* ---- Radius ---- */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-full: 9999px;
+
+  /* ---- Shadow ---- */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:  0 8px 32px rgba(0,0,0,0.12);
+  --shadow-xl:  0 20px 60px rgba(0,0,0,0.16);
+
+  /* ---- Transitions ---- */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   500ms ease;
+  --transition-image:  700ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ---- Typography Utilities ---- */
+.font-serif   { font-family: var(--font-serif); }
+.font-sans    { font-family: var(--font-sans); }
+
+.text-h1 {
+  font-family: var(--font-serif);
+  font-size: var(--text-h1);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+.text-h2 {
+  font-family: var(--font-serif);
+  font-size: var(--text-h2);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+}
+.text-h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  line-height: 1.4;
+  font-weight: 400;
+}
+.text-body-lg {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-lg);
+  line-height: 1.6;
+}
+.text-body-md {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-md);
+  line-height: 1.6;
+}
+.text-body-sm {
+  font-family: var(--font-sans);
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+.text-label-caps {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.text-btn {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Color Utilities ---- */
+.bg-surface         { background-color: var(--color-surface); }
+.bg-surface-low     { background-color: var(--color-surface-low); }
+.bg-surface-container { background-color: var(--color-surface-container); }
+.bg-primary         { background-color: var(--color-primary); }
+.bg-primary-dark    { background-color: var(--color-primary-container); }
+.text-primary       { color: var(--color-primary); }
+.text-on-surface    { color: var(--color-on-surface); }
+.text-muted         { color: var(--color-on-surface-variant); }
+.text-accent        { color: var(--color-on-tertiary-container); }
+.text-white         { color: #FFFFFF; }
+
+/* ---- Layout ---- */
+.hedj-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+/* ---- Material Symbols ---- */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+  font-size: 24px;
+}
+
+/* ---- Skeleton loader ---- */
+@keyframes skeleton-pulse {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--color-surface-container) 25%,
+    var(--color-surface-high) 50%,
+    var(--color-surface-container) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Badge / Status ---- */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.badge-success { background:#DCFCE7; color:#15803D; }
+.badge-warning { background:#FEF9C3; color:#854D0E; }
+.badge-amber   { background:#FEF3C7; color:#92400E; }
+.badge-error   { background:#FEE2E2; color:#991B1B; }
+.badge-info    { background:#DBEAFE; color:#1D4ED8; }
+.badge-neutral { background:var(--color-surface-highest); color:var(--color-on-surface-variant); }
+
+/* ---- Button System ---- */
+.btn-hedj-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+.btn-hedj-primary:hover  { opacity: 0.88; color: var(--color-on-primary); }
+
+.btn-hedj-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 32px;
+  background: transparent;
+  color: var(--color-on-tertiary-container);
+  border: 1.5px solid var(--color-on-tertiary-container);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+.btn-hedj-outline:hover { background: var(--color-secondary-container); color: var(--color-on-tertiary-container); }
+
+.btn-hedj-ghost {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-primary);
+  padding-bottom: 2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  text-decoration: none;
+}
+.btn-hedj-ghost:hover { color: var(--color-on-tertiary-container); border-color: var(--color-on-tertiary-container); }
+
+/* ---- Image hover scale ---- */
+.img-hover-scale { overflow: hidden; }
+.img-hover-scale img {
+  transition: transform var(--transition-image);
+  width: 100%; height: 100%; object-fit: cover;
+}
+.img-hover-scale:hover img { transform: scale(1.05); }
+
+/* ---- Divider ---- */
+.hedj-divider {
+  width: 64px; height: 2px;
+  background: var(--color-on-tertiary-container);
+  margin: 12px 0 0;
+}
+
+/* ---- Toast override ---- */
+.Toastify__toast { font-family: var(--font-sans) !important; font-size: 14px !important; }
