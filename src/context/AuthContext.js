@@ -12,7 +12,7 @@ import axios from "axios";
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (window.location.hostname === "localhost"
-    ? "http://localhost:8000"
+    ? "http://localhost:4000"
     : "https://hedj.onrender.com");
 
 const AuthContext = createContext();

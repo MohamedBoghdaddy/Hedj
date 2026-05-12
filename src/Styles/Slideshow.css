@@ -9,23 +9,23 @@
   src: url("../Assets/Fonts/Aeonik-Thin.otf") format("opentype");
 }
 body {
-  /* Updated background color */
   overflow-y: auto; /* Enable vertical scroll if needed */
   overflow-x: hidden; /* Hide horizontal scroll bar */
-background-color: #eceae6;
+  background-color: #FCF9F4;
 }
 .carousel {
   position: relative;
-  width: 80%; /* Example: 80% of parent container */
-  /* max-width: 600px; Maximum width */
-  margin: 0 auto; /* Center the carousel */
-  top:100px;
-  
+  width: min(100%, 1440px);
+  margin: 0 auto;
+  padding: 24px;
 }
 
 .carousel img {
-  width: 100%; /* Adjusted width */
-  height: auto; /* Maintain aspect ratio */
+  width: 100%;
+  height: clamp(320px, 58vw, 680px);
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
 }
 
 
@@ -35,6 +35,10 @@ background-color: #eceae6;
 }
 .carousel-caption p {
   font-family: "Aeonik Thin";
+}
+
+.carousel-caption {
+  text-shadow: 0 2px 18px rgba(0,0,0,0.45);
 }
 /* Optional: Carousel Transition */
 .carousel .carousel-item {

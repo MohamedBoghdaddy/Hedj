@@ -8,13 +8,14 @@
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid #E8E5DF;
   box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  min-height: 80px;
 }
 
 .hedj-navbar .nav-inner {
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 24px;
-  height: 76px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -164,7 +165,7 @@
   .hedj-navbar .nav-links {
     display: none;
     position: fixed;
-    top: 76px; left: 0; right: 0;
+    top: 80px; left: 0; right: 0;
     background: var(--color-surface-lowest);
     border-bottom: 1px solid var(--color-outline-variant);
     flex-direction: column;

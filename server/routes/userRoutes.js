@@ -10,6 +10,7 @@ import {
   searchUsers,
   upload,
   getUsersByRole,
+  checkAuth,
 } from "../controller/usercontroller.js";
 import { isAuthenticated } from "../middleware/AuthMiddleware.js";
 
@@ -21,6 +22,7 @@ const router = express.Router();
 router.post("/signup", registerUser); // Ensure it is lowercase
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
+router.get("/checkAuth", checkAuth);
 
 router.put(
   "/update/:userId",

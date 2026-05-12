@@ -68,8 +68,8 @@ const App = () => {
         <Route path="/contact" element={<><NavBar /><Contact /><Footer /></>} />
 
         {/* ── Auth Routes ── */}
-        <Route path="/Login" element={<><Mininavbar /><Login /><Footer /></>} />
-        <Route path="/Signup" element={<><Mininavbar /><Signup /><Footer /></>} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Signup" element={<Signup />} />
 
         {/* ── Admin / ERP Routes ── */}
         <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />

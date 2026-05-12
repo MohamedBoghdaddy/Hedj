@@ -7,7 +7,7 @@ import { useAuthContext } from "../context/AuthContext";
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (window.location.hostname === "localhost"
-    ? "http://localhost:8000"
+    ? "http://localhost:4000"
     : "https://hedj.onrender.com");
 
 export const useLogout = () => {

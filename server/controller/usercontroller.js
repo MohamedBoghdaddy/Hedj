@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
 import dotenv from "dotenv";
@@ -12,7 +13,17 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "hedj-demo-jwt-secret";
+
+const isDatabaseReady = () => mongoose.connection.readyState === 1;
+
+const requireAuthDatabase = (res) => {
+  if (isDatabaseReady()) return true;
+  res.status(503).json({
+    message: "Authentication database is unavailable. Please try again later.",
+  });
+  return false;
+};
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -39,6 +50,8 @@ export const registerUser = async (req, res) => {
   if (!username || !email || !password || !firstName || !lastName || !gender) {
     return res.status(400).json({ message: "All fields are required" });
   }
+
+  if (!requireAuthDatabase(res)) return;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -80,6 +93,8 @@ export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return res.status(400).json({ message: "Email and password required" });
+
+  if (!requireAuthDatabase(res)) return;
 
   try {
     const user = await User.findOne({ email });
@@ -192,8 +207,13 @@ export const searchUsers = async (req, res) => {
 
 
 export const checkAuth = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
+
   try {
-    const token = req.cookies.token;
+    const authHeader = req.header("Authorization");
+    const token =
+      req.cookies.token ||
+      (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : authHeader);
     if (!token) return res.status(401).json({ message: "Not authenticated" });
 
     const decoded = jwt.verify(token, JWT_SECRET);

@@ -25,11 +25,14 @@ const __dirname = path.dirname(__filename);
 
 const {
   PORT = 4000,
-  MONGO_URL,
+  MONGO_URL: RAW_MONGO_URL,
+  MONGO_URI,
   SESSION_SECRET = "hedj-demo-session-secret",
   CORS_ORIGIN = "http://localhost:3000",
   NODE_ENV = "development",
 } = process.env;
+
+const MONGO_URL = RAW_MONGO_URL || MONGO_URI;
 
 const isProduction = NODE_ENV === "production";
 const app = express();
@@ -129,7 +132,11 @@ const connectDB = async () => {
     startServer();
   } catch (error) {
     console.error("Database connection error:", error);
-    process.exit(1);
+    if (isProduction) {
+      process.exit(1);
+    }
+    console.warn("Continuing in demo mode because MongoDB is unreachable in development.");
+    startServer();
   }
 };
 
