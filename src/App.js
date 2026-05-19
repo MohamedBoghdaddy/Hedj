@@ -11,11 +11,6 @@ import Footer from "./Components/Homepage/Footer";
 // Public pages
 import Home from "./Components/Homepage/Home";
 import Slideshow from "./Components/Homepage/Slideshow";
-import Kitchen from "./Components/Products/Kitchen";
-import Bedrooms from "./Components/Products/Bedrooms";
-import DayComplement from "./Components/Products/DayComplement";
-import NightComplement from "./Components/Products/NighComplement";
-import Outdoor from "./Components/Products/Outdoor";
 import ProductDetail from "./Components/Products/ProductDetail";
 import Wishlist from "./Components/Products/wishlist";
 import KitchenCollections from "./Pages/KitchenCollections";
@@ -52,8 +47,10 @@ import AdminERPHierarchy from "./Pages/AdminERPHierarchy";
 import AdminERPWorkflows from "./Pages/AdminERPWorkflows";
 import AdminERPApprovals from "./Pages/AdminERPApprovals";
 import ProductCollections from "./Pages/ProductCollections";
+import CollectionCategory from "./Pages/CollectionCategory";
 import VirtualShowroom from "./Pages/VirtualShowroom";
 import CustomerDashboard from "./Pages/CustomerDashboard";
+import StaticPlaceholder from "./Pages/StaticPlaceholder";
 
 const AdminRoute = ({ children }) => {
   const { state } = useAuthContext();
@@ -86,22 +83,42 @@ const App = () => {
 
         {/* ── Public Routes ── */}
         <Route path="/" element={<><NavBar /><Slideshow /><Home /><Footer /></>} />
+
+        {/* Collections */}
         <Route path="/collections" element={<ProductCollections />} />
         <Route path="/collections/kitchens" element={<KitchenCollections />} />
-        <Route path="/Kitchen" element={<><NavBar /><Kitchen /><Footer /></>} />
-        <Route path="/Bedroom" element={<><NavBar /><Bedrooms /><Footer /></>} />
-        <Route path="/DayComplement" element={<><NavBar /><DayComplement /><Footer /></>} />
-        <Route path="/NightComplement" element={<><NavBar /><NightComplement /><Footer /></>} />
-        <Route path="/Outdoor" element={<><NavBar /><Outdoor /><Footer /></>} />
+        <Route path="/collections/bedrooms" element={<CollectionCategory />} />
+        <Route path="/collections/outdoor" element={<CollectionCategory />} />
+        <Route path="/collections/complements" element={<CollectionCategory />} />
+
+        {/* Legacy collection routes → premium redirects */}
+        <Route path="/Kitchen" element={<Navigate to="/collections/kitchens" replace />} />
+        <Route path="/Kitchens" element={<Navigate to="/collections/kitchens" replace />} />
+        <Route path="/Bedroom" element={<Navigate to="/collections/bedrooms" replace />} />
+        <Route path="/Bedrooms" element={<Navigate to="/collections/bedrooms" replace />} />
+        <Route path="/Outdoor" element={<Navigate to="/collections/outdoor" replace />} />
+        <Route path="/DayComplement" element={<Navigate to="/collections/complements?type=day" replace />} />
+        <Route path="/NightComplement" element={<Navigate to="/collections/complements?type=night" replace />} />
+        <Route path="/Complements" element={<Navigate to="/collections/complements" replace />} />
+
+        {/* Products */}
         <Route path="/products" element={<ProductCollections />} />
         <Route path="/Products" element={<ProductCollections />} />
         <Route path="/products/obsidian-kitchen-island" element={<PremiumProductDetail />} />
         <Route path="/products/:slug" element={<><NavBar /><ProductDetail /><Footer /></>} />
+
+        {/* Commerce */}
         <Route path="/cart" element={<CartCheckout />} />
         <Route path="/checkout" element={<CartCheckout />} />
         <Route path="/wishlist" element={<><NavBar /><Wishlist /><Footer /></>} />
         <Route path="/contact" element={<PremiumContact />} />
         <Route path="/virtual-showroom" element={<VirtualShowroom />} />
+
+        {/* Static / legal pages */}
+        <Route path="/privacy" element={<StaticPlaceholder pageKey="privacy" />} />
+        <Route path="/terms" element={<StaticPlaceholder pageKey="terms" />} />
+        <Route path="/shipping" element={<StaticPlaceholder pageKey="shipping" />} />
+        <Route path="/sustainability" element={<StaticPlaceholder pageKey="sustainability" />} />
 
         {/* ── Auth Routes ── */}
         <Route path="/Login" element={<Login />} />

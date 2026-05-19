@@ -1311,3 +1311,163 @@
     height: 260px;
   }
 }
+
+/* --- Navbar Dropdown -------------------------------------------------------- */
+
+.commerce-nav-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.commerce-nav-dropdown-trigger {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: #78716c;
+  font-size: 14px;
+  font-family: ''Inter'', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  line-height: 1;
+  transition: color 0.16s;
+}
+
+.commerce-nav-dropdown-trigger:hover,
+.commerce-nav-dropdown-trigger.active {
+  color: #000000;
+}
+
+.commerce-nav-dropdown-trigger.active {
+  border-bottom: 1px solid #000000;
+  padding-bottom: 4px;
+}
+
+.commerce-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: -16px;
+  min-width: 210px;
+  background: #ffffff;
+  border: 1px solid #e5e2dd;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.1);
+  z-index: 200;
+  padding: 6px 0;
+}
+
+.commerce-dropdown-panel a {
+  display: block;
+  padding: 9px 20px;
+  font-size: 13px;
+  color: #57534e;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s;
+}
+
+.commerce-dropdown-panel a:hover {
+  background: #f6f3ee;
+  color: #000000;
+}
+
+.commerce-dropdown-panel a.active {
+  background: #f6f3ee;
+  color: #000000;
+  border-bottom: none !important;
+  padding-bottom: 9px !important;
+}
+
+/* --- Footer Grid (replaces old footer-inner layout) -------------------------- */
+
+.commerce-footer {
+  margin-top: 80px;
+  background: #f5f5f4;
+  border-top: 1px solid #e7e5e4;
+  padding: 64px 0 0;
+}
+
+.commerce-footer-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+.commerce-footer-logo {
+  font-family: ''Noto Serif'', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1c1c19;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.commerce-footer-brand-col p {
+  font-size: 13px;
+  color: #78716c;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.commerce-footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #1c1c19;
+  margin: 0 0 16px;
+}
+
+.commerce-footer-col nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.commerce-footer-col a {
+  font-size: 13px;
+  color: #78716c;
+  text-decoration: none;
+  letter-spacing: normal;
+  text-transform: none;
+  font-family: ''Inter'', sans-serif;
+  transition: color 0.15s;
+}
+
+.commerce-footer-col a:hover {
+  color: #000000;
+}
+
+.commerce-footer-bottom {
+  max-width: 1280px;
+  margin: 48px auto 0;
+  padding: 24px;
+  border-top: 1px solid #e7e5e4;
+}
+
+.commerce-footer-bottom p {
+  font-size: 11px;
+  color: #a8a29e;
+  font-family: ''Noto Serif'', serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .commerce-footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .commerce-footer-grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+}

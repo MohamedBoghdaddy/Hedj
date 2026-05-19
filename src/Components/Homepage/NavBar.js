@@ -35,9 +35,10 @@ const NavBar = () => {
   return (
     <nav className="hedj-navbar">
       <div className="nav-inner">
-
         {/* Brand */}
-        <Link to="/" className="nav-brand">Hedj Commerce</Link>
+        <Link to="/" className="nav-brand">
+          Hedj Commerce
+        </Link>
 
         {/* Desktop nav links */}
         <ul className={`nav-links${mobileOpen ? " open" : ""}`}>
@@ -49,14 +50,26 @@ const NavBar = () => {
           >
             <a
               href="#collections"
-              className={isActive("/collections") || isActive("/Kitchen") ? "active" : ""}
-              onClick={(e) => { e.preventDefault(); setCollOpen(!collectionsOpen); }}
+              className={
+                isActive("/collections") || isActive("/Kitchen") ? "active" : ""
+              }
+              onClick={(e) => {
+                e.preventDefault();
+                setCollOpen(!collectionsOpen);
+              }}
             >
               Collections
             </a>
             <div className="nav-dropdown-menu">
               {COLLECTION_LINKS.map(({ label, path }) => (
-                <Link key={path} to={path} onClick={() => { setMobileOpen(false); setCollOpen(false); }}>
+                <Link
+                  key={path}
+                  to={path}
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setCollOpen(false);
+                  }}
+                >
                   {label}
                 </Link>
               ))}
@@ -68,20 +81,23 @@ const NavBar = () => {
               to="/products"
               className={isActive("/products") ? "active" : ""}
               onClick={() => setMobileOpen(false)}
-            >Products</Link>
+            >
+              Products
+            </Link>
           </li>
           <li>
             <Link
-              to="/contact"
-              className={isActive("/contact") ? "active" : ""}
+              to="/VirtualShowroom"
+              className={isActive("/VirtualShowroom") ? "active" : ""}
               onClick={() => setMobileOpen(false)}
-            >Virtual Showroom</Link>
+            >
+              Virtual Showroom
+            </Link>
           </li>
           <li>
-            <Link
-              to="/contact"
-              onClick={() => setMobileOpen(false)}
-            >Contact</Link>
+            <Link to="/contact" onClick={() => setMobileOpen(false)}>
+              Contact
+            </Link>
           </li>
 
           {/* Dashboard link for admins */}
@@ -89,9 +105,13 @@ const NavBar = () => {
             <li>
               <Link
                 to="/dashboard"
-                className={isActive("/dashboard") || isActive("/admin") ? "active" : ""}
+                className={
+                  isActive("/dashboard") || isActive("/admin") ? "active" : ""
+                }
                 onClick={() => setMobileOpen(false)}
-              >Dashboard</Link>
+              >
+                Dashboard
+              </Link>
             </li>
           )}
         </ul>
@@ -108,7 +128,11 @@ const NavBar = () => {
           </Link>
 
           {isAuthenticated && user ? (
-            <button className="nav-icon-btn nav-user-pill" onClick={handleLogout} title="Logout">
+            <button
+              className="nav-icon-btn nav-user-pill"
+              onClick={handleLogout}
+              title="Logout"
+            >
               <span className="material-symbols-outlined">account_circle</span>
             </button>
           ) : (
@@ -123,12 +147,23 @@ const NavBar = () => {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle navigation"
           >
-            <span style={{ transform: mobileOpen ? "rotate(45deg) translate(5px, 5px)" : "none" }} />
+            <span
+              style={{
+                transform: mobileOpen
+                  ? "rotate(45deg) translate(5px, 5px)"
+                  : "none",
+              }}
+            />
             <span style={{ opacity: mobileOpen ? 0 : 1 }} />
-            <span style={{ transform: mobileOpen ? "rotate(-45deg) translate(5px, -5px)" : "none" }} />
+            <span
+              style={{
+                transform: mobileOpen
+                  ? "rotate(-45deg) translate(5px, -5px)"
+                  : "none",
+              }}
+            />
           </button>
         </div>
-
       </div>
     </nav>
   );

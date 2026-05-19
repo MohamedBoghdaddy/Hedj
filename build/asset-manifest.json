@@ -1,34 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.7975b402.css",
-    "main.js": "/static/js/main.8c17aec0.js",
-    "static/js/453.64be9eb2.chunk.js": "/static/js/453.64be9eb2.chunk.js",
+    "main.css": "/static/css/main.d53af3db.css",
+    "main.js": "/static/js/main.c15a8b53.js",
+    "static/js/453.69f3745b.chunk.js": "/static/js/453.69f3745b.chunk.js",
     "static/media/7.jpg": "/static/media/7.d90af917432088fb89d3.jpg",
     "static/media/23.jpg": "/static/media/23.798baa9725d625af037b.jpg",
     "static/media/81.jpg": "/static/media/81.de85eddf4117dcdca24f.jpg",
-    "static/media/74.jpg": "/static/media/74.bd342ea3d4dafd74801a.jpg",
-    "static/media/73.jpg": "/static/media/73.cddde11ca6991035fc52.jpg",
-    "static/media/70.jpg": "/static/media/70.28d710b4ce7cf7574644.jpg",
-    "static/media/outdoor1.jpg": "/static/media/outdoor1.72d4b35f1e259c365f5a.jpg",
-    "static/media/greenday.jpg": "/static/media/greenday.c978aa7f86091941bbe7.jpg",
-    "static/media/daybedroom.jpg": "/static/media/daybedroom.a981b4b72244fbe76574.jpg",
-    "static/media/outdoor2.jpg": "/static/media/outdoor2.407fcc45007c02148604.jpg",
-    "static/media/night3.jpg": "/static/media/night3.41607d78ad815a3d3fd5.jpg",
-    "static/media/outdoor4.jpg": "/static/media/outdoor4.f1d8ee94a591cf103236.jpg",
     "static/media/Aeonik-Thin.otf": "/static/media/Aeonik-Thin.5f053c6b6c30034467b1.otf",
-    "static/media/dayroom.jpg": "/static/media/dayroom.58aa55361910bf914701.jpg",
-    "static/media/outdoor3.jpg": "/static/media/outdoor3.c1d63697195222a1ba46.jpg",
-    "static/media/night2.jpg": "/static/media/night2.a7310eae7292a809596f.jpg",
-    "static/media/night1.jpg": "/static/media/night1.8d4830dd5d41c1314139.jpg",
-    "static/media/night4.jpg": "/static/media/night4.add0cd488e2137cb3033.jpg",
     "static/media/Beverly.otf": "/static/media/Beverly.be4abf25b0a091dbd612.otf",
     "index.html": "/index.html",
-    "main.7975b402.css.map": "/static/css/main.7975b402.css.map",
-    "main.8c17aec0.js.map": "/static/js/main.8c17aec0.js.map",
-    "453.64be9eb2.chunk.js.map": "/static/js/453.64be9eb2.chunk.js.map"
+    "main.d53af3db.css.map": "/static/css/main.d53af3db.css.map",
+    "main.c15a8b53.js.map": "/static/js/main.c15a8b53.js.map",
+    "453.69f3745b.chunk.js.map": "/static/js/453.69f3745b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7975b402.css",
-    "static/js/main.8c17aec0.js"
+    "static/css/main.d53af3db.css",
+    "static/js/main.c15a8b53.js"
   ]
 }

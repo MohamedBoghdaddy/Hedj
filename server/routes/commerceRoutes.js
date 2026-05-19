@@ -52,7 +52,11 @@ const removeCartItem = (req, res) => {
 router.get("/health", (req, res) => {
   res.json({
     ok: true,
-    mode: process.env.MONGO_URL || process.env.MONGO_URI ? "mongo" : "demo",
+    mode: req.app.locals.mongoMode || "demo",
+    mongo: {
+      available: req.app.locals.mongoAvailable === true,
+      source: req.app.locals.mongoUriSource || null,
+    },
   });
 });
 

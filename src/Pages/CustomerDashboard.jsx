@@ -100,7 +100,7 @@ export default function CustomerDashboard() {
 
           <nav className="customer-dashboard-links">
             <Link to="/collections">Collections</Link>
-            <Link to="/journal">Journal</Link>
+            <Link to="/products">Products</Link>
             <Link to="/virtual-showroom">Showrooms</Link>
             <Link to="/contact">Consultations</Link>
           </nav>
@@ -110,9 +110,9 @@ export default function CustomerDashboard() {
               <span className="material-symbols-outlined">shopping_bag</span>
             </Link>
 
-            <button type="button" aria-label="Profile" className="active">
+            <Link to="/dashboard" aria-label="Dashboard" className="active">
               <span className="material-symbols-outlined">person</span>
-            </button>
+            </Link>
           </div>
         </div>
       </header>
