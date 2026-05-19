@@ -17,6 +17,7 @@ import productRoutes from "./routes/productsRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
+import erpRoutes from "./routes/erpRoutes.js";
 
 dotenv.config();
 
@@ -103,6 +104,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/erp", erpRoutes);
 
 app.get("/", (req, res) => {
   res.json({

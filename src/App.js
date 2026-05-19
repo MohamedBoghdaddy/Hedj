@@ -45,6 +45,12 @@ import CustomerDetail from "./Components/dashboard/CustomerDetail";
 import AdminOrdersPipeline from "./Pages/AdminOrdersPipeline";
 import AdminAnalytics from "./Pages/AdminAnalytics";
 import AdminEmployees from "./Pages/AdminEmployees";
+import AdminERPOverview from "./Pages/AdminERPOverview";
+import AdminERPApps from "./Pages/AdminERPApps";
+import AdminERPSchema from "./Pages/AdminERPSchema";
+import AdminERPHierarchy from "./Pages/AdminERPHierarchy";
+import AdminERPWorkflows from "./Pages/AdminERPWorkflows";
+import AdminERPApprovals from "./Pages/AdminERPApprovals";
 import ProductCollections from "./Pages/ProductCollections";
 import VirtualShowroom from "./Pages/VirtualShowroom";
 import CustomerDashboard from "./Pages/CustomerDashboard";
@@ -118,6 +124,12 @@ const App = () => {
         <Route path="/admin/products" element={adminPage(<AdminProducts />)} />
         <Route path="/admin/settings" element={adminPage(<Setting />)} />
         <Route path="/admin/reports" element={adminStandalonePage(<AdminAnalytics />)} />
+        <Route path="/admin/erp" element={adminStandalonePage(<AdminERPOverview />)} />
+        <Route path="/admin/erp/apps" element={adminStandalonePage(<AdminERPApps />)} />
+        <Route path="/admin/erp/schema" element={adminStandalonePage(<AdminERPSchema />)} />
+        <Route path="/admin/erp/hierarchy" element={adminStandalonePage(<AdminERPHierarchy />)} />
+        <Route path="/admin/erp/workflows" element={adminStandalonePage(<AdminERPWorkflows />)} />
+        <Route path="/admin/erp/approvals" element={adminStandalonePage(<AdminERPApprovals />)} />
 
         {/* Legacy admin paths */}
         <Route path="/Setting" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />

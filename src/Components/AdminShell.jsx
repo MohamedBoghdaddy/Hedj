@@ -14,6 +14,7 @@ const navItems = [
   ["Leads", "leaderboard", "/admin/leads"],
   ["Quotes", "request_quote", "/admin/quotes"],
   ["Showroom", "event_seat", "/admin/showroom"],
+  ["ERP Architecture", "account_tree", "/admin/erp"],
   ["Reports", "analytics", "/admin/analytics"],
   ["Settings", "settings", "/admin/settings"],
 ];
