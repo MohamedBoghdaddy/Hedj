@@ -13,6 +13,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const JWT_SECRET = process.env.JWT_SECRET || "hedj-demo-jwt-secret";
+const isProduction = process.env.NODE_ENV === "production";
 const USER_ROLES = ["customer", "employee", "admin"];
 
 const isDatabaseReady = () => mongoose.connection.readyState === 1;
@@ -64,6 +65,17 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const createToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
+
+const authCookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  maxAge: 1000 * 60 * 60 * 24 * 30,
+};
+
+const setAuthCookie = (res, token) => {
+  res.cookie("token", token, authCookieOptions);
+};
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -121,6 +133,7 @@ export const registerUser = async (req, res) => {
     await user.save();
 
     const token = createToken(user);
+    setAuthCookie(res, token);
     res.status(201).json({ token, user: toPublicUser(user) });
   } catch (error) {
     console.error("Registration failed:", error);
@@ -146,6 +159,7 @@ export const loginUser = async (req, res) => {
     }
 
     const token = createToken(user);
+    setAuthCookie(res, token);
     res.status(200).json({ token, user: toPublicUser(user) });
   } catch (error) {
     console.error("Login error:", error);
@@ -155,6 +169,11 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+    });
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
     console.error("Logout error:", error);

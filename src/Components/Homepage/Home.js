@@ -1,296 +1,157 @@
-import { useContext, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { ShopContext } from "../../context/productContext";
-import "../../Styles/home-premium.css";
+import { Link } from "react-router-dom";
+import NavBar from "./NavBar";
+import HeroSection from "./HeroSection";
+import Slideshow from "./Slideshow";
+import StorytellingSection from "./StorytellingSection";
+import VirtualShowroomSection from "./VirtualShowroomSection";
+import Footer from "./Footer";
+import "./homepage-premium.css";
 
-/* ── Seed data used when backend is offline ── */
-const BEST_SELLERS = [
-  {
-    id: "eames-lounge",
-    name: "Eames-inspired Lounge",
-    material: "Walnut & Obsidian Leather",
-    price: 3450,
-    img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80",
-    slug: "eames-inspired-lounge",
-  },
-  {
-    id: "minimalist-oak-island",
-    name: "Minimalist Oak Island",
-    material: "Solid European Oak",
-    price: 2800,
-    img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
-    slug: "minimalist-oak-island",
-  },
-  {
-    id: "bronze-geometric-table",
-    name: "Bronze Geometric Table",
-    material: "Tinted Glass & Bronze",
-    price: 4100,
-    img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
-    slug: "bronze-geometric-table",
-  },
-  {
-    id: "obsidian-kitchen-island",
-    name: "The Obsidian Kitchen Island",
-    material: "Black Marble & Oak",
-    price: 12450,
-    img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
-    slug: "obsidian-kitchen-island",
-  },
+const stats = [
+  { value: "12", label: "Collections" },
+  { value: "5k+", label: "Custom Orders" },
+  { value: "45", label: "Delivery Cities" },
+  { value: "98%", label: "Client Satisfaction" },
 ];
 
-const TESTIMONIALS = [
+const testimonials = [
   {
-    quote: '"The customization process was effortless. Our new dining table is the heartbeat of our home."',
+    quote:
+      "The customization process was effortless. Our new dining table is the heartbeat of our home.",
     name: "Eleanor Vance",
     location: "San Francisco, CA",
   },
   {
-    quote: '"Quiet luxury defined. The delivery and installation team were as professional as the designers."',
+    quote:
+      "Quiet luxury defined. The delivery and installation team were as professional as the designers.",
     name: "Julian Thorne",
     location: "London, UK",
   },
   {
-    quote: '"Seeing the furniture in AR before buying gave us the confidence to choose bold, larger pieces."',
+    quote:
+      "Seeing the furniture in AR before buying gave us the confidence to choose bold, larger pieces.",
     name: "Maya Rodriguez",
     location: "Barcelona, ES",
   },
 ];
 
-const COLLECTIONS = [
-  { label: "Kitchens",    sub: "Culinary sanctuaries designed for craft.", path: "/Kitchen",      img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" },
-  { label: "Bedrooms",   sub: "Restful spaces of quiet luxury.",           path: "/Bedroom",      img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80" },
-  { label: "Outdoor",    sub: "",                                           path: "/Outdoor",      img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" },
-  { label: "Complements",sub: "",                                           path: "/DayComplement",img: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=800&q=80" },
+const featuredCollections = [
+  {
+    title: "Kitchens",
+    subtitle: "Culinary sanctuaries designed for craft.",
+    path: "/collections/kitchens",
+    className: "hedj-featured-large",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCEAhjFPUItLxxOaR7BMld1mCJr3kY_jYeMzAXgnxovBlFWjCXQ9JAiBSmQRTwYsm2MaN-OBzz7C5KAsCEo7ZOwq4KLzAZwQk5VbLA9GsYw8oad7poGqmpTgcLBfI0z3Mx_odse-0ZPQ--uJtKsoxHznTJpUOpVauDSDlhuFpfxhq7TIpvf_z4gsjjW672p4P5dqUvxsuekYaiQlUndjToy1e25ppoYuODEJfmKcvin2RkA0xSY8UCj7xo5ML4HcsYSZKHO7KSBqk3w",
+  },
+  {
+    title: "Bedrooms",
+    subtitle: "Restful spaces of quiet luxury.",
+    path: "/collections/bedrooms",
+    className: "hedj-featured-wide",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDXdzQ9Zlizx8AhwVye2n6B9uYmBIOgm8H9VwGdkUrsmt7FeRvjHnUNKSfQCPAsFVVEjG_yYL1qIvXZOVVDdznc5voK-JnMSrsAmk2GUYid_G81Uy9-V_SI4YX2i2eJfx-dIYGL3Jb2lemFZ7DzBCYGGFeG-GcOgoA2dWQDHwl3AiHRhqlpIjhiXDXSGea0aRTLixZB47PXPTs1ap_4oU4E0BTrJokem9IE7d_kG6hqK2Q24Y0IcWfU92F7QItPDMD2h9qiGK7Dnzc4",
+  },
+  {
+    title: "Outdoor",
+    subtitle: "Outdoor pieces for resort-caliber living.",
+    path: "/collections/outdoor",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuD_3HuA3JQgRk0Ic7bvD1RwaSRKKmhgwttQ5COPjWx38phbMwIfipts9AAgJCNKoCa58tU8mGS9hPU2unJACIviXA8oy8UvH8UPwXrpo_5QzB67C3Ai-y_ecHnGEbpGqakIEBkZnSQy9aSsT3_gUsyv4EzqDVCUJp4e9A6YWHMyldYJZPWfTTF1l5zWhHvQS8o4dRNEXgKmA_srPK7Rira5ueXkfXIH4L4gmB5pCME8kJt_wQP3n78vCeDy32vKX9LM_mwOfAHaAlTn",
+  },
+  {
+    title: "Complements",
+    subtitle: "Finishing pieces with sculptural presence.",
+    path: "/collections/complements",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBizykCGysmS8_SMHrWeAP6kzwuovAWBWkwCaxo-HOoH6lxvCfa9NsZKppDSeUC9ECpAYIfhoenzcgSdD3eBpklxjsnzT4TxyjtJA6TtKQ1yXmFLd2_c9ZFWsrmuP1PkodzinHnBVgetM8E-FVALutlAs8MI2QDNSeg8K-no20Axb4kUYut5-UfhpHXa5TImsAWfKIwPbGO4NN_GkqYVQM2IGoGgynta92NgGzRgTW8s7Bk3oEBFO12omA2E7JGxtjjnFEHYLwaVbCx",
+  },
 ];
 
-const StarIcon = () => (
-  <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>star</span>
+const StatsRow = () => (
+  <section className="hedj-home-stats" aria-label="Hedj statistics">
+    <div className="hedj-home-container hedj-home-stats-grid">
+      {stats.map((stat) => (
+        <div className="hedj-home-stat" key={stat.label}>
+          <strong>{stat.value}</strong>
+          <span>{stat.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
 );
 
-const Home = () => {
-  const { addToCart } = useContext(ShopContext);
-  const scrollRef      = useRef(null);
-  const navigate       = useNavigate();
+const CuratedCollections = () => (
+  <section className="hedj-home-section hedj-featured" aria-labelledby="collections-heading">
+    <div className="hedj-home-container">
+      <div className="hedj-home-section-heading">
+        <h2 id="collections-heading">Curated Collections</h2>
+        <span aria-hidden="true" />
+      </div>
 
-  const scrollBy = (dir) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: dir * 360, behavior: "smooth" });
-    }
-  };
-
-  const openWithKeyboard = (event, path) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      navigate(path);
-    }
-  };
-
-  const handleBestSellerAdd = async (product) => {
-    await addToCart({ ...product, id: product.id });
-    toast.success(`${product.name} added to cart.`);
-  };
-
-  return (
-    <div style={{ background: "var(--color-background)" }}>
-
-      {/* ── Hero ── */}
-      <section className="hero-section-premium">
-        <div className="hero-inner">
-          <div className="hero-content">
-            <span className="hero-eyebrow">Est. 2024</span>
-            <h1 className="hero-heading">Design-led furniture for modern living.</h1>
-            <p className="hero-body">
-              Experience the pinnacle of premium crafted furniture and customizable interiors.
-              Each piece is an intentional statement of luxury, designed to harmonize with your unique spatial narrative.
-            </p>
-            <div className="hero-cta-group">
-              <Link to="/collections" className="btn-hedj-primary">Shop Collections</Link>
-              <Link to="/contact" className="btn-hedj-outline">Book a Showroom Visit</Link>
-            </div>
-          </div>
-          <div className="hero-image-wrap">
-            <div className="hero-image-bg" />
-            <img
-              className="hero-image-main"
-              src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=900&q=85"
-              alt="Luxury living room with premium furniture"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ── Stats Band ── */}
-      <section className="stats-band">
-        <div className="stats-band-inner">
-          {[
-            { n: "12",   l: "Collections" },
-            { n: "5k+",  l: "Custom Orders" },
-            { n: "45",   l: "Delivery Cities" },
-            { n: "98%",  l: "Client Satisfaction" },
-          ].map(({ n, l }) => (
-            <div className="stat-item" key={l}>
-              <div className="stat-number">{n}</div>
-              <div className="stat-label">{l}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Curated Collections ── */}
-      <section className="collections-section">
-        <div className="section-header">
-          <h2>Curated Collections</h2>
-          <div className="hedj-divider" />
-        </div>
-        <div className="collections-bento">
-          {COLLECTIONS.map(({ label, sub, path, img }) => (
-            <div
-              className="col-card"
-              key={label}
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate(path)}
-              onKeyDown={(event) => openWithKeyboard(event, path)}
-              aria-label={`Open ${label} collection`}
-            >
-              <img src={img} alt={label} />
-              <div className="col-card-overlay">
-                <h3>{label}</h3>
-                {sub && <p>{sub}</p>}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Best Sellers ── */}
-      <section className="bestsellers-section">
-        <div className="bestsellers-header">
-          <div>
-            <p className="left-label">Iconic Pieces</p>
-            <h2>Best Sellers</h2>
-          </div>
-          <div className="scroll-arrows">
-            <button onClick={() => scrollBy(-1)} aria-label="scroll left">
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button onClick={() => scrollBy(1)} aria-label="scroll right">
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
-        </div>
-        <div className="bestsellers-scroll" ref={scrollRef}>
-          {BEST_SELLERS.map((p) => (
-            <div className="bs-card" key={p.id}>
-              <div
-                className="bs-card-img"
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate(`/products/${p.slug || p.id}`)}
-                onKeyDown={(event) => openWithKeyboard(event, `/products/${p.slug || p.id}`)}
-                aria-label={`View ${p.name}`}
-              >
-                <img src={p.img} alt={p.name} />
-                <button
-                  className="bs-card-add"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    handleBestSellerAdd(p);
-                  }}
-                  title="Add to cart"
-                >
-                  <span className="material-symbols-outlined">add_shopping_cart</span>
-                </button>
-              </div>
-              <button
-                className="bs-card-title-btn"
-                type="button"
-                onClick={() => navigate(`/products/${p.slug || p.id}`)}
-              >
-                {p.name}
-              </button>
-              <p className="bs-material">{p.material}</p>
-              <p className="bs-price">${p.price.toLocaleString()}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── How Hedj Works ── */}
-      <section className="how-section">
-        <div className="how-inner">
-          <h2>How Hedj Works</h2>
-          <div className="how-steps">
-            {[
-              { icon: "search",          title: "Browse",           body: "Explore our curated collections or start a bespoke project with our designers." },
-              { icon: "edit_note",       title: "Customize",        body: "Select finishes, dimensions, and hardware to perfectly fit your spatial needs." },
-              { icon: "verified",        title: "Order",            body: "Place your order through our secure portal with full transparency on lead times." },
-              { icon: "local_shipping",  title: "Deliver & Install", body: "White-glove delivery and professional installation for a seamless transition." },
-            ].map(({ icon, title, body }) => (
-              <div className="how-step" key={title}>
-                <div className="how-step-icon">
-                  <span className="material-symbols-outlined">{icon}</span>
-                </div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Virtual Showroom Teaser ── */}
-      <section className="showroom-section">
-        <div className="showroom-inner">
-          <div className="showroom-content">
-            <span className="showroom-eyebrow">The Future of Retail</span>
-            <h2 className="showroom-heading">The Virtual Showroom</h2>
-            <p className="showroom-body">
-              Visualize your dream space in stunning 4K clarity. Our AR tools allow you to project
-              any piece from our collection into your home with true-to-life scaling and material accuracy.
-            </p>
-            <Link to="/contact" className="btn-showroom">
-              Explore Showroom
-              <span className="material-symbols-outlined">view_in_ar</span>
-            </Link>
-          </div>
-          <div className="showroom-img-wrap">
-            <img
-              src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=700&q=80"
-              alt="Virtual showroom AR preview"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ── Testimonials ── */}
-      <section className="testimonials-section">
-        <div className="testimonials-inner">
-          <h2>Voices of Hedj</h2>
-          <div className="testimonials-grid">
-            {TESTIMONIALS.map(({ quote, name, location }) => (
-              <div className="testi-card" key={name}>
-                <div className="testi-stars">
-                  {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
-                </div>
-                <p className="testi-quote">{quote}</p>
-                <div className="testi-author">
-                  <div className="testi-avatar" />
-                  <div>
-                    <p className="testi-name">{name}</p>
-                    <p className="testi-location">{location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      <div className="hedj-featured-grid">
+        {featuredCollections.map((collection) => (
+          <Link
+            className={`hedj-featured-card ${collection.className || ""}`}
+            to={collection.path}
+            key={collection.title}
+          >
+            <img src={collection.image} alt={`${collection.title} collection`} />
+            <span className="hedj-featured-shade" aria-hidden="true" />
+            <span className="hedj-featured-copy">
+              <strong>{collection.title}</strong>
+              <small>{collection.subtitle}</small>
+            </span>
+          </Link>
+        ))}
+      </div>
     </div>
-  );
-};
+  </section>
+);
+
+const Testimonials = () => (
+  <section className="hedj-home-section hedj-testimonials" aria-labelledby="testimonials-heading">
+    <div className="hedj-home-container">
+      <h2 id="testimonials-heading">Voices of Hedj</h2>
+      <div className="hedj-testimonial-grid">
+        {testimonials.map((testimonial) => (
+          <article className="hedj-testimonial-card" key={testimonial.name}>
+            <div className="hedj-testimonial-stars" aria-label="5 out of 5 stars">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <span className="material-symbols-outlined" key={index}>
+                  star
+                </span>
+              ))}
+            </div>
+            <p>"{testimonial.quote}"</p>
+            <div className="hedj-testimonial-person">
+              <span aria-hidden="true" />
+              <div>
+                <strong>{testimonial.name}</strong>
+                <small>{testimonial.location}</small>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const Home = () => (
+  <div className="hedj-home-page">
+    <NavBar />
+    <main>
+      <HeroSection />
+      <StatsRow />
+      <CuratedCollections />
+      <Slideshow />
+      <StorytellingSection />
+      <VirtualShowroomSection />
+      <Testimonials />
+    </main>
+    <Footer />
+  </div>
+);
 
 export default Home;

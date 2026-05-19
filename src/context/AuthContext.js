@@ -7,6 +7,7 @@ import {
   useMemo,
 } from "react";
 import axios from "axios";
+import { setAxiosAuthToken } from "../services/authHeaders";
 
 
 const API_URL =
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("user", JSON.stringify(user));
 
             // ✅ Ensure Authorization header is set
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            setAxiosAuthToken(token);
           } else {
             dispatch({ type: "AUTH_ERROR" });
           }
@@ -93,8 +94,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const user = JSON.parse(storedUser);
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
-        axios.defaults.headers.common["Authorization"] =
-          `Bearer ${storedToken}`;
+        setAxiosAuthToken(storedToken);
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
         dispatch({ type: "AUTH_ERROR" });
@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    delete axios.defaults.headers.common["Authorization"];
+    setAxiosAuthToken(null);
     dispatch({ type: "LOGOUT_SUCCESS" });
   }, []);
 

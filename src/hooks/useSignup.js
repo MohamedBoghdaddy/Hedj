@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext";
+import { setAxiosAuthToken } from "../services/authHeaders";
 
 
 const API_URL =
@@ -60,7 +61,7 @@ export const useSignup = () => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setAxiosAuthToken(token);
 
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
 

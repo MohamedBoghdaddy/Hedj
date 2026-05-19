@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContext";
+import { setAxiosAuthToken } from "../services/authHeaders";
 
 // ✅ Backend API Base URL (Production & Local)
 
@@ -27,7 +28,7 @@ export const useLogout = () => {
       localStorage.removeItem("token");
 
       // ✅ Remove Authorization Header for Future Requests
-      delete axios.defaults.headers.common["Authorization"];
+      setAxiosAuthToken(null);
 
       // ✅ Dispatch Logout Action to Update State
       dispatch({ type: "LOGOUT_SUCCESS" });

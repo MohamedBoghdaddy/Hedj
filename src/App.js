@@ -10,7 +10,6 @@ import Footer from "./Components/Homepage/Footer";
 
 // Public pages
 import Home from "./Components/Homepage/Home";
-import Slideshow from "./Components/Homepage/Slideshow";
 import ProductDetail from "./Components/Products/ProductDetail";
 import Wishlist from "./Components/Products/wishlist";
 import KitchenCollections from "./Pages/KitchenCollections";
@@ -82,7 +81,7 @@ const App = () => {
       <Routes>
 
         {/* ── Public Routes ── */}
-        <Route path="/" element={<><NavBar /><Slideshow /><Home /><Footer /></>} />
+        <Route path="/" element={<Home />} />
 
         {/* Collections */}
         <Route path="/collections" element={<ProductCollections />} />

@@ -4,6 +4,12 @@ import { useAuthContext } from "../../context/AuthContext";
 import { useLogout } from "../../hooks/useLogout.js";
 import "../../Styles/admin-layout.css";
 
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://hedj.onrender.com");
+
 const NAV = [
   { icon: "dashboard",      label: "Overview",   path: "/dashboard" },
   { icon: "shopping_cart",  label: "Orders",     path: "/admin/orders" },
@@ -59,7 +65,7 @@ const AdminLayout = ({ children }) => {
           <div className="admin-user-row">
             <div className="admin-avatar">
               {user?.profilePhoto ? (
-                <img src={`http://localhost:8000${user.profilePhoto}`} alt="Admin" />
+                <img src={`${API_URL}${user.profilePhoto}`} alt="Admin" />
               ) : (
                 <span className="material-symbols-outlined">account_circle</span>
               )}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
+import { setAxiosAuthToken } from "../../services/authHeaders";
 import "../../Styles/auth-premium.css";
 
 const signupVisual =
@@ -94,7 +95,7 @@ const Signup = () => {
       if (token && user) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        setAxiosAuthToken(token);
         dispatch({ type: "LOGIN_SUCCESS", payload: user });
       }
       setMessage({ error: "", success: "Registration successful" });

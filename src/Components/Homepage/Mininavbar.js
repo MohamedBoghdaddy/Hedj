@@ -76,11 +76,11 @@ const MiniNavbar = () => {
               onMouseLeave={() => setShowDropdown(false)}
             >
               {[
-                { route: "/Kitchen", label: "KITCHEN" },
-                { route: "/Bedroom", label: "Bedroom" },
-                { route: "/DayComplement", label: "DAY COMPLEMENTS" },
-                { route: "/NightComplement", label: "NIGHT COMPLEMENTS" },
-                { route: "/Outdoor", label: "OUTDOOR" },
+                { route: "/collections/kitchens", label: "KITCHEN" },
+                { route: "/collections/bedrooms", label: "Bedroom" },
+                { route: "/collections/complements?type=day", label: "DAY COMPLEMENTS" },
+                { route: "/collections/complements?type=night", label: "NIGHT COMPLEMENTS" },
+                { route: "/collections/outdoor", label: "OUTDOOR" },
               ].map(({ route, label }) => (
                 <NavDropdown.Item
                   key={route}
@@ -103,10 +103,10 @@ const MiniNavbar = () => {
               </Link>
             ) : (
               <>
-                <Link to="/login" className="nav-link">
+                <Link to="/Login" className="nav-link">
                   <FontAwesomeIcon icon={faUser} /> Login
                 </Link>
-                <Link to="/signup" className="nav-link">
+                <Link to="/Signup" className="nav-link">
                   Signup
                 </Link>
               </>

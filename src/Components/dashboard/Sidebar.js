@@ -14,6 +14,13 @@ import { Modal, Button } from "react-bootstrap";
 import "../../Styles/Sidebar.css";
 import { useAuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { withAuth } from "../../services/authHeaders";
+
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://hedj.onrender.com");
 
 const Sidebar = () => {
   const { state } = useAuthContext();
@@ -70,9 +77,9 @@ const Sidebar = () => {
 
         // Upload to backend
         const response = await axios.put(
-          `http://localhost:8000/api/users/update/${user._id}`,
+          `${API_URL}/api/users/update/${user._id}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          withAuth({ headers: { "Content-Type": "multipart/form-data" } })
         );
 
         // Update profile state
@@ -101,7 +108,7 @@ const Sidebar = () => {
             {profilePhoto || isEditing ? (
               <>
                 <img
-                  src={`http://localhost:8000${profilePhoto}`}
+                  src={`${API_URL}${profilePhoto}`}
                   alt="Profile"
                   className="profile-photo"
                 />
@@ -175,7 +182,7 @@ const Sidebar = () => {
         </Modal.Header>
         <Modal.Body className="text-center">
           <img
-            src={`http://localhost:8000${profilePhoto}`}
+            src={`${API_URL}${profilePhoto}`}
             alt="Profile Preview"
             className="img-fluid"
             style={{ maxWidth: "100%", borderRadius: "50%" }}

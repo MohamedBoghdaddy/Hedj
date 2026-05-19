@@ -1,4 +1,5 @@
 import { createInitialDemoStore } from "./demoData";
+import { getAuthHeaders } from "./authHeaders";
 
 const API_URL =
   process.env.REACT_APP_API_URL ??
@@ -42,10 +43,10 @@ const saveStore = (store) => {
 const request = async (path, options = {}) => {
   const response = await fetch(`${API_URL}${path}`, {
     credentials: "include",
-    headers: {
+    headers: getAuthHeaders({
       "Content-Type": "application/json",
       ...(options.headers || {}),
-    },
+    }),
     ...options,
     body:
       options.body && typeof options.body !== "string"
