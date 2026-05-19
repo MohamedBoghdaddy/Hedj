@@ -11,6 +11,7 @@ const collectionLinks = [
   { label: "Outdoor", to: "/collections/outdoor" },
   { label: "Day Complements", to: "/collections/complements?type=day" },
   { label: "Night Complements", to: "/collections/complements?type=night" },
+  { label: "All Products", to: "/products" },
 ];
 
 export const PublicNavbar = ({ active = "" }) => {
@@ -60,7 +61,7 @@ export const PublicNavbar = ({ active = "" }) => {
     ? role === "admin" || role === "employee"
       ? "/admin/dashboard"
       : "/dashboard"
-    : "/Login";
+    : "/login";
 
   return (
     <header className="commerce-navbar">
@@ -205,7 +206,7 @@ export const PublicFooter = () => (
     </div>
 
     <div className="commerce-footer-bottom">
-      <p>(c) 2024 Hedj Commerce. All rights reserved.</p>
+      <p>&copy; 2024 Hedj Commerce. All rights reserved.</p>
     </div>
   </footer>
 );

@@ -123,6 +123,7 @@
 .auth-kicker,
 .auth-field label,
 .auth-label-row a,
+.auth-text-link,
 .auth-divider span,
 .auth-primary-btn,
 .auth-social-btn,
@@ -168,7 +169,8 @@
 }
 
 .auth-field label,
-.auth-label-row a {
+.auth-label-row a,
+.auth-text-link {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -186,13 +188,19 @@
   gap: 16px;
 }
 
-.auth-label-row a {
+.auth-label-row a,
+.auth-text-link {
   color: #645D58;
   text-decoration: none;
   transition: color 150ms ease;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
 }
 
-.auth-label-row a:hover {
+.auth-label-row a:hover,
+.auth-text-link:hover {
   color: #000000;
 }
 

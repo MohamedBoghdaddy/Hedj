@@ -77,9 +77,13 @@ const Login = () => {
             <div className="auth-field">
               <div className="auth-label-row">
                 <label htmlFor="login-password">Password</label>
-                <a href="#forgot-password" onClick={(event) => event.preventDefault()}>
+                <button
+                  type="button"
+                  className="auth-text-link"
+                  onClick={() => toast.info("Password reset is not connected yet.")}
+                >
                   Forgot Password?
-                </a>
+                </button>
               </div>
               <div className="auth-password-wrap">
                 <input
@@ -129,14 +133,14 @@ const Login = () => {
 
           <footer className="auth-switch">
             <p>Don't have an account?</p>
-            <Link to="/Signup">Create an account</Link>
+            <Link to="/signup">Create an account</Link>
           </footer>
         </div>
 
         <div className="auth-legal">
-          <a href="#privacy">Privacy Policy</a>
-          <a href="#terms">Terms of Service</a>
-          <a href="#support">Contact Support</a>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
+          <Link to="/contact">Contact Support</Link>
           <p>(c) 2024 Hedj Commerce OS.</p>
         </div>
       </section>

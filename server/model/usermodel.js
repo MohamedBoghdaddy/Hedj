@@ -32,6 +32,9 @@ const UserSchema = new mongoose.Schema(
     profilePhoto: {
       type: String,
     },
+    // Supabase Storage reference (added by hybrid storage layer)
+    profilePhotoUrl: { type: String },
+    profilePhotoAssetId: { type: String },
   },
   { timestamps: true }
 );

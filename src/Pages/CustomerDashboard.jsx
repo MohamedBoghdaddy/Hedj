@@ -1,5 +1,8 @@
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { PublicCommerceShell } from "../Components/PublicCommerceShell";
+import { ShopContext } from "../context/productContext";
+import { useLogout } from "../hooks/useLogout";
 import "../Styles/customer-dashboard-premium.css";
 
 const activeOrders = [
@@ -48,10 +51,47 @@ const wishlistItems = [
 ];
 
 const accountLinks = [
-  { label: "Address Book", icon: "location_on" },
-  { label: "Payment Methods", icon: "payments" },
-  { label: "Profile Settings", icon: "settings" },
-  { label: "Order History", icon: "history" },
+  { key: "addresses", label: "Address Book", icon: "location_on" },
+  { key: "payments", label: "Payment Methods", icon: "payments" },
+  { key: "profile", label: "Profile Settings", icon: "settings" },
+  { key: "orders", label: "Order History", icon: "history" },
+];
+
+const savedAddresses = [
+  {
+    id: "home",
+    label: "Primary Residence",
+    line1: "48 Laurel House, Pacific Heights",
+    line2: "San Francisco, CA 94115",
+  },
+  {
+    id: "studio",
+    label: "Design Studio",
+    line1: "210 Market Hall, Suite 8",
+    line2: "San Francisco, CA 94103",
+  },
+];
+
+const savedPayments = [
+  { id: "visa-4242", brand: "Visa", last4: "4242", expiry: "08/28" },
+  {
+    id: "amex-1005",
+    brand: "American Express",
+    last4: "1005",
+    expiry: "02/27",
+  },
+];
+
+const orderHistory = [
+  ...activeOrders,
+  {
+    id: "HJ-9321",
+    title: "Marais Oak Dining Table",
+    status: "Installed",
+    statusTone: "dark",
+    delivery: "Oct 22",
+    image: wishlistItems[0].image,
+  },
 ];
 
 function getStoredUser() {
@@ -62,9 +102,16 @@ function getStoredUser() {
   }
 }
 
+function moneyToNumber(value) {
+  return Number(String(value).replace(/[^0-9.]/g, ""));
+}
+
 export default function CustomerDashboard() {
   const navigate = useNavigate();
+  const shop = useContext(ShopContext);
+  const { logout } = useLogout();
   const [toast, setToast] = useState("");
+  const [activePanel, setActivePanel] = useState("orders");
 
   const user = useMemo(() => getStoredUser(), []);
   const firstName =
@@ -78,221 +125,318 @@ export default function CustomerDashboard() {
     setTimeout(() => setToast(""), 2400);
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+  const handleSignOut = async () => {
+    await logout();
     navigate("/Login", { replace: true });
   };
 
+  const handleMoveToBag = async (item) => {
+    await shop?.addToCart?.({
+      id: item.id,
+      name: item.title,
+      price: moneyToNumber(item.price),
+      image: item.image,
+      img: item.image,
+      quantity: 1,
+    });
+    showToast(`${item.title} moved to bag.`);
+  };
+
+  const renderAccountPanel = () => {
+    if (activePanel === "addresses") {
+      return (
+        <div className="customer-account-panel-list">
+          {savedAddresses.map((address) => (
+            <article className="customer-account-panel-item" key={address.id}>
+              <span className="material-symbols-outlined">location_on</span>
+              <div>
+                <strong>{address.label}</strong>
+                <p>{address.line1}</p>
+                <p>{address.line2}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => showToast(`${address.label} set as default.`)}
+              >
+                Use Default
+              </button>
+            </article>
+          ))}
+        </div>
+      );
+    }
+
+    if (activePanel === "payments") {
+      return (
+        <div className="customer-account-panel-list">
+          {savedPayments.map((payment) => (
+            <article className="customer-account-panel-item" key={payment.id}>
+              <span className="material-symbols-outlined">credit_card</span>
+              <div>
+                <strong>
+                  {payment.brand} ending {payment.last4}
+                </strong>
+                <p>Expires {payment.expiry}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => showToast(`${payment.brand} set as default.`)}
+              >
+                Set Default
+              </button>
+            </article>
+          ))}
+        </div>
+      );
+    }
+
+    if (activePanel === "profile") {
+      return (
+        <form
+          className="customer-profile-form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            showToast("Profile details saved locally for this session.");
+          }}
+        >
+          <label>
+            First Name
+            <input defaultValue={user?.firstName || firstName} />
+          </label>
+          <label>
+            Last Name
+            <input defaultValue={user?.lastName || ""} />
+          </label>
+          <label>
+            Email
+            <input type="email" defaultValue={user?.email || ""} />
+          </label>
+          <label>
+            Notifications
+            <select
+              defaultValue={user?.receiveNotifications === false ? "off" : "on"}
+            >
+              <option value="on">Enabled</option>
+              <option value="off">Disabled</option>
+            </select>
+          </label>
+          <button type="submit">Save Profile</button>
+        </form>
+      );
+    }
+
+    return (
+      <div className="customer-account-panel-list">
+        {orderHistory.map((order) => (
+          <article className="customer-account-panel-item" key={order.id}>
+            <span className="material-symbols-outlined">receipt_long</span>
+            <div>
+              <strong>#{order.id}</strong>
+              <p>{order.title}</p>
+              <p>
+                {order.status} - {order.delivery}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => showToast(`Opened order #${order.id}.`)}
+            >
+              View Details
+            </button>
+          </article>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="customer-dashboard-page">
-      {toast && (
-        <div className="customer-dashboard-toast" role="status">
-          {toast}
-        </div>
-      )}
-
-      <header className="customer-dashboard-nav">
-        <div className="customer-dashboard-nav-inner">
-          <Link to="/" className="customer-dashboard-brand">
-            Hedj Commerce
-          </Link>
-
-          <nav className="customer-dashboard-links">
-            <Link to="/collections">Collections</Link>
-            <Link to="/products">Products</Link>
-            <Link to="/virtual-showroom">Showrooms</Link>
-            <Link to="/contact">Consultations</Link>
-          </nav>
-
-          <div className="customer-dashboard-nav-actions">
-            <Link to="/cart" aria-label="Shopping bag">
-              <span className="material-symbols-outlined">shopping_bag</span>
-            </Link>
-
-            <Link to="/dashboard" aria-label="Dashboard" className="active">
-              <span className="material-symbols-outlined">person</span>
-            </Link>
+    <PublicCommerceShell active="Dashboard">
+      <div className="customer-dashboard-page">
+        {toast && (
+          <div className="customer-dashboard-toast" role="status">
+            {toast}
           </div>
-        </div>
-      </header>
+        )}
 
-      <main className="customer-dashboard-main">
-        <section className="customer-dashboard-hero">
-          <div className="customer-dashboard-container">
-            <span>Customer Dashboard</span>
-            <h1>Welcome back, {firstName}.</h1>
-            <p>
-              Manage your collections, track orders, and curate your space with
-              the precision of a master craftsman.
-            </p>
-          </div>
-        </section>
+        <main className="customer-dashboard-main">
+          <section className="customer-dashboard-hero">
+            <div className="customer-dashboard-container">
+              <span>Customer Dashboard</span>
+              <h1>Welcome back, {firstName}.</h1>
+              <p>
+                Manage your collections, track orders, and curate your space
+                with the precision of a master craftsman.
+              </p>
+            </div>
+          </section>
 
-        <section className="customer-dashboard-content">
-          <div className="customer-dashboard-container customer-dashboard-grid">
-            <div className="customer-dashboard-left">
-              <section className="customer-dashboard-card customer-dashboard-reveal">
-                <div className="customer-dashboard-section-title">
-                  <h2>Active Orders</h2>
-                  <button type="button" onClick={() => showToast("Order history coming soon.")}>
-                    View All
-                  </button>
-                </div>
+          <section className="customer-dashboard-content">
+            <div className="customer-dashboard-container customer-dashboard-grid">
+              <div className="customer-dashboard-left">
+                <section className="customer-dashboard-card customer-dashboard-reveal">
+                  <div className="customer-dashboard-section-title">
+                    <h2>Active Orders</h2>
+                    <button
+                      type="button"
+                      onClick={() => setActivePanel("orders")}
+                    >
+                      View All
+                    </button>
+                  </div>
 
-                <div className="customer-orders-list">
-                  {activeOrders.map((order) => (
-                    <article className="customer-order-row" key={order.id}>
-                      <div className="customer-order-info">
-                        <div className="customer-order-image">
-                          <img src={order.image} alt={order.title} />
+                  <div className="customer-orders-list">
+                    {activeOrders.map((order) => (
+                      <article className="customer-order-row" key={order.id}>
+                        <div className="customer-order-info">
+                          <div className="customer-order-image">
+                            <img src={order.image} alt={order.title} />
+                          </div>
+
+                          <div>
+                            <p>#{order.id}</p>
+                            <h3>{order.title}</h3>
+                            <span>
+                              Status:{" "}
+                              <strong className={`status-${order.statusTone}`}>
+                                {order.status}
+                              </strong>
+                            </span>
+                          </div>
                         </div>
 
-                        <div>
-                          <p>#{order.id}</p>
-                          <h3>{order.title}</h3>
-                          <span>
-                            Status:{" "}
-                            <strong className={`status-${order.statusTone}`}>
-                              {order.status}
-                            </strong>
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="customer-order-action">
-                        <span>Est. Delivery: {order.delivery}</span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            showToast(`Tracking details for #${order.id} are coming soon.`)
-                          }
-                        >
-                          Track Order
-                        </button>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-              <section className="customer-wishlist-section customer-dashboard-reveal">
-                <div className="customer-dashboard-section-title">
-                  <h2>My Wishlist</h2>
-                  <button type="button" onClick={() => showToast("Wishlist page coming soon.")}>
-                    View All
-                  </button>
-                </div>
-
-                <div className="customer-wishlist-grid">
-                  {wishlistItems.map((item) => (
-                    <article className="customer-wishlist-card" key={item.id}>
-                      <div className="customer-wishlist-image">
-                        <img src={item.image} alt={item.title} />
-                        <button
-                          type="button"
-                          aria-label={`Remove ${item.title} from wishlist`}
-                          onClick={() => showToast(`${item.title} removed from wishlist.`)}
-                        >
-                          <span className="material-symbols-outlined filled">
-                            favorite
-                          </span>
-                        </button>
-                      </div>
-
-                      <div className="customer-wishlist-body">
-                        <h3>{item.title}</h3>
-                        <p>{item.price}</p>
-
-                        <div className="customer-wishlist-actions">
+                        <div className="customer-order-action">
+                          <span>Est. Delivery: {order.delivery}</span>
                           <button
                             type="button"
-                            onClick={() => showToast(`${item.title} moved to bag.`)}
+                            onClick={() => {
+                              setActivePanel("orders");
+                              showToast(`Tracking #${order.id}.`);
+                            }}
                           >
-                            Move to Bag
+                            Track Order
                           </button>
-                          <Link to="/products/obsidian-kitchen-island">
-                            View Details
-                          </Link>
                         </div>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="customer-wishlist-section customer-dashboard-reveal">
+                  <div className="customer-dashboard-section-title">
+                    <h2>My Wishlist</h2>
+                    <button type="button" onClick={() => navigate("/wishlist")}>
+                      View All
+                    </button>
+                  </div>
+
+                  <div className="customer-wishlist-grid">
+                    {wishlistItems.map((item) => (
+                      <article className="customer-wishlist-card" key={item.id}>
+                        <div className="customer-wishlist-image">
+                          <img src={item.image} alt={item.title} />
+                          <button
+                            type="button"
+                            aria-label={`Remove ${item.title} from wishlist`}
+                            onClick={() =>
+                              showToast(`${item.title} removed from wishlist.`)
+                            }
+                          >
+                            <span className="material-symbols-outlined filled">
+                              favorite
+                            </span>
+                          </button>
+                        </div>
+
+                        <div className="customer-wishlist-body">
+                          <h3>{item.title}</h3>
+                          <p>{item.price}</p>
+
+                          <div className="customer-wishlist-actions">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveToBag(item)}
+                            >
+                              Move to Bag
+                            </button>
+                            <Link to="/products/obsidian-kitchen-island">
+                              View Details
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+
+                <section className="customer-dashboard-card customer-account-panel customer-dashboard-reveal">
+                  <div className="customer-dashboard-section-title">
+                    <h2>
+                      {accountLinks.find((link) => link.key === activePanel)
+                        ?.label || "Order History"}
+                    </h2>
+                    <button type="button" onClick={() => navigate("/contact")}>
+                      Need Help?
+                    </button>
+                  </div>
+                  {renderAccountPanel()}
+                </section>
+              </div>
+
+              <aside className="customer-dashboard-right">
+                <section className="customer-consultation-card customer-dashboard-reveal">
+                  <span>Your Curated Space</span>
+                  <h2>Design Consultation</h2>
+
+                  <div className="customer-consultation-box">
+                    <p>Next Session:</p>
+                    <h3>Dec 12 at 10:00 AM</h3>
+                    <em>with Marcus Thorne</em>
+                    <small>Senior Interior Designer</small>
+                  </div>
+
+                  <button type="button" onClick={() => navigate("/contact")}>
+                    Book New Session
+                  </button>
+                </section>
+
+                <section className="customer-account-card customer-dashboard-reveal">
+                  <h2>Account Overview</h2>
+
+                  <ul>
+                    {accountLinks.map((link) => (
+                      <li key={link.key}>
+                        <button
+                          type="button"
+                          className={activePanel === link.key ? "active" : ""}
+                          onClick={() => setActivePanel(link.key)}
+                        >
+                          <span>
+                            <i className="material-symbols-outlined">
+                              {link.icon}
+                            </i>
+                            {link.label}
+                          </span>
+                          <i className="material-symbols-outlined">
+                            chevron_right
+                          </i>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    type="button"
+                    className="customer-signout-button"
+                    onClick={handleSignOut}
+                  >
+                    Sign Out
+                  </button>
+                </section>
+              </aside>
             </div>
-
-            <aside className="customer-dashboard-right">
-              <section className="customer-consultation-card customer-dashboard-reveal">
-                <span>Your Curated Space</span>
-                <h2>Design Consultation</h2>
-
-                <div className="customer-consultation-box">
-                  <p>Next Session:</p>
-                  <h3>Dec 12 at 10:00 AM</h3>
-                  <em>with Marcus Thorne</em>
-                  <small>Senior Interior Designer</small>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => showToast("Booking flow is not connected yet.")}
-                >
-                  Book New Session
-                </button>
-              </section>
-
-              <section className="customer-account-card customer-dashboard-reveal">
-                <h2>Account Overview</h2>
-
-                <ul>
-                  {accountLinks.map((link) => (
-                    <li key={link.label}>
-                      <button
-                        type="button"
-                        onClick={() => showToast(`${link.label} coming soon.`)}
-                      >
-                        <span>
-                          <i className="material-symbols-outlined">{link.icon}</i>
-                          {link.label}
-                        </span>
-                        <i className="material-symbols-outlined">chevron_right</i>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-
-                <button
-                  type="button"
-                  className="customer-signout-button"
-                  onClick={handleSignOut}
-                >
-                  Sign Out
-                </button>
-              </section>
-            </aside>
-          </div>
-        </section>
-      </main>
-
-      <footer className="customer-dashboard-footer">
-        <div className="customer-dashboard-container customer-footer-inner">
-          <div>
-            <Link to="/" className="customer-footer-brand">
-              Hedj Commerce
-            </Link>
-            <p>© 2024 Hedj Commerce. Purveyors of Fine Craftsmanship.</p>
-          </div>
-
-          <nav>
-            <Link to="/sustainability">Sustainability</Link>
-            <Link to="/shipping">Shipping & Returns</Link>
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
-            <Link to="/contact">Contact</Link>
-          </nav>
-        </div>
-      </footer>
-    </div>
+          </section>
+        </main>
+      </div>
+    </PublicCommerceShell>
   );
 }

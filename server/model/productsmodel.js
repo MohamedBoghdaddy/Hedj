@@ -26,7 +26,17 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-    }, // Admin/Employee
+    },
+    // Supabase Storage references (added by hybrid storage layer)
+    imageUrl: { type: String },
+    imageAssetId: { type: String },
+    galleryImages: [
+      {
+        url: { type: String },
+        assetId: { type: String },
+        altText: { type: String },
+      },
+    ],
   },
   { timestamps: true }
 );

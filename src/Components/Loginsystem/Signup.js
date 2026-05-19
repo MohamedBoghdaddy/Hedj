@@ -203,7 +203,7 @@ const Signup = () => {
 
           <footer className="auth-switch">
             <p>Already have an account?</p>
-            <Link to="/Login">Sign in</Link>
+            <Link to="/login">Sign in</Link>
           </footer>
         </div>
 

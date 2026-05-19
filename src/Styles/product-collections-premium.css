@@ -274,6 +274,7 @@
   color: #ffffff;
 }
 
+.collection-add-to-cart,
 .collection-wishlist {
   border: 0;
   background: transparent;
@@ -287,6 +288,16 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.collection-add-to-cart {
+  background: rgba(19, 27, 46, 0.88);
+  border-radius: 999px;
+  padding: 10px 16px;
+}
+
+.collection-add-to-cart:hover {
+  background: #000000;
 }
 
 .collection-product-info {

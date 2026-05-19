@@ -498,6 +498,11 @@
   background: #fcf9f4;
 }
 
+.customer-account-card li button.active {
+  background: #fcf9f4;
+  box-shadow: inset 3px 0 0 #a07e48;
+}
+
 .customer-account-card li button span {
   display: flex;
   align-items: center;
@@ -540,6 +545,89 @@
 .customer-signout-button:hover {
   color: #ba1a1a;
   border-color: #ba1a1a;
+}
+
+.customer-account-panel {
+  background: #ffffff;
+}
+
+.customer-account-panel-list {
+  display: grid;
+  gap: 16px;
+}
+
+.customer-account-panel-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #c6c6cd;
+  background: #fcf9f4;
+}
+
+.customer-account-panel-item > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #f0ede8;
+  color: #645d58;
+}
+
+.customer-account-panel-item strong {
+  display: block;
+  color: #000000;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-account-panel-item p {
+  margin: 4px 0 0;
+  color: #645d58;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.customer-account-panel-item button,
+.customer-profile-form button {
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.customer-profile-form label {
+  display: grid;
+  gap: 8px;
+  color: #645d58;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-form input,
+.customer-profile-form select {
+  border: 1px solid #c6c6cd;
+  background: #fcf9f4;
+  color: #1c1c19;
+  font: inherit;
+  padding: 13px 14px;
+  outline: none;
 }
 
 .customer-dashboard-footer {
@@ -671,5 +759,9 @@
     right: 18px;
     left: 18px;
     text-align: center;
+  }
+
+  .customer-account-panel-item {
+    grid-template-columns: 1fr;
   }
 }

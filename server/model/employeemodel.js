@@ -20,6 +20,15 @@ const employeeSchema = new mongoose.Schema(
       default: "readonly",
       required: true,
     },
+    // Supabase Storage + email outbox references
+    profilePhotoUrl: { type: String },
+    profilePhotoAssetId: { type: String },
+    invitationEmailStatus: {
+      type: String,
+      enum: ["none", "queued", "sent", "failed", "provider_not_configured"],
+      default: "none",
+    },
+    invitationEmailOutboxId: { type: String },
   },
   { timestamps: true }
 );

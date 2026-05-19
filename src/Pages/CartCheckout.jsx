@@ -290,7 +290,9 @@ const CartCheckout = () => {
 
               <div className="promo-row">
                 <input aria-label="Promo Code" placeholder="Promo Code" type="text" />
-                <button type="button">Apply</button>
+                <button type="button" onClick={() => toast.info("Promo codes are not connected yet.")}>
+                  Apply
+                </button>
               </div>
 
               <button
@@ -302,7 +304,11 @@ const CartCheckout = () => {
                 {submitting ? "Processing..." : "Secure Checkout"}
               </button>
 
-              <button className="quote-button" type="button">
+              <button
+                className="quote-button"
+                type="button"
+                onClick={() => toast.info("Quote requests are handled through the contact form.")}
+              >
                 Request Quote for Project
               </button>
 
@@ -334,7 +340,7 @@ const CartCheckout = () => {
               <button
                 className="commerce-button"
                 type="button"
-                onClick={() => setSuccessOpen(false)}
+                onClick={() => toast.info("Design timeline is not connected yet.")}
               >
                 View Design Timeline
               </button>

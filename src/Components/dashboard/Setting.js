@@ -6,7 +6,8 @@ import useDashboard from "../../hooks/useDashboard";
 import { useAuthContext } from "../../context/AuthContext";
 import "../../Styles/Settings.css";
 const Setting = () => {
-  const { user, updateUser } = useAuthContext();
+  const { state: authState, dispatch } = useAuthContext();
+  const user = authState.user;
   const { state, fetchProfile, handleUpdateProfile, fetchDashboardData } =
     useDashboard();
 
@@ -47,7 +48,9 @@ const Setting = () => {
   const handleSubmitProfileUpdate = async () => {
     try {
       await handleUpdateProfile(profile);
-      updateUser(profile); // Update global user state
+      const nextUser = { ...user, ...profile };
+      localStorage.setItem("user", JSON.stringify(nextUser));
+      dispatch({ type: "LOGIN_SUCCESS", payload: nextUser });
       toast.success("Profile updated successfully.");
     } catch (error) {
       toast.error("Error updating profile.");

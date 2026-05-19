@@ -95,33 +95,44 @@ export const DashboardProvider = ({ children }) => {
     if (!isAuthenticated || !user) return;
 
     try {
+      const canLoadAdminData = ["admin", "employee"].includes(user.role);
       const [
         analyticsRes,
         settingsRes,
         productsRes,
-        customersRes,
-        employeesRes,
-        adminsRes,
         profileRes,
       ] = await Promise.allSettled([
         axios.get(`${API_URL}/api/analytics`, withAuth()),
         axios.get(`${API_URL}/api/settings`, withAuth()),
         axios.get(`${API_URL}/api/products`, withAuth()),
-        axios.get(`${API_URL}/api/users/filter?role=customer`, {
-          ...withAuth(),
-        }),
-        axios.get(`${API_URL}/api/users/filter?role=employee`, {
-          ...withAuth(),
-        }),
-        axios.get(`${API_URL}/api/users/filter?role=admin`, {
-          ...withAuth(),
-        }),
         user?._id
           ? axios.get(`${API_URL}/api/users/${user._id}`, {
               ...withAuth(),
             })
           : Promise.resolve({ data: null }),
       ]);
+
+      const [
+        customersRes,
+        employeesRes,
+        adminsRes,
+      ] = canLoadAdminData
+        ? await Promise.allSettled([
+            axios.get(`${API_URL}/api/users/filter?role=customer`, {
+              ...withAuth(),
+            }),
+            axios.get(`${API_URL}/api/users/filter?role=employee`, {
+              ...withAuth(),
+            }),
+            axios.get(`${API_URL}/api/users/filter?role=admin`, {
+              ...withAuth(),
+            }),
+          ])
+        : [
+            { status: "fulfilled", value: { data: [] } },
+            { status: "fulfilled", value: { data: [] } },
+            { status: "fulfilled", value: { data: [] } },
+          ];
 
       dispatch({
         type: "FETCH_SUCCESS",
@@ -164,6 +175,11 @@ export const DashboardProvider = ({ children }) => {
   // ✅ Fetch Chart Data (Sales Analytics)
   useEffect(() => {
     const fetchStats = async () => {
+      if (!isAuthenticated || !user) {
+        setChartData(null);
+        return;
+      }
+
       try {
         const { data } = await axios.get(`${API_URL}/api/analytics`, withAuth());
         setChartData({
@@ -178,7 +194,7 @@ export const DashboardProvider = ({ children }) => {
       }
     };
     fetchStats();
-  }, []);
+  }, [isAuthenticated, user]);
 
   // ✅ Fetch Profile Information
   const fetchProfile = useCallback(async () => {

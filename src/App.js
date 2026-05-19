@@ -2,17 +2,11 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuthContext } from "./context/AuthContext";
-
-// Public layout
-import NavBar from "./Components/Homepage/NavBar";
-import Mininavbar from "./Components/Homepage/Mininavbar";
-import Footer from "./Components/Homepage/Footer";
+import { AdminShell } from "./Components/AdminShell";
 
 // Public pages
 import Home from "./Components/Homepage/Home";
-import ProductDetail from "./Components/Products/ProductDetail";
 import Wishlist from "./Components/Products/wishlist";
-import KitchenCollections from "./Pages/KitchenCollections";
 import PremiumProductDetail from "./Pages/ProductDetail";
 import CartCheckout from "./Pages/CartCheckout";
 import PremiumContact from "./Pages/Contact";
@@ -21,15 +15,9 @@ import PremiumContact from "./Pages/Contact";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 
-// Admin layout
-import AdminLayout from "./Components/dashboard/AdminLayout";
-
 // Admin pages
 import Dashboard from "./Components/dashboard/Dashboard";
-import Sidebar from "./Components/dashboard/Sidebar";
 import Setting from "./Components/dashboard/Setting";
-import Reports from "./Components/dashboard/Report";
-import Employees from "./Components/dashboard/EmployeeList";
 import Customers from "./Components/dashboard/CustomersList";
 import Leads from "./Components/dashboard/Leads";
 import AdminProducts from "./Components/dashboard/AdminProducts";
@@ -46,7 +34,6 @@ import AdminERPHierarchy from "./Pages/AdminERPHierarchy";
 import AdminERPWorkflows from "./Pages/AdminERPWorkflows";
 import AdminERPApprovals from "./Pages/AdminERPApprovals";
 import ProductCollections from "./Pages/ProductCollections";
-import CollectionCategory from "./Pages/CollectionCategory";
 import VirtualShowroom from "./Pages/VirtualShowroom";
 import CustomerDashboard from "./Pages/CustomerDashboard";
 import StaticPlaceholder from "./Pages/StaticPlaceholder";
@@ -58,7 +45,7 @@ const AdminRoute = ({ children }) => {
 
   if (state.loading) return null;
   if (!state.isAuthenticated) {
-    return <Navigate to="/Login" state={{ from: location }} replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
   if (role !== "admin" && role !== "employee") {
     return <Navigate to="/" replace />;
@@ -68,9 +55,15 @@ const AdminRoute = ({ children }) => {
 };
 
 const App = () => {
-  const adminPage = (page) => (
+  const adminPage = (page, shellProps = {}) => (
     <AdminRoute>
-      <AdminLayout>{page}</AdminLayout>
+      <AdminShell
+        active={shellProps.active}
+        title={shellProps.title}
+        subtitle={shellProps.subtitle}
+      >
+        {page}
+      </AdminShell>
     </AdminRoute>
   );
   const adminStandalonePage = (page) => <AdminRoute>{page}</AdminRoute>;
@@ -85,10 +78,10 @@ const App = () => {
 
         {/* Collections */}
         <Route path="/collections" element={<ProductCollections />} />
-        <Route path="/collections/kitchens" element={<KitchenCollections />} />
-        <Route path="/collections/bedrooms" element={<CollectionCategory />} />
-        <Route path="/collections/outdoor" element={<CollectionCategory />} />
-        <Route path="/collections/complements" element={<CollectionCategory />} />
+        <Route path="/collections/kitchens" element={<ProductCollections />} />
+        <Route path="/collections/bedrooms" element={<ProductCollections />} />
+        <Route path="/collections/outdoor" element={<ProductCollections />} />
+        <Route path="/collections/complements" element={<ProductCollections />} />
 
         {/* Legacy collection routes → premium redirects */}
         <Route path="/Kitchen" element={<Navigate to="/collections/kitchens" replace />} />
@@ -102,14 +95,13 @@ const App = () => {
 
         {/* Products */}
         <Route path="/products" element={<ProductCollections />} />
-        <Route path="/Products" element={<ProductCollections />} />
-        <Route path="/products/obsidian-kitchen-island" element={<PremiumProductDetail />} />
-        <Route path="/products/:slug" element={<><NavBar /><ProductDetail /><Footer /></>} />
+        <Route path="/Products" element={<Navigate to="/products" replace />} />
+        <Route path="/products/:slug" element={<PremiumProductDetail />} />
 
         {/* Commerce */}
         <Route path="/cart" element={<CartCheckout />} />
         <Route path="/checkout" element={<CartCheckout />} />
-        <Route path="/wishlist" element={<><NavBar /><Wishlist /><Footer /></>} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/contact" element={<PremiumContact />} />
         <Route path="/virtual-showroom" element={<VirtualShowroom />} />
 
@@ -121,39 +113,78 @@ const App = () => {
 
         {/* ── Auth Routes ── */}
         <Route path="/Login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/Signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup />} />
 
         {/* ── Customer Dashboard ── */}
         <Route path="/dashboard" element={<CustomerDashboard />} />
 
         {/* ── Admin / ERP Routes ── */}
-        <Route path="/admin" element={adminPage(<Dashboard />)} />
-        <Route path="/admin/dashboard" element={adminPage(<Dashboard />)} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route
+          path="/admin/dashboard"
+          element={adminPage(<Dashboard />, {
+            active: "Overview",
+            title: "Admin Dashboard",
+            subtitle: "Revenue, orders, stock alerts, and daily operating signals.",
+          })}
+        />
         <Route path="/admin/orders" element={adminStandalonePage(<AdminOrdersPipeline />)} />
-        <Route path="/admin/orders/:orderId" element={adminPage(<OrderDetail />)} />
-        <Route path="/admin/customers" element={adminPage(<Customers />)} />
-        <Route path="/admin/customers/:customerId" element={adminPage(<CustomerDetail />)} />
-        <Route path="/admin/leads" element={adminPage(<Leads />)} />
-        <Route path="/admin/quotes" element={adminPage(<Quotes />)} />
+        <Route
+          path="/admin/orders/:orderId"
+          element={adminPage(<OrderDetail />, { active: "Orders", title: "Order Detail" })}
+        />
+        <Route
+          path="/admin/customers"
+          element={adminPage(<Customers />, { active: "Customers", title: "Customers" })}
+        />
+        <Route
+          path="/admin/customers/:customerId"
+          element={adminPage(<CustomerDetail />, {
+            active: "Customers",
+            title: "Customer Detail",
+          })}
+        />
+        <Route
+          path="/admin/leads"
+          element={adminPage(<Leads />, { active: "Leads", title: "Leads" })}
+        />
+        <Route
+          path="/admin/quotes"
+          element={adminPage(<Quotes />, { active: "Quotes", title: "Quotes" })}
+        />
         <Route path="/admin/analytics" element={adminStandalonePage(<AdminAnalytics />)} />
         <Route path="/admin/employees" element={adminStandalonePage(<AdminEmployees />)} />
-        <Route path="/admin/products" element={adminPage(<AdminProducts />)} />
-        <Route path="/admin/settings" element={adminPage(<Setting />)} />
+        <Route
+          path="/admin/products"
+          element={adminPage(<AdminProducts />, {
+            active: "Products",
+            title: "Products",
+            subtitle: "Product catalog, stock visibility, and inventory actions.",
+          })}
+        />
+        <Route
+          path="/admin/settings"
+          element={adminPage(<Setting />, { active: "Settings", title: "Settings" })}
+        />
         <Route path="/admin/reports" element={adminStandalonePage(<AdminAnalytics />)} />
-        <Route path="/admin/erp" element={adminStandalonePage(<AdminERPOverview />)} />
+        <Route path="/admin/erp" element={<Navigate to="/admin/erp/overview" replace />} />
+        <Route path="/admin/erp/overview" element={adminStandalonePage(<AdminERPOverview />)} />
         <Route path="/admin/erp/apps" element={adminStandalonePage(<AdminERPApps />)} />
         <Route path="/admin/erp/schema" element={adminStandalonePage(<AdminERPSchema />)} />
         <Route path="/admin/erp/hierarchy" element={adminStandalonePage(<AdminERPHierarchy />)} />
-        <Route path="/admin/erp/workflows" element={adminStandalonePage(<AdminERPWorkflows />)} />
+        <Route path="/admin/erp/workflow" element={adminStandalonePage(<AdminERPWorkflows />)} />
+        <Route path="/admin/erp/workflows" element={<Navigate to="/admin/erp/workflow" replace />} />
         <Route path="/admin/erp/approvals" element={adminStandalonePage(<AdminERPApprovals />)} />
 
         {/* Legacy admin paths */}
-        <Route path="/Setting" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />
-        <Route path="/Settings" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />
-        <Route path="/Reports" element={adminPage(<Reports />)} />
-        <Route path="/Profile" element={adminPage(<Customers />)} />
-        <Route path="/Employees" element={adminPage(<Employees />)} />
-        <Route path="/Customers" element={adminPage(<Customers />)} />
+        <Route path="/Setting" element={<Navigate to="/admin/settings" replace />} />
+        <Route path="/Settings" element={<Navigate to="/admin/settings" replace />} />
+        <Route path="/Reports" element={<Navigate to="/admin/reports" replace />} />
+        <Route path="/Profile" element={<Navigate to="/admin/customers" replace />} />
+        <Route path="/Employees" element={<Navigate to="/admin/employees" replace />} />
+        <Route path="/Customers" element={<Navigate to="/admin/customers" replace />} />
 
       </Routes>
     </BrowserRouter>

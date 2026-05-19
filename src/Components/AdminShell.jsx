@@ -8,14 +8,12 @@ const navItems = [
   ["Overview", "dashboard", "/admin/dashboard"],
   ["Orders", "shopping_cart", "/admin/orders"],
   ["Products", "chair", "/admin/products"],
-  ["Inventory", "inventory_2", "/admin/inventory"],
   ["Customers", "groups", "/admin/customers"],
   ["Employees", "badge", "/admin/employees"],
   ["Leads", "leaderboard", "/admin/leads"],
   ["Quotes", "request_quote", "/admin/quotes"],
-  ["Showroom", "event_seat", "/admin/showroom"],
-  ["ERP Architecture", "account_tree", "/admin/erp"],
-  ["Reports", "analytics", "/admin/analytics"],
+  ["ERP Architecture", "account_tree", "/admin/erp/overview"],
+  ["Reports", "analytics", "/admin/reports"],
   ["Settings", "settings", "/admin/settings"],
 ];
 
@@ -54,7 +52,7 @@ export const AdminSidebar = ({ active = "Overview", profileName = "Julianne Vose
 export const AdminFooter = () => (
   <footer className="admin-premium-footer">
     <div>
-      <p>(c) 2024 Hedj Commerce OS. All rights reserved.</p>
+      <p>&copy; 2024 Hedj Commerce OS. All rights reserved.</p>
       <nav aria-label="Admin footer links">
         <Link to="/privacy">Privacy Policy</Link>
         <Link to="/terms">Terms of Service</Link>

@@ -1,10 +1,56 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { PublicFooter, PublicNavbar } from "../Components/PublicCommerceShell";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { PublicCommerceShell } from "../Components/PublicCommerceShell";
+import { ShopContext } from "../context/productContext";
 import "../Styles/commerce-premium.css";
 import "../Styles/product-collections-premium.css";
 
 const ITEMS_PER_PAGE = 9;
+
+const categoryMeta = {
+  products: {
+    label: "Products",
+    heading: "The Collections",
+    description:
+      "Discover our curated selection of high-performance furniture and product design, where artisanal craftsmanship meets state-of-the-art innovation. Each piece is a testament to timeless aesthetics and functional excellence.",
+    ids: null,
+  },
+  collections: {
+    label: "Collections",
+    heading: "Curated Collections",
+    description:
+      "Explore Hedj pieces by room and ritual, from architectural kitchens to softer finishing objects.",
+    ids: null,
+  },
+  kitchens: {
+    label: "Kitchens",
+    heading: "Kitchen Collections",
+    description:
+      "Sculptural cabinetry, worktops, tables, and lighting for the kitchen as the architectural heart of the home.",
+    ids: [1, 2, 5, 8, 9],
+  },
+  bedrooms: {
+    label: "Bedrooms",
+    heading: "Bedroom Collections",
+    description:
+      "Considered furniture for rest and renewal, from platform beds to hand-finished storage and soft textiles.",
+    ids: [7, 10, 11, 12, 18],
+  },
+  outdoor: {
+    label: "Outdoor",
+    heading: "Outdoor Collections",
+    description:
+      "Weather-conscious furniture for terraces, gardens, and courtyards with the same rigor as our interiors.",
+    ids: [13, 14, 15],
+  },
+  complements: {
+    label: "Complements",
+    heading: "Complements Collection",
+    description:
+      "Decorative objects, textiles, and lighting selected for artisanal quality and quiet sculptural presence.",
+    ids: [4, 8, 16, 17, 18],
+  },
+};
 
 const allProducts = [
   { id: 1, name: "Monolith Island System", price: 18400, label: "New Arrival", category: "Kitchen", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDLqr4iFhQDw4oQ6PXhM-lWDMfLkLRIrZiGhQRQtn_vpYhZoldyAch_oRJWGXrhLDg8nGt5vXk89oCU6Gv4io2qP89C8i_URayMjSrH-4Gxdy39g3LyUYUWhQMysqzxnhQDUJXS-LOkRy4L1qIeFvytLe9x0nuqXWazRKZe2LhlAhgez9JeQ7dGhQ1ZoB1-FwyMPc4LJ03IxYnJWfBnpEz5Ul9YXf12HbFR6icIASkkebHRXVr6COHvRVTwont6DXb8YM9qINyBtDpc" },
@@ -31,59 +77,118 @@ function formatPrice(price) {
   return `$${price.toLocaleString()}`;
 }
 
+function slugify(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export default function ProductCollections() {
+  const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
+  const shop = useContext(ShopContext);
   const [sort, setSort] = useState("newest");
   const [viewMode, setViewMode] = useState("grid");
   const [page, setPage] = useState(1);
   const [wishlistMessage, setWishlistMessage] = useState("");
+  const typeFilter = searchParams.get("type");
+  const routeCollection = pathname.match(/^\/collections\/([^/?]+)/)?.[1];
+  const isCollectionsRoute = pathname.startsWith("/collections");
+  const meta =
+    categoryMeta[routeCollection] ||
+    (isCollectionsRoute ? categoryMeta.collections : categoryMeta.products);
 
   const sortedProducts = useMemo(() => {
-    const result = [...allProducts];
+    const allowedIds = meta.ids ? new Set(meta.ids) : null;
+    const result = allProducts.filter((product) => {
+      if (allowedIds && !allowedIds.has(product.id)) return false;
+      if (routeCollection === "complements" && typeFilter === "day") {
+        return ["Decor", "Lighting"].includes(product.category);
+      }
+      if (routeCollection === "complements" && typeFilter === "night") {
+        return ["Textiles", "Lighting"].includes(product.category);
+      }
+      return true;
+    });
+
     if (sort === "price-low") result.sort((a, b) => a.price - b.price);
     if (sort === "price-high") result.sort((a, b) => b.price - a.price);
     return result;
-  }, [sort]);
+  }, [meta.ids, routeCollection, sort, typeFilter]);
 
   const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
-  const visibleProducts = sortedProducts.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
+  const visibleProducts = sortedProducts.slice(0, page * ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pathname, typeFilter]);
 
   const handleSort = (value) => {
     setSort(value);
     setPage(1);
   };
 
-  const handleWishlist = (productName) => {
-    setWishlistMessage(`${productName} added to wishlist.`);
+  const showMessage = (message) => {
+    setWishlistMessage(message);
     setTimeout(() => setWishlistMessage(""), 2500);
   };
 
+  const handleWishlist = (product) => {
+    shop?.addToWishlist?.({
+      id: product.id,
+      slug: slugify(product.name),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      img: product.image,
+    });
+    showMessage(`${product.name} added to wishlist.`);
+  };
+
+  const handleAddToCart = async (product) => {
+    await shop?.addToCart?.({
+      id: product.id,
+      slug: slugify(product.name),
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      img: product.image,
+      quantity: 1,
+    });
+    showMessage(`${product.name} added to cart.`);
+  };
+
   const goToPage = (p) => {
-    setPage(p);
+    setPage(Math.min(Math.max(p, 1), totalPages));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div className="commerce-page">
-      <PublicNavbar active="Products" />
-
+    <PublicCommerceShell active={isCollectionsRoute ? "Collections" : "Products"}>
       <main className="products-collection-container">
         <nav className="products-breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Home</Link>
           <span className="material-symbols-outlined">chevron_right</span>
-          <span>Products</span>
+          {isCollectionsRoute ? (
+            <>
+              <Link to="/collections">Collections</Link>
+              {routeCollection && (
+                <>
+                  <span className="material-symbols-outlined">chevron_right</span>
+                  <span>{meta.label}</span>
+                </>
+              )}
+            </>
+          ) : (
+            <span>Products</span>
+          )}
         </nav>
 
         <section className="products-intro">
-          <h1>The Collections</h1>
-          <p>
-            Discover our curated selection of high-performance furniture and
-            product design, where artisanal craftsmanship meets state-of-the-art
-            innovation. Each piece is a testament to timeless aesthetics and
-            functional excellence.
-          </p>
+          <h1>{meta.heading}</h1>
+          <p>{meta.description}</p>
         </section>
 
         {wishlistMessage && (
@@ -94,7 +199,13 @@ export default function ProductCollections() {
 
         <section className="products-toolbar">
           <div className="products-toolbar-left">
-            <button className="products-filter-button" type="button">
+            <button
+              className="products-filter-button"
+              type="button"
+              onClick={() =>
+                showMessage("Use the Collections menu and sort control to refine products.")
+              }
+            >
               <span className="material-symbols-outlined">filter_list</span>
               Filter
             </button>
@@ -159,15 +270,23 @@ export default function ProductCollections() {
                 )}
                 <div className="collection-product-actions">
                   <Link
-                    to="/products/obsidian-kitchen-island"
+                    to={`/products/${slugify(product.name)}`}
                     className="collection-quick-view"
                   >
                     Quick View
                   </Link>
                   <button
                     type="button"
+                    className="collection-add-to-cart"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <span className="material-symbols-outlined">shopping_bag</span>
+                    Add to Cart
+                  </button>
+                  <button
+                    type="button"
                     className="collection-wishlist"
-                    onClick={() => handleWishlist(product.name)}
+                    onClick={() => handleWishlist(product)}
                   >
                     <span className="material-symbols-outlined">favorite</span>
                     Add to Wishlist
@@ -183,62 +302,62 @@ export default function ProductCollections() {
           ))}
         </section>
 
-        <section className="products-pagination">
-          <div className="products-pagination-line" />
+        {totalPages > 1 && (
+          <section className="products-pagination">
+            <div className="products-pagination-line" />
 
-          {page < totalPages && (
-            <button
-              type="button"
-              className="products-load-more"
-              onClick={() => goToPage(page + 1)}
-            >
-              <span>Load More Products</span>
-            </button>
-          )}
-
-          <div className="products-page-numbers">
-            <button
-              type="button"
-              aria-label="Previous page"
-              disabled={page === 1}
-              onClick={() => goToPage(page - 1)}
-              style={{ opacity: page === 1 ? 0.35 : 1 }}
-            >
-              <span className="material-symbols-outlined">arrow_back</span>
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            {page < totalPages && (
               <button
-                key={p}
                 type="button"
-                onClick={() => goToPage(p)}
-                aria-label={`Page ${p}`}
-                aria-current={p === page ? "page" : undefined}
-                style={{
-                  fontWeight: p === page ? 700 : 400,
-                  color: p === page ? "#000000" : "#76777d",
-                  borderBottom: p === page ? "1px solid #000000" : "none",
-                  padding: "4px 2px",
-                }}
+                className="products-load-more"
+                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
               >
-                {p}
+                <span>Load More Products</span>
               </button>
-            ))}
+            )}
 
-            <button
-              type="button"
-              aria-label="Next page"
-              disabled={page === totalPages}
-              onClick={() => goToPage(page + 1)}
-              style={{ opacity: page === totalPages ? 0.35 : 1 }}
-            >
-              <span className="material-symbols-outlined">arrow_forward</span>
-            </button>
-          </div>
-        </section>
+            <div className="products-page-numbers">
+              <button
+                type="button"
+                aria-label="Previous page"
+                disabled={page === 1}
+                onClick={() => goToPage(page - 1)}
+                style={{ opacity: page === 1 ? 0.35 : 1 }}
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => goToPage(p)}
+                  aria-label={`Show through page ${p}`}
+                  aria-current={p === page ? "page" : undefined}
+                  style={{
+                    fontWeight: p === page ? 700 : 400,
+                    color: p === page ? "#000000" : "#76777d",
+                    borderBottom: p === page ? "1px solid #000000" : "none",
+                    padding: "4px 2px",
+                  }}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                aria-label="Next page"
+                disabled={page === totalPages}
+                onClick={() => goToPage(page + 1)}
+                style={{ opacity: page === totalPages ? 0.35 : 1 }}
+              >
+                <span className="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </div>
+          </section>
+        )}
       </main>
-
-      <PublicFooter />
-    </div>
+    </PublicCommerceShell>
   );
 }

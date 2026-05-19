@@ -18,6 +18,8 @@ import userRoutes from "./routes/userRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import erpRoutes from "./routes/erpRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import emailAdminRoutes from "./routes/emailAdminRoutes.js";
 
 dotenv.config();
 
@@ -266,6 +268,9 @@ const configureApp = ({ mongoConnected, sessionStore }) => {
   app.use("/api/analytics", analyticsRoutes);
   app.use("/api/settings", settingsRoutes);
   app.use("/api/erp", erpRoutes);
+  // Hybrid storage routes (Supabase Storage + email outbox)
+  app.use("/api", requireMongoConnection, uploadRoutes);
+  app.use("/api/admin/emails", requireMongoConnection, emailAdminRoutes);
 
   app.get("/", (req, res) => {
     res.json({

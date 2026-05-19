@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { PublicFooter, PublicNavbar } from "../Components/PublicCommerceShell";
+import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import "../Styles/commerce-premium.css";
 import "../Styles/virtual-showroom-premium.css";
 
@@ -88,9 +88,8 @@ export default function VirtualShowroom() {
   };
 
   return (
-    <div className="commerce-page virtual-showroom-page">
-      <PublicNavbar active="Virtual Showroom" />
-
+    <PublicCommerceShell active="Virtual Showroom">
+      <div className="virtual-showroom-page">
       {toast && (
         <div className="vs-toast" role="status">
           {toast}
@@ -147,10 +146,18 @@ export default function VirtualShowroom() {
               </div>
 
               <div className="vs-arrow-row">
-                <button type="button" aria-label="Previous showroom">
+                <button
+                  type="button"
+                  aria-label="Previous showroom"
+                  onClick={() => showMessage("Showroom gallery navigation is not connected yet.")}
+                >
                   <span className="material-symbols-outlined">arrow_back</span>
                 </button>
-                <button type="button" aria-label="Next showroom">
+                <button
+                  type="button"
+                  aria-label="Next showroom"
+                  onClick={() => showMessage("Showroom gallery navigation is not connected yet.")}
+                >
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </button>
               </div>
@@ -251,7 +258,7 @@ export default function VirtualShowroom() {
         </section>
       </main>
 
-      <PublicFooter />
-    </div>
+      </div>
+    </PublicCommerceShell>
   );
 }

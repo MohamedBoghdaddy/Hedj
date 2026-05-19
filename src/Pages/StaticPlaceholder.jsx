@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PublicFooter, PublicNavbar } from "../Components/PublicCommerceShell";
+import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import "../Styles/commerce-premium.css";
 
 const placeholderContent = {
@@ -25,8 +25,7 @@ export default function StaticPlaceholder({ pageKey = "privacy" }) {
   const content = placeholderContent[pageKey] || { title: "Coming Soon", message: "This page is being crafted with care." };
 
   return (
-    <div className="commerce-page">
-      <PublicNavbar />
+    <PublicCommerceShell>
       <main
         style={{
           maxWidth: 720,
@@ -98,7 +97,6 @@ export default function StaticPlaceholder({ pageKey = "privacy" }) {
           </Link>
         </div>
       </main>
-      <PublicFooter />
-    </div>
+    </PublicCommerceShell>
   );
 }

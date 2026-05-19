@@ -1328,7 +1328,7 @@
   cursor: pointer;
   color: #78716c;
   font-size: 14px;
-  font-family: ''Inter'', sans-serif;
+  font-family: "Inter", sans-serif;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -1399,7 +1399,7 @@
 }
 
 .commerce-footer-logo {
-  font-family: ''Noto Serif'', serif;
+  font-family: "Noto Serif", serif;
   font-size: 20px;
   font-weight: 700;
   color: #1c1c19;
@@ -1436,7 +1436,7 @@
   text-decoration: none;
   letter-spacing: normal;
   text-transform: none;
-  font-family: ''Inter'', sans-serif;
+  font-family: "Inter", sans-serif;
   transition: color 0.15s;
 }
 
@@ -1454,7 +1454,7 @@
 .commerce-footer-bottom p {
   font-size: 11px;
   color: #a8a29e;
-  font-family: ''Noto Serif'', serif;
+  font-family: "Noto Serif", serif;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin: 0;

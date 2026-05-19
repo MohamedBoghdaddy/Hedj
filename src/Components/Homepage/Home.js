@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
-import NavBar from "./NavBar";
+import { PublicCommerceShell } from "../PublicCommerceShell";
 import HeroSection from "./HeroSection";
 import Slideshow from "./Slideshow";
 import StorytellingSection from "./StorytellingSection";
 import VirtualShowroomSection from "./VirtualShowroomSection";
-import Footer from "./Footer";
 import "./homepage-premium.css";
 
 const stats = [
@@ -139,9 +138,8 @@ const Testimonials = () => (
 );
 
 const Home = () => (
-  <div className="hedj-home-page">
-    <NavBar />
-    <main>
+  <PublicCommerceShell>
+    <main className="hedj-home-page">
       <HeroSection />
       <StatsRow />
       <CuratedCollections />
@@ -150,8 +148,7 @@ const Home = () => (
       <VirtualShowroomSection />
       <Testimonials />
     </main>
-    <Footer />
-  </div>
+  </PublicCommerceShell>
 );
 
 export default Home;
