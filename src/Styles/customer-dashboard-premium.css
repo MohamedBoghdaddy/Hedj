@@ -1,0 +1,675 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
+
+.customer-dashboard-page {
+  min-height: 100vh;
+  background: #fcf9f4;
+  color: #1c1c19;
+  font-family: "Inter", sans-serif;
+  overflow-x: hidden;
+}
+
+.customer-dashboard-page .material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.customer-dashboard-page .material-symbols-outlined.filled {
+  font-variation-settings: "FILL" 1, "wght" 300, "GRAD" 0, "opsz" 24;
+}
+
+.customer-dashboard-container {
+  width: min(1440px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.customer-dashboard-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  background: #000000;
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 999px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+  font-size: 14px;
+}
+
+.customer-dashboard-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fcf9f4;
+  border-bottom: 1px solid #c6c6cd;
+}
+
+.customer-dashboard-nav-inner {
+  width: min(1440px, calc(100% - 64px));
+  min-height: 80px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.customer-dashboard-brand,
+.customer-footer-brand {
+  font-family: "Noto Serif", serif;
+  color: #000000;
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 1.4;
+  letter-spacing: -0.03em;
+}
+
+.customer-dashboard-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.customer-dashboard-links a {
+  color: #645d58;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.customer-dashboard-links a:hover {
+  color: #131b2e;
+}
+
+.customer-dashboard-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.customer-dashboard-nav-actions a,
+.customer-dashboard-nav-actions button {
+  border: 0;
+  background: transparent;
+  color: #000000;
+  cursor: pointer;
+  padding: 0 0 4px;
+  text-decoration: none;
+}
+
+.customer-dashboard-nav-actions .active {
+  border-bottom: 1px solid #000000;
+}
+
+.customer-dashboard-main {
+  background: #f6f3ee;
+}
+
+.customer-dashboard-hero {
+  background: linear-gradient(to bottom, #fcf9f4, #f6f3ee);
+  padding: 80px 0;
+}
+
+.customer-dashboard-hero span,
+.customer-consultation-card > span {
+  display: block;
+  margin-bottom: 12px;
+  color: #4b4641;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.customer-dashboard-hero h1 {
+  margin: 0 0 12px;
+  font-family: "Noto Serif", serif;
+  color: #000000;
+  font-size: clamp(36px, 5vw, 48px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+.customer-dashboard-hero p {
+  max-width: 720px;
+  margin: 0;
+  color: #645d58;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.customer-dashboard-content {
+  padding: 0 0 80px;
+}
+
+.customer-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+.customer-dashboard-left,
+.customer-dashboard-right {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.customer-dashboard-card,
+.customer-account-card {
+  background: #ffffff;
+  padding: 48px;
+  box-shadow: 30px 30px 60px -15px rgba(0, 0, 0, 0.05);
+}
+
+.customer-dashboard-section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.customer-dashboard-section-title h2,
+.customer-account-card h2,
+.customer-consultation-card h2 {
+  margin: 0;
+  font-family: "Noto Serif", serif;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #000000;
+}
+
+.customer-dashboard-section-title button {
+  border: 0;
+  background: transparent;
+  color: #645d58;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.customer-order-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  border: 1px solid #c6c6cd;
+  transition: 0.25s ease;
+}
+
+.customer-order-row:hover {
+  border-color: #000000;
+}
+
+.customer-order-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.customer-order-image {
+  width: 64px;
+  height: 64px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: #f0ede8;
+}
+
+.customer-order-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.customer-order-info p {
+  margin: 0 0 4px;
+  color: #4b4641;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.customer-order-info h3 {
+  margin: 0 0 4px;
+  font-family: "Noto Serif", serif;
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #000000;
+}
+
+.customer-order-info span {
+  color: #cec5bf;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.customer-order-info strong {
+  font-weight: 500;
+}
+
+.status-gold {
+  color: #a07e48;
+}
+
+.status-dark {
+  color: #000000;
+}
+
+.customer-order-action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customer-order-action span {
+  color: #645d58;
+  font-size: 14px;
+}
+
+.customer-order-action button,
+.customer-wishlist-actions button,
+.customer-consultation-card button {
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 12px 24px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: 0.2s ease;
+}
+
+.customer-order-action button:hover,
+.customer-wishlist-actions button:hover,
+.customer-consultation-card button:hover {
+  background: #131b2e;
+}
+
+.customer-wishlist-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.customer-wishlist-card {
+  background: #fcf9f4;
+  border: 1px solid #c6c6cd;
+  overflow: hidden;
+}
+
+.customer-wishlist-image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #f0ede8;
+}
+
+.customer-wishlist-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.customer-wishlist-card:hover .customer-wishlist-image img {
+  transform: scale(1.05);
+}
+
+.customer-wishlist-image button {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: #fcf9f4;
+  color: #ba1a1a;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: 0.25s ease;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.customer-wishlist-card:hover .customer-wishlist-image button {
+  opacity: 1;
+}
+
+.customer-wishlist-body {
+  background: #ffffff;
+  padding: 24px;
+}
+
+.customer-wishlist-body h3 {
+  margin: 0 0 4px;
+  font-family: "Noto Serif", serif;
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #000000;
+}
+
+.customer-wishlist-body p {
+  margin: 0 0 24px;
+  color: #cec5bf;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.customer-wishlist-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customer-wishlist-actions a {
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid #76777d;
+  color: #000000;
+  padding: 10px 16px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: 0.2s ease;
+}
+
+.customer-wishlist-actions a:hover {
+  background: #dcdad5;
+}
+
+.customer-consultation-card {
+  background: #000000;
+  color: #ffffff;
+  padding: 48px;
+  box-shadow: 30px 30px 60px -15px rgba(0, 0, 0, 0.15);
+}
+
+.customer-consultation-card > span {
+  color: #7c839b;
+}
+
+.customer-consultation-card h2 {
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.customer-consultation-box {
+  background: #131b2e;
+  border: 1px solid rgba(124, 131, 155, 0.2);
+  padding: 24px;
+  margin-bottom: 48px;
+}
+
+.customer-consultation-box p {
+  margin: 0 0 4px;
+  color: #3f465c;
+  font-size: 14px;
+}
+
+.customer-consultation-box h3 {
+  margin: 0 0 4px;
+  font-family: "Noto Serif", serif;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.customer-consultation-box em {
+  display: block;
+  color: #7c839b;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.customer-consultation-box small {
+  display: block;
+  margin-top: 24px;
+  color: #7c839b;
+  font-size: 14px;
+}
+
+.customer-consultation-card button {
+  width: 100%;
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  padding: 24px;
+}
+
+.customer-account-card {
+  background: #e5e2dd;
+  box-shadow: none;
+}
+
+.customer-account-card h2 {
+  margin-bottom: 24px;
+}
+
+.customer-account-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.customer-account-card li + li {
+  margin-top: 12px;
+}
+
+.customer-account-card li button {
+  width: 100%;
+  border: 0;
+  background: #f0ede8;
+  color: #000000;
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: 0.2s ease;
+}
+
+.customer-account-card li button:hover {
+  background: #fcf9f4;
+}
+
+.customer-account-card li button span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+}
+
+.customer-account-card li button i {
+  color: #645d58;
+  font-style: normal;
+}
+
+.customer-account-card li button > i {
+  opacity: 0;
+  transition: 0.2s ease;
+}
+
+.customer-account-card li button:hover > i {
+  opacity: 1;
+}
+
+.customer-signout-button {
+  width: 100%;
+  margin-top: 48px;
+  border: 1px solid #c6c6cd;
+  background: transparent;
+  color: #645d58;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.customer-signout-button:hover {
+  color: #ba1a1a;
+  border-color: #ba1a1a;
+}
+
+.customer-dashboard-footer {
+  background: #f0ede8;
+}
+
+.customer-footer-inner {
+  padding-top: 80px;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.customer-footer-inner p {
+  margin: 4px 0 0;
+  color: rgba(69, 70, 77, 0.8);
+  font-size: 14px;
+}
+
+.customer-dashboard-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+.customer-dashboard-footer nav a {
+  color: #45464d;
+  text-decoration: underline;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: 0.2s ease;
+}
+
+.customer-dashboard-footer nav a:hover {
+  color: #000000;
+}
+
+.customer-dashboard-reveal {
+  animation: customerReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes customerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .customer-order-row {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .customer-order-action {
+    align-items: flex-end;
+  }
+
+  .customer-wishlist-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-footer-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .customer-footer-inner > div {
+    text-align: left;
+  }
+}
+
+@media (min-width: 1024px) {
+  .customer-dashboard-grid {
+    grid-template-columns: 8fr 4fr;
+  }
+
+  .customer-wishlist-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .customer-dashboard-container,
+  .customer-dashboard-nav-inner {
+    width: min(100% - 36px, 1440px);
+  }
+
+  .customer-dashboard-links {
+    display: none;
+  }
+
+  .customer-dashboard-hero {
+    padding: 56px 0;
+  }
+
+  .customer-dashboard-content {
+    padding-bottom: 56px;
+  }
+
+  .customer-dashboard-card,
+  .customer-account-card,
+  .customer-consultation-card {
+    padding: 24px;
+  }
+
+  .customer-order-info {
+    align-items: flex-start;
+  }
+
+  .customer-dashboard-section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .customer-dashboard-toast {
+    right: 18px;
+    left: 18px;
+    text-align: center;
+  }
+}

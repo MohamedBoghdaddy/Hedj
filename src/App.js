@@ -13,7 +13,6 @@ import Home from "./Components/Homepage/Home";
 import Slideshow from "./Components/Homepage/Slideshow";
 import Kitchen from "./Components/Products/Kitchen";
 import Bedrooms from "./Components/Products/Bedrooms";
-import Products from "./Components/Products/Products";
 import DayComplement from "./Components/Products/DayComplement";
 import NightComplement from "./Components/Products/NighComplement";
 import Outdoor from "./Components/Products/Outdoor";
@@ -46,6 +45,9 @@ import CustomerDetail from "./Components/dashboard/CustomerDetail";
 import AdminOrdersPipeline from "./Pages/AdminOrdersPipeline";
 import AdminAnalytics from "./Pages/AdminAnalytics";
 import AdminEmployees from "./Pages/AdminEmployees";
+import ProductCollections from "./Pages/ProductCollections";
+import VirtualShowroom from "./Pages/VirtualShowroom";
+import CustomerDashboard from "./Pages/CustomerDashboard";
 
 const AdminRoute = ({ children }) => {
   const { state } = useAuthContext();
@@ -78,28 +80,31 @@ const App = () => {
 
         {/* ── Public Routes ── */}
         <Route path="/" element={<><NavBar /><Slideshow /><Home /><Footer /></>} />
-        <Route path="/collections" element={<><NavBar /><Kitchen /><Footer /></>} />
+        <Route path="/collections" element={<ProductCollections />} />
         <Route path="/collections/kitchens" element={<KitchenCollections />} />
         <Route path="/Kitchen" element={<><NavBar /><Kitchen /><Footer /></>} />
         <Route path="/Bedroom" element={<><NavBar /><Bedrooms /><Footer /></>} />
         <Route path="/DayComplement" element={<><NavBar /><DayComplement /><Footer /></>} />
         <Route path="/NightComplement" element={<><NavBar /><NightComplement /><Footer /></>} />
         <Route path="/Outdoor" element={<><NavBar /><Outdoor /><Footer /></>} />
-        <Route path="/products" element={<><NavBar /><Products /><Footer /></>} />
-        <Route path="/Products" element={<><NavBar /><Products /><Footer /></>} />
+        <Route path="/products" element={<ProductCollections />} />
+        <Route path="/Products" element={<ProductCollections />} />
         <Route path="/products/obsidian-kitchen-island" element={<PremiumProductDetail />} />
         <Route path="/products/:slug" element={<><NavBar /><ProductDetail /><Footer /></>} />
         <Route path="/cart" element={<CartCheckout />} />
         <Route path="/checkout" element={<CartCheckout />} />
         <Route path="/wishlist" element={<><NavBar /><Wishlist /><Footer /></>} />
         <Route path="/contact" element={<PremiumContact />} />
+        <Route path="/virtual-showroom" element={<VirtualShowroom />} />
 
         {/* ── Auth Routes ── */}
         <Route path="/Login" element={<Login />} />
         <Route path="/Signup" element={<Signup />} />
 
+        {/* ── Customer Dashboard ── */}
+        <Route path="/dashboard" element={<CustomerDashboard />} />
+
         {/* ── Admin / ERP Routes ── */}
-        <Route path="/dashboard" element={adminPage(<Dashboard />)} />
         <Route path="/admin" element={adminPage(<Dashboard />)} />
         <Route path="/admin/dashboard" element={adminPage(<Dashboard />)} />
         <Route path="/admin/orders" element={adminStandalonePage(<AdminOrdersPipeline />)} />

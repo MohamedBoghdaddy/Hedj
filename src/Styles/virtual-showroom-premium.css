@@ -1,0 +1,524 @@
+.virtual-showroom-page {
+  background: #fcf9f4;
+  color: #1c1c19;
+  overflow-x: hidden;
+}
+
+.vs-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  background: #000000;
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 999px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+  font-size: 14px;
+}
+
+.vs-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.vs-hero {
+  position: relative;
+  min-height: 921px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.vs-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.vs-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vs-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(252, 249, 244, 1) 100%
+  );
+}
+
+.vs-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.vs-hero-copy {
+  max-width: 760px;
+}
+
+.vs-hero-copy span,
+.vs-feature-copy > div > span,
+.vs-consultation-card > span {
+  display: block;
+  margin-bottom: 16px;
+  color: #645d58;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.vs-hero-copy h1 {
+  margin: 0 0 24px;
+  font-family: "Noto Serif", serif;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+  color: #000000;
+}
+
+.vs-hero-copy p {
+  max-width: 620px;
+  margin: 0 0 40px;
+  color: #645d58;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.vs-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vs-primary-button,
+.vs-secondary-button {
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 40px;
+  border-radius: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.vs-primary-button {
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
+.vs-primary-button:hover {
+  background: #645d58;
+  border-color: #645d58;
+}
+
+.vs-secondary-button {
+  border: 1px solid #645d58;
+  background: transparent;
+  color: #645d58;
+}
+
+.vs-secondary-button:hover {
+  background: #eae1da;
+  color: #1c1c19;
+}
+
+.vs-gallery-section {
+  background: #fcf9f4;
+  padding: 80px 0;
+}
+
+.vs-section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.vs-section-heading h2,
+.vs-feature-copy h2,
+.vs-consultation-card h2 {
+  margin: 0;
+  font-family: "Noto Serif", serif;
+  font-size: clamp(32px, 4vw, 42px);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  color: #000000;
+}
+
+.vs-section-heading p {
+  max-width: 680px;
+  margin: 16px 0 0;
+  color: #645d58;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.vs-arrow-row {
+  display: flex;
+  gap: 16px;
+}
+
+.vs-arrow-row button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #c6c6cd;
+  background: transparent;
+  color: #1c1c19;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.vs-arrow-row button:hover {
+  border-color: #000000;
+  background: #f0ede8;
+}
+
+.vs-gallery-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.vs-space-card {
+  cursor: pointer;
+}
+
+.vs-space-image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #f0ede8;
+}
+
+.vs-space-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.vs-space-card:hover .vs-space-image img {
+  transform: scale(1.05);
+}
+
+.vs-space-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.22);
+  opacity: 0;
+  display: grid;
+  place-items: center;
+  transition: 0.25s ease;
+}
+
+.vs-space-card:hover .vs-space-overlay {
+  opacity: 1;
+}
+
+.vs-space-overlay button {
+  border: 0;
+  background: rgba(255, 255, 255, 0.92);
+  color: #000000;
+  padding: 14px 26px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.vs-space-card h3 {
+  margin: 0 0 4px;
+  font-family: "Noto Serif", serif;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #000000;
+}
+
+.vs-space-card p {
+  margin: 0;
+  color: #645d58;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.vs-features-section {
+  background: #f6f3ee;
+  padding: 80px 0;
+  overflow: hidden;
+}
+
+.vs-features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.vs-feature-visual {
+  position: relative;
+}
+
+.vs-feature-image {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #e5e2dd;
+  overflow: hidden;
+}
+
+.vs-feature-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  mix-blend-mode: multiply;
+  opacity: 0.8;
+}
+
+.vs-feature-block {
+  position: absolute;
+  right: -32px;
+  bottom: -32px;
+  width: 256px;
+  height: 256px;
+  background: #eae1da;
+  z-index: -1;
+}
+
+.vs-hotspot {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  animation: vsPulse 1.6s infinite ease-in-out;
+}
+
+.vs-hotspot i {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 999px;
+}
+
+.vs-hotspot-one {
+  top: 25%;
+  left: 33%;
+}
+
+.vs-hotspot-two {
+  right: 25%;
+  bottom: 33%;
+}
+
+@keyframes vsPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+.vs-feature-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.vs-feature-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+.vs-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vs-feature-icon {
+  width: 48px;
+  height: 48px;
+  background: #000000;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+}
+
+.vs-feature-card h4 {
+  margin: 0;
+  font-family: "Noto Serif", serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.vs-feature-card p {
+  margin: 0;
+  color: #645d58;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.vs-consultation-section {
+  background: #fcf9f4;
+  padding: 80px 24px;
+}
+
+.vs-consultation-card {
+  max-width: 1024px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  background: rgba(246, 243, 238, 0.3);
+  border: 1px solid #c6c6cd;
+  padding: 80px 48px;
+}
+
+.vs-consultation-card h2 {
+  font-size: clamp(36px, 5vw, 48px);
+  margin-bottom: 32px;
+}
+
+.vs-consultation-card p {
+  max-width: 720px;
+  margin: 0 auto 40px;
+  color: #645d58;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.vs-corner {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+}
+
+.vs-corner-top-left {
+  top: 0;
+  left: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.vs-corner-bottom-right {
+  right: 0;
+  bottom: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.vs-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vs-reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+  .vs-section-heading {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .vs-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vs-feature-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .vs-gallery-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .vs-features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .vs-container {
+    padding: 0 18px;
+  }
+
+  .vs-hero {
+    min-height: 760px;
+  }
+
+  .vs-hero-content {
+    padding: 0 18px 72px;
+  }
+
+  .vs-hero-copy p {
+    font-size: 16px;
+  }
+
+  .vs-primary-button,
+  .vs-secondary-button {
+    width: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .vs-gallery-section,
+  .vs-features-section,
+  .vs-consultation-section {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .vs-consultation-card {
+    padding: 56px 24px;
+  }
+
+  .vs-toast {
+    right: 18px;
+    left: 18px;
+    text-align: center;
+  }
+}

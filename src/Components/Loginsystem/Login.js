@@ -1,12 +1,16 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLogin } from "../../hooks/useLogin";
+import { useAuthContext } from "../../context/AuthContext";
 import "../../Styles/auth-premium.css";
 
 const loginVisual =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD0G77Y0EaIuevvsyBlAjXP4n3DqYhdREaa2GehU7zHSGXq6Wkdby2W3m_np3QXxPscKf13xeBUzGqWu-m5cyDqkw6dBOC0gMTYPDSL1xXNU4X4nAp-B07tB8eCZ47lFtYmndhkImOQjMVHukcc-VMxc-TdtHxK1WfjN1AAhNQni1K7sipyMOvz9H3XyEOS9KHxrFazbUsfvge1Jrc7VuiIO_hCBZbEXJafaiXHd06Yd-QSeYy0lgCvZwaGOt9vnW3CaHc7e1KaNFG4";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { state } = useAuthContext();
   const {
     email,
     setEmail,
@@ -19,6 +23,17 @@ const Login = () => {
     isLoading,
     handleLogin,
   } = useLogin();
+
+  useEffect(() => {
+    if (state.isAuthenticated && !state.loading) {
+      const role = String(state.user?.role || state.user?.userType || "").toLowerCase();
+      if (role === "admin" || role === "employee") {
+        navigate("/admin/dashboard", { replace: true });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
+    }
+  }, [state.isAuthenticated, state.loading, state.user, navigate]);
 
   const handleSocialClick = () => {
     toast.info("Social login is not configured yet.");
