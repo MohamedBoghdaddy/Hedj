@@ -20,10 +20,7 @@ const MAX_SIZE_BYTES = {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────────
 
-const getBucketName = (bucketEnvKey) =>
-  process.env[bucketEnvKey] || bucketEnvKey;
-
-const sanitizeFileName = (fileName) =>
+export const sanitizeFileName = (fileName) =>
   path
     .basename(fileName)
     .replace(/[^a-zA-Z0-9._-]/g, "_")
@@ -40,7 +37,11 @@ const validateFile = (buffer, contentType, bucket) => {
     );
   }
 
-  const maxBytes = MAX_SIZE_BYTES[bucket];
+  const maxBytes =
+    MAX_SIZE_BYTES[bucket] ||
+    (bucket === process.env.SUPABASE_PRODUCT_IMAGES_BUCKET ? MAX_SIZE_BYTES["product-images"] : null) ||
+    (bucket === process.env.SUPABASE_PROFILE_IMAGES_BUCKET ? MAX_SIZE_BYTES["profile-images"] : null) ||
+    (bucket === process.env.SUPABASE_EMPLOYEE_IMAGES_BUCKET ? MAX_SIZE_BYTES["employee-images"] : null);
   if (maxBytes && buffer.length > maxBytes) {
     const maxMB = (maxBytes / (1024 * 1024)).toFixed(0);
     throw Object.assign(
@@ -176,6 +177,27 @@ export const saveImageAssetMetadata = async ({
   return data;
 };
 
+export const markImageAssetOrphaned = async ({ assetId, reason }) => {
+  requireSupabase();
+  if (!assetId) return null;
+
+  const { data, error } = await supabaseAdmin
+    .from("image_assets")
+    .update({
+      status: "orphaned",
+      metadata: reason ? { orphanedReason: reason } : undefined,
+    })
+    .eq("id", assetId)
+    .select()
+    .single();
+
+  if (error) {
+    console.warn(`Could not mark image asset orphaned: ${error.message}`);
+    return null;
+  }
+  return data;
+};
+
 // ─── High-level upload helpers ────────────────────────────────────────────────────
 
 /**
@@ -184,7 +206,11 @@ export const saveImageAssetMetadata = async ({
  *   users/{userId}/profile/{ts}-{safeFileName}
  *   employees/{employeeId}/profile/{ts}-{safeFileName}
  */
-export const buildStoragePath = (entityType, entityId, originalName) => {
+export const buildStoragePath = (...args) => {
+  const [first, second, third] = args;
+  const entityType = typeof first === "object" ? first.type : first;
+  const entityId = typeof first === "object" ? first.entityId : second;
+  const originalName = typeof first === "object" ? first.fileName : third;
   const ts = Date.now();
   const safe = sanitizeFileName(originalName);
   switch (entityType) {

@@ -96,6 +96,12 @@ export const verifyAdminOrEmployee = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password -__v");
+    if (user && ["admin", "employee"].includes(user.role)) {
+      req.user = user;
+      return next();
+    }
+
     const employee = await Employee.findById(decoded.id).select("-password -__v");
 
     if (
@@ -112,5 +118,39 @@ export const verifyAdminOrEmployee = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(403).json({ success: false, message: "Forbidden." });
+  }
+};
+
+export const verifyAdmin = async (req, res, next) => {
+  try {
+    if (!requireDatabase(res)) return;
+
+    const token = getTokenFromRequest(req);
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: "Access denied. No token provided.",
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password -__v");
+    if (user?.role === "admin") {
+      req.user = user;
+      return next();
+    }
+
+    const employee = await Employee.findById(decoded.id).select("-password -__v");
+    if (employee?.role === "admin") {
+      req.employee = employee;
+      return next();
+    }
+
+    return res.status(403).json({
+      success: false,
+      message: "Access forbidden. Admins only.",
+    });
+  } catch (error) {
+    return res.status(403).json({ success: false, message: "Forbidden." });
   }
 };

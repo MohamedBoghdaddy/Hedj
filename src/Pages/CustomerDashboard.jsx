@@ -1,8 +1,10 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import { ShopContext } from "../context/productContext";
 import { useLogout } from "../hooks/useLogout";
+import { useAuthContext } from "../context/AuthContext";
+import { storageApi } from "../services/api";
 import "../Styles/customer-dashboard-premium.css";
 
 const activeOrders = [
@@ -110,10 +112,22 @@ export default function CustomerDashboard() {
   const navigate = useNavigate();
   const shop = useContext(ShopContext);
   const { logout } = useLogout();
+  const { dispatch, state } = useAuthContext();
   const [toast, setToast] = useState("");
   const [activePanel, setActivePanel] = useState("orders");
+  const user = useMemo(() => state.user || getStoredUser(), [state.user]);
 
-  const user = useMemo(() => getStoredUser(), []);
+  // profile photo upload state
+  const photoFileRef = useRef();
+  const [photoPreview, setPhotoPreview] = useState(
+    user?.profilePhotoUrl || user?.profilePhoto || null
+  );
+  const [photoUploading, setPhotoUploading] = useState(false);
+
+  useEffect(() => {
+    setPhotoPreview(user?.profilePhotoUrl || user?.profilePhoto || null);
+  }, [user?.profilePhoto, user?.profilePhotoUrl]);
+
   const firstName =
     user?.firstName ||
     user?.username?.split(" ")?.[0] ||
@@ -140,6 +154,34 @@ export default function CustomerDashboard() {
       quantity: 1,
     });
     showToast(`${item.title} moved to bag.`);
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Optimistic local preview
+    const objectUrl = URL.createObjectURL(file);
+    setPhotoPreview(objectUrl);
+    setPhotoUploading(true);
+
+    try {
+      const result = await storageApi.uploadMyProfilePhoto(file);
+      // Persist the Supabase URL back into localStorage so the avatar stays
+      // visible after page reload (until a full auth refresh).
+      const stored = JSON.parse(localStorage.getItem("user") || "{}");
+      const nextUser = { ...stored, ...(result.user || {}), profilePhotoUrl: result.photoUrl };
+      localStorage.setItem("user", JSON.stringify(nextUser));
+      dispatch({ type: "USER_LOADED", payload: nextUser });
+      setPhotoPreview(result.photoUrl);
+      showToast("Profile photo updated.");
+    } catch (err) {
+      // Revert preview on failure
+      setPhotoPreview(user?.profilePhotoUrl || user?.profilePhoto || null);
+      showToast(`Photo upload failed: ${err.message}`);
+    } finally {
+      setPhotoUploading(false);
+    }
   };
 
   const renderAccountPanel = () => {
@@ -192,36 +234,84 @@ export default function CustomerDashboard() {
 
     if (activePanel === "profile") {
       return (
-        <form
-          className="customer-profile-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            showToast("Profile details saved locally for this session.");
-          }}
-        >
-          <label>
-            First Name
-            <input defaultValue={user?.firstName || firstName} />
-          </label>
-          <label>
-            Last Name
-            <input defaultValue={user?.lastName || ""} />
-          </label>
-          <label>
-            Email
-            <input type="email" defaultValue={user?.email || ""} />
-          </label>
-          <label>
-            Notifications
-            <select
-              defaultValue={user?.receiveNotifications === false ? "off" : "on"}
-            >
-              <option value="on">Enabled</option>
-              <option value="off">Disabled</option>
-            </select>
-          </label>
-          <button type="submit">Save Profile</button>
-        </form>
+        <div className="customer-profile-section">
+          {/* ── Profile photo ── */}
+          <div className="customer-profile-photo-row">
+            <div className="customer-profile-avatar-wrap">
+              {photoPreview ? (
+                <img
+                  className="customer-profile-avatar"
+                  src={photoPreview}
+                  alt="Profile"
+                />
+              ) : (
+                <div className="customer-profile-avatar customer-profile-avatar--initials">
+                  {firstName?.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              {photoUploading && (
+                <div className="customer-profile-avatar-uploading">
+                  <span className="material-symbols-outlined">hourglass_empty</span>
+                </div>
+              )}
+            </div>
+
+            <div className="customer-profile-photo-controls">
+              <p className="customer-profile-photo-label">Profile Photo</p>
+              <p className="customer-profile-photo-hint">
+                JPG, PNG or WebP · max 2 MB · stored securely in Supabase
+              </p>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                ref={photoFileRef}
+                style={{ display: "none" }}
+                onChange={handlePhotoChange}
+              />
+              <button
+                type="button"
+                className="customer-profile-photo-btn"
+                onClick={() => photoFileRef.current?.click()}
+                disabled={photoUploading}
+              >
+                <span className="material-symbols-outlined">upload</span>
+                {photoUploading ? "Uploading…" : "Upload New Photo"}
+              </button>
+            </div>
+          </div>
+
+          {/* ── Profile form ── */}
+          <form
+            className="customer-profile-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              showToast("Profile details saved locally for this session.");
+            }}
+          >
+            <label>
+              First Name
+              <input defaultValue={user?.firstName || firstName} />
+            </label>
+            <label>
+              Last Name
+              <input defaultValue={user?.lastName || ""} />
+            </label>
+            <label>
+              Email
+              <input type="email" defaultValue={user?.email || ""} />
+            </label>
+            <label>
+              Notifications
+              <select
+                defaultValue={user?.receiveNotifications === false ? "off" : "on"}
+              >
+                <option value="on">Enabled</option>
+                <option value="off">Disabled</option>
+              </select>
+            </label>
+            <button type="submit">Save Profile</button>
+          </form>
+        </div>
       );
     }
 

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminShell } from "../Components/AdminShell";
+import { erpApi } from "../services/api";
 import "../Styles/admin-erp-premium.css";
 
 const initialRequests = [
@@ -45,10 +46,31 @@ export default function AdminERPApprovals() {
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(""), 2400); };
 
-  const handleAction = (id, action) => {
-    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status: action } : r));
-    showToast(`Request ${action}.`);
-    if (selected?.id === id) setSelected((prev) => ({ ...prev, status: action }));
+  useEffect(() => {
+    erpApi.getApprovals().then((payload) => {
+      const live = (payload.data || []).map((request) => ({
+        id: request._id,
+        requestType: request.requestType,
+        employeeName: request.employeeId?.fullName || request.employeeName || "Employee",
+        employeeCode: request.employeeId?.employeeCode || "",
+        currentApproverName: request.currentApproverId?.fullName || request.currentApproverName || "Approver",
+        status: request.status,
+        description: request.description,
+        date: new Date(request.createdAt).toLocaleDateString(),
+      }));
+      if (live.length) setRequests(live);
+    }).catch((err) => showToast(err.message || "Approval API unavailable."));
+  }, []);
+
+  const handleAction = async (id, action) => {
+    try {
+      await (action === "approved" ? erpApi.approve(id) : erpApi.reject(id));
+      setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status: action } : r));
+      showToast(`Request ${action}.`);
+      if (selected?.id === id) setSelected((prev) => ({ ...prev, status: action }));
+    } catch (err) {
+      showToast(err.message || `Could not mark request ${action}.`);
+    }
   };
 
   const visible = filterStatus === "all" ? requests : requests.filter((r) => r.status === filterStatus);

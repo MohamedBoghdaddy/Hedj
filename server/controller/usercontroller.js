@@ -48,6 +48,15 @@ const toPublicUser = (user) => ({
   department: user.department,
   receiveNotifications: user.receiveNotifications,
   profilePhoto: user.profilePhoto,
+  profilePhotoUrl: user.profilePhotoUrl,
+  profilePhotoAssetId: user.profilePhotoAssetId,
+  jobTitle: user.jobTitle,
+  seniorityLevel: user.seniorityLevel,
+  phone: user.phone,
+  status: user.status,
+  invitedAt: user.invitedAt,
+  invitationEmailStatus: user.invitationEmailStatus,
+  invitationEmailOutboxId: user.invitationEmailOutboxId,
 });
 
 const getTokenFromRequest = (req) => {

@@ -1,12 +1,13 @@
 import express from "express";
 import multer from "multer";
-import { isAuthenticated, verifyAdminOrEmployee } from "../middleware/AuthMiddleware.js";
+import { isAuthenticated, verifyAdmin } from "../middleware/AuthMiddleware.js";
 import {
   uploadProductImage,
   uploadProductGallery,
   uploadUserProfilePhoto,
   uploadEmployeeProfilePhoto,
   sendEmployeeInvite,
+  createAndInviteEmployee,
 } from "../controller/uploadController.js";
 
 const router = express.Router();
@@ -27,7 +28,7 @@ const uploadMulti = multer({
 // ─── Admin: product image ─────────────────────────────────────────────────────────
 router.post(
   "/admin/products/:productId/image",
-  verifyAdminOrEmployee,
+  verifyAdmin,
   uploadSingle.single("image"),
   uploadProductImage
 );
@@ -35,7 +36,7 @@ router.post(
 // ─── Admin: product gallery ───────────────────────────────────────────────────────
 router.post(
   "/admin/products/:productId/gallery",
-  verifyAdminOrEmployee,
+  verifyAdmin,
   uploadMulti.array("images", 10),
   uploadProductGallery
 );
@@ -43,15 +44,22 @@ router.post(
 // ─── Admin: employee profile photo ───────────────────────────────────────────────
 router.post(
   "/admin/employees/:employeeId/profile-photo",
-  verifyAdminOrEmployee,
+  verifyAdmin,
   uploadSingle.single("image"),
   uploadEmployeeProfilePhoto
 );
 
-// ─── Admin: send employee invite ──────────────────────────────────────────────────
+// ─── Admin: create employee + send invite (single step) ──────────────────────────
+router.post(
+  "/admin/employees/invite",
+  verifyAdmin,
+  createAndInviteEmployee
+);
+
+// ─── Admin: send invite to existing employee ──────────────────────────────────────
 router.post(
   "/admin/employees/:employeeId/send-invite",
-  verifyAdminOrEmployee,
+  verifyAdmin,
   sendEmployeeInvite
 );
 
@@ -62,5 +70,15 @@ router.post(
   uploadSingle.single("image"),
   uploadUserProfilePhoto
 );
+
+router.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ success: false, message: "Uploaded file is too large." });
+    }
+    return res.status(400).json({ success: false, message: err.message });
+  }
+  return next(err);
+});
 
 export default router;

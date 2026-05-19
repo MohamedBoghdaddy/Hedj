@@ -66,6 +66,8 @@ create trigger email_outbox_updated_at
 
 create index if not exists idx_email_outbox_status   on email_outbox(status);
 create index if not exists idx_email_outbox_to_email on email_outbox(to_email);
+create index if not exists idx_email_outbox_related
+  on email_outbox(related_entity_type, related_entity_id);
 
 -- ─── 3. email_logs ──────────────────────────────────────────
 create table if not exists email_logs (
@@ -94,8 +96,9 @@ create table if not exists image_assets (
   width               integer,
   height              integer,
   alt_text            text,
+  metadata            jsonb not null default '{}'::jsonb,
   status              text not null default 'active'
-    check (status in ('active','archived','deleted')),
+    check (status in ('active','archived','deleted','orphaned')),
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );

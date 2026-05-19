@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { AdminShell } from "../Components/AdminShell";
+import { erpApi } from "../services/api";
 import "../Styles/admin-erp-premium.css";
 
 const layers = [
@@ -77,9 +79,25 @@ const integrations = [
 ];
 
 export default function AdminERPOverview() {
+  const [overview, setOverview] = useState(null);
+  const [liveIntegrations, setLiveIntegrations] = useState(integrations);
+  const [error, setError] = useState("");
   const primaryCount = 7;
   const secondaryCount = 8;
   const optionalCount = 6;
+
+  useEffect(() => {
+    erpApi
+      .getOverview()
+      .then((payload) => {
+        setOverview(payload.overview);
+        if (payload.overview?.integrations) {
+          setLiveIntegrations(payload.overview.integrations);
+        }
+        setError("");
+      })
+      .catch((err) => setError(err.message || "ERP overview could not be loaded."));
+  }, []);
 
   return (
     <AdminShell
@@ -87,15 +105,16 @@ export default function AdminERPOverview() {
       title="ERP Architecture"
       subtitle="Application dependencies, schema relationships, and organizational structure"
     >
+      {error && <div className="admin-toast admin-toast--warn">{error}</div>}
       {/* KPI Row */}
       <div className="erp-kpi-row">
         {[
           { label: "Primary Apps", value: primaryCount, icon: "layers", sub: "Foundation layer" },
           { label: "Secondary Apps", value: secondaryCount, icon: "account_tree", sub: "Operational layer" },
           { label: "Optional Apps", value: optionalCount, icon: "extension", sub: "Extension layer" },
-          { label: "Employees", value: 15, icon: "badge", sub: "Org hierarchy" },
-          { label: "Departments", value: 8, icon: "corporate_fare", sub: "Active units" },
-          { label: "Pending Approvals", value: 3, icon: "pending_actions", sub: "Requires action" },
+          { label: "Employees", value: overview?.employees ?? 15, icon: "badge", sub: "Org hierarchy" },
+          { label: "Departments", value: overview?.departments ?? 8, icon: "corporate_fare", sub: "Active units" },
+          { label: "Pending Approvals", value: overview?.pendingApprovals ?? 3, icon: "pending_actions", sub: "Requires action" },
         ].map((kpi) => (
           <div className="erp-kpi-card" key={kpi.label}>
             <div className="erp-kpi-icon">
@@ -154,7 +173,7 @@ export default function AdminERPOverview() {
         <div className="erp-section-card">
           <h2>Integration Status</h2>
           <div className="erp-activity-feed">
-            {integrations.map((item) => (
+            {liveIntegrations.map((item) => (
               <div className="erp-activity-item" key={item.name} style={{ alignItems: "center" }}>
                 <span
                   className="material-symbols-outlined"
@@ -163,11 +182,11 @@ export default function AdminERPOverview() {
                     color: item.status === "active" ? "#059669" : item.status === "static" ? "#d97706" : "#c6c6cd",
                   }}
                 >
-                  {item.icon}
+                  {item.icon || (item.status === "active" ? "check_circle" : "info")}
                 </span>
                 <div>
                   <div className="erp-activity-text">{item.name}</div>
-                  <div className="erp-activity-time" style={{ textTransform: "capitalize" }}>{item.status}</div>
+                  <div className="erp-activity-time" style={{ textTransform: "capitalize" }}>{item.message || item.status}</div>
                 </div>
                 <span
                   className={`erp-badge erp-badge-${item.status === "api-connected" ? "api" : item.status}`}

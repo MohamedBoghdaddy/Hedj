@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import { ShopContext } from "../context/productContext";
+import { commerceApi } from "../services/api";
 import "../Styles/commerce-premium.css";
 import "../Styles/product-collections-premium.css";
 
@@ -85,6 +86,26 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+function normalizeProduct(product) {
+  const slug = product.slug || slugify(product.name || product._id || product.id);
+  const image =
+    product.imageUrl ||
+    product.image ||
+    product.img ||
+    product.images?.[0] ||
+    product.galleryImages?.[0]?.url ||
+    "";
+  return {
+    ...product,
+    id: product._id || product.id,
+    slug,
+    price: Number(product.price || 0),
+    category: product.category || product.collection || "Product",
+    collection: product.collection || product.category || "",
+    image,
+  };
+}
+
 export default function ProductCollections() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
@@ -93,6 +114,9 @@ export default function ProductCollections() {
   const [viewMode, setViewMode] = useState("grid");
   const [page, setPage] = useState(1);
   const [wishlistMessage, setWishlistMessage] = useState("");
+  const [serverProducts, setServerProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [productError, setProductError] = useState("");
   const typeFilter = searchParams.get("type");
   const routeCollection = pathname.match(/^\/collections\/([^/?]+)/)?.[1];
   const isCollectionsRoute = pathname.startsWith("/collections");
@@ -100,10 +124,43 @@ export default function ProductCollections() {
     categoryMeta[routeCollection] ||
     (isCollectionsRoute ? categoryMeta.collections : categoryMeta.products);
 
+  useEffect(() => {
+    let alive = true;
+    setLoadingProducts(true);
+    commerceApi
+      .getProducts()
+      .then((products) => {
+        if (!alive) return;
+        setServerProducts(products.map(normalizeProduct));
+        setProductError("");
+      })
+      .catch((error) => {
+        if (!alive) return;
+        setProductError(error.message || "Products could not be loaded from MongoDB.");
+      })
+      .finally(() => {
+        if (alive) setLoadingProducts(false);
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const sortedProducts = useMemo(() => {
-    const allowedIds = meta.ids ? new Set(meta.ids) : null;
-    const result = allProducts.filter((product) => {
+    const usingServer = serverProducts.length > 0;
+    const sourceProducts = usingServer ? serverProducts : allProducts;
+    const allowedIds = !usingServer && meta.ids ? new Set(meta.ids) : null;
+    const result = sourceProducts.filter((product) => {
+      const bucket = slugify(`${product.collection || product.category || ""}`);
       if (allowedIds && !allowedIds.has(product.id)) return false;
+      if (usingServer && routeCollection) {
+        const route = slugify(routeCollection);
+        if (route === "complements") {
+          return ["complements", "decor", "lighting", "textiles"].includes(bucket);
+        }
+        return bucket === route || bucket === route.replace(/s$/, "");
+      }
       if (routeCollection === "complements" && typeFilter === "day") {
         return ["Decor", "Lighting"].includes(product.category);
       }
@@ -116,7 +173,7 @@ export default function ProductCollections() {
     if (sort === "price-low") result.sort((a, b) => a.price - b.price);
     if (sort === "price-high") result.sort((a, b) => b.price - a.price);
     return result;
-  }, [meta.ids, routeCollection, sort, typeFilter]);
+  }, [meta.ids, routeCollection, serverProducts, sort, typeFilter]);
 
   const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
   const visibleProducts = sortedProducts.slice(0, page * ITEMS_PER_PAGE);
@@ -197,6 +254,17 @@ export default function ProductCollections() {
           </div>
         )}
 
+        {loadingProducts && (
+          <div className="products-toast" role="status">
+            Loading products from MongoDB...
+          </div>
+        )}
+        {!loadingProducts && productError && serverProducts.length === 0 && (
+          <div className="products-toast" role="status">
+            {productError}
+          </div>
+        )}
+
         <section className="products-toolbar">
           <div className="products-toolbar-left">
             <button
@@ -270,7 +338,7 @@ export default function ProductCollections() {
                 )}
                 <div className="collection-product-actions">
                   <Link
-                    to={`/products/${slugify(product.name)}`}
+                    to={`/products/${product.slug || slugify(product.name)}`}
                     className="collection-quick-view"
                   >
                     Quick View

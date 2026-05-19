@@ -11,12 +11,20 @@ const requireSupabase = () => {
 
 // ─── Log helper ──────────────────────────────────────────────────────────────────
 
+const redactPayload = (payload = {}) => {
+  const text = JSON.stringify(payload);
+  if (/token|password|secret|authorization|api[_-]?key/i.test(text)) {
+    return { redacted: true };
+  }
+  return payload;
+};
+
 const logEvent = async (outboxId, eventType, payload = {}) => {
   if (!isSupabaseConfigured() || !outboxId) return;
   await supabaseAdmin.from("email_logs").insert({
     outbox_id: outboxId,
     event_type: eventType,
-    payload,
+    payload: redactPayload(payload),
   });
 };
 
@@ -77,31 +85,37 @@ export const queueEmail = async ({
 };
 
 /**
- * Mark an outbox entry as "sending" and increment attempts.
+ * Mark an outbox entry as "sending" and increment attempts counter.
  */
 export const markEmailSending = async (outboxId) => {
   requireSupabase();
-  const { data, error } = await supabaseAdmin
+  if (!outboxId) return null;
+
+  // Read current attempts count first so we can increment it safely.
+  const { data: current } = await supabaseAdmin
     .from("email_outbox")
-    .update({ status: "sending", attempts: supabaseAdmin.rpc })
+    .select("attempts")
     .eq("id", outboxId)
+    .single();
+
+  const nextAttempts = (current?.attempts ?? 0) + 1;
+
+  const { data } = await supabaseAdmin
+    .from("email_outbox")
+    .update({ status: "sending", attempts: nextAttempts })
+    .eq("id", outboxId)
+    .in("status", ["pending", "failed"])
     .select()
     .single();
 
-  // Use a raw update for attempts increment
-  await supabaseAdmin.rpc("increment_email_attempts", { row_id: outboxId }).catch(() => {
-    // rpc might not exist; fall back to a regular update
-  });
+  if (!data) {
+    throw Object.assign(new Error("Email is already being sent or is not retryable."), {
+      statusCode: 409,
+    });
+  }
 
-  const { data: updated } = await supabaseAdmin
-    .from("email_outbox")
-    .update({ status: "sending" })
-    .eq("id", outboxId)
-    .select()
-    .single();
-
-  await logEvent(outboxId, "sending");
-  return updated || data;
+  await logEvent(outboxId, "sending", { attempt: nextAttempts });
+  return data;
 };
 
 /**
@@ -109,6 +123,7 @@ export const markEmailSending = async (outboxId) => {
  */
 export const markEmailSent = async (outboxId, providerMessageId) => {
   requireSupabase();
+  if (!outboxId) return null;
   const { data } = await supabaseAdmin
     .from("email_outbox")
     .update({
@@ -129,6 +144,7 @@ export const markEmailSent = async (outboxId, providerMessageId) => {
  */
 export const markEmailFailed = async (outboxId, errorMessage) => {
   requireSupabase();
+  if (!outboxId) return null;
   const { data } = await supabaseAdmin
     .from("email_outbox")
     .update({ status: "failed", error_message: errorMessage || "Unknown error" })
@@ -136,7 +152,9 @@ export const markEmailFailed = async (outboxId, errorMessage) => {
     .select()
     .single();
 
-  await logEvent(outboxId, "failed", { errorMessage });
+  await logEvent(outboxId, "failed", {
+    errorMessage: String(errorMessage || "Unknown error").slice(0, 1000),
+  });
   return data;
 };
 
@@ -146,12 +164,16 @@ export const markEmailFailed = async (outboxId, errorMessage) => {
  */
 export const listEmailOutbox = async (filters = {}) => {
   requireSupabase();
+  const page = Math.max(1, Number(filters.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(filters.limit) || 50));
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
 
   let query = supabaseAdmin
     .from("email_outbox")
-    .select("*")
+    .select("*", { count: "exact" })
     .order("created_at", { ascending: false })
-    .limit(200);
+    .range(from, to);
 
   if (filters.status) query = query.eq("status", filters.status);
   if (filters.toEmail) query = query.ilike("to_email", `%${filters.toEmail}%`);
@@ -162,8 +184,24 @@ export const listEmailOutbox = async (filters = {}) => {
   if (filters.dateTo)
     query = query.lte("created_at", filters.dateTo);
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
   if (error) throw new Error(`Failed to list email outbox: ${error.message}`);
+  return { count: data.length, total: count || 0, page, limit, outbox: data };
+};
+
+export const getEmailOutboxById = async (outboxId) => {
+  requireSupabase();
+
+  const { data, error } = await supabaseAdmin
+    .from("email_outbox")
+    .select("*")
+    .eq("id", outboxId)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    throw new Error(`Failed to get email outbox row: ${error.message}`);
+  }
   return data;
 };
 
@@ -181,4 +219,9 @@ export const getEmailLogs = async (outboxId) => {
 
   if (error) throw new Error(`Failed to get email logs: ${error.message}`);
   return data;
+};
+
+export const writeEmailLog = async ({ outboxId, eventType, payload }) => {
+  requireSupabase();
+  await logEvent(outboxId, eventType, payload);
 };

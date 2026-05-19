@@ -13,6 +13,9 @@ const employeeSchema = new mongoose.Schema(
       trim: true,
     },
     department: { type: String, required: true },
+    jobTitle: { type: String, trim: true },
+    seniorityLevel: { type: String, trim: true },
+    phone: { type: String, trim: true },
     password: { type: String, required: true },
     role: {
       type: String,
@@ -23,9 +26,15 @@ const employeeSchema = new mongoose.Schema(
     // Supabase Storage + email outbox references
     profilePhotoUrl: { type: String },
     profilePhotoAssetId: { type: String },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "invited", "suspended"],
+      default: "active",
+    },
+    invitedAt: { type: Date },
     invitationEmailStatus: {
       type: String,
-      enum: ["none", "queued", "sent", "failed", "provider_not_configured"],
+      enum: ["none", "pending", "queued", "sent", "failed", "provider_not_configured"],
       default: "none",
     },
     invitationEmailOutboxId: { type: String },

@@ -15,6 +15,8 @@ const detectProvider = () => {
   return null;
 };
 
+export const isEmailProviderConfigured = () => Boolean(detectProvider());
+
 // ─── SMTP via nodemailer ──────────────────────────────────────────────────────────
 
 const sendViaSMTP = async (outboxRow) => {
@@ -118,6 +120,7 @@ export const deliverEmail = async (outboxRow) => {
   if (!provider) {
     return {
       status: "queued",
+      provider: null,
       message:
         "Email queued. Delivery provider is not configured. " +
         "Set SMTP_*, RESEND_API_KEY, or SENDGRID_API_KEY to enable sending.",
@@ -127,6 +130,14 @@ export const deliverEmail = async (outboxRow) => {
   const outboxId = outboxRow.id;
 
   try {
+    if (outboxRow.status && !["pending", "failed"].includes(outboxRow.status)) {
+      return {
+        status: "skipped",
+        provider,
+        message: `Email status "${outboxRow.status}" cannot be sent.`,
+      };
+    }
+
     await markEmailSending(outboxId);
 
     let providerMessageId;

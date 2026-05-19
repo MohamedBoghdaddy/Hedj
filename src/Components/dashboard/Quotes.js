@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { commerceApi } from "../../services/api";
 import "../../Styles/admin-dashboard.css";
@@ -9,7 +8,6 @@ const Quotes = () => {
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const loadQuotes = async () => {
     setLoading(true);
@@ -28,17 +26,42 @@ const Quotes = () => {
     loadQuotes();
   }, []);
 
-  const convertQuote = async (quote) => {
-    setSavingId(quote.id);
+  const quoteKey = (quote) => quote._id || quote.id;
+
+  const sendQuote = async (quote) => {
+    setSavingId(quoteKey(quote));
     try {
-      const result = await commerceApi.convertQuoteToOrder(quote.id);
-      setQuotes((prev) =>
-        prev.map((item) => (item.id === quote.id ? { ...item, status: "converted", orderId: result.order.id } : item))
-      );
-      toast.success(`Quote converted to order ${result.order.id}.`);
-      navigate("/admin/orders");
-    } catch {
-      toast.error("Could not convert quote.");
+      const result = await commerceApi.sendQuote(quoteKey(quote));
+      setQuotes((prev) => prev.map((item) => (quoteKey(item) === quoteKey(quote) ? result.quote : item)));
+      toast.success(result.message || "Quote email queued.");
+    } catch (error) {
+      toast.error(error.message || "Could not send quote.");
+    } finally {
+      setSavingId("");
+    }
+  };
+
+  const updateStatus = async (quote, status) => {
+    try {
+      const result = await commerceApi.updateQuoteStatus(quoteKey(quote), status);
+      setQuotes((prev) => prev.map((item) => (quoteKey(item) === quoteKey(quote) ? result.quote : item)));
+    } catch (error) {
+      toast.error(error.message || "Could not update quote.");
+    }
+  };
+
+  const downloadPdf = async (quote) => {
+    setSavingId(quoteKey(quote));
+    try {
+      const blob = await commerceApi.downloadQuotePdf(quoteKey(quote));
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${quote.quoteNumber || "quote"}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error.message || "Could not generate PDF.");
     } finally {
       setSavingId("");
     }
@@ -51,7 +74,7 @@ const Quotes = () => {
           <p className="admin-page-eyebrow">Quotes</p>
           <h2>Quote Pipeline</h2>
         </div>
-        <button className="btn-hedj-primary" type="button" onClick={() => navigate("/admin/leads")}>
+        <button className="btn-hedj-primary" type="button" onClick={() => window.location.assign("/admin/leads")}>
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
           New Quote
         </button>
@@ -76,31 +99,46 @@ const Quotes = () => {
             </thead>
             <tbody>
               {quotes.map((quote) => (
-                <tr key={quote.id}>
-                  <td>{quote.customerName}</td>
+                <tr key={quoteKey(quote)}>
+                  <td>
+                    <strong>{quote.customerName || quote.leadId?.name || "Customer"}</strong>
+                    <p className="admin-muted">{quote.quoteNumber}</p>
+                  </td>
                   <td>{quote.project}</td>
                   <td>
                     <div className="admin-chip-row">
                       {(quote.items || []).map((item) => (
-                        <span className="admin-chip" key={item}>{item}</span>
+                        <span className="admin-chip" key={item.name || item}>{item.name || item}</span>
                       ))}
                     </div>
                   </td>
-                  <td>${Number(quote.amount || 0).toLocaleString()}</td>
+                  <td>${Number(quote.total || quote.amount || 0).toLocaleString()}</td>
                   <td>
-                    <span className={`badge-status ${quote.status === "converted" ? "badge-success" : "badge-amber"}`}>
-                      {quote.status}
-                    </span>
+                    <select value={quote.status || "draft"} onChange={(event) => updateStatus(quote, event.target.value)}>
+                      {["draft", "pending", "sent", "accepted", "rejected", "expired", "converted", "cancelled"].map((status) => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
                   </td>
                   <td>
-                    <button
-                      className="admin-ghost-btn"
-                      type="button"
-                      disabled={savingId === quote.id || quote.status === "converted"}
-                      onClick={() => convertQuote(quote)}
-                    >
-                      {quote.status === "converted" ? "Converted" : savingId === quote.id ? "Converting..." : "Convert"}
-                    </button>
+                    <div className="admin-actions">
+                      <button
+                        className="admin-ghost-btn"
+                        type="button"
+                        disabled={savingId === quoteKey(quote)}
+                        onClick={() => sendQuote(quote)}
+                      >
+                        {savingId === quoteKey(quote) ? "Working..." : "Send"}
+                      </button>
+                      <button
+                        className="admin-ghost-btn"
+                        type="button"
+                        disabled={savingId === quoteKey(quote)}
+                        onClick={() => downloadPdf(quote)}
+                      >
+                        PDF
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

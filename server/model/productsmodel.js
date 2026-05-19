@@ -13,19 +13,22 @@ const reviewSchema = new mongoose.Schema(
 const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    slug: { type: String, trim: true, lowercase: true },
     description: { type: String, required: true },
     category: { type: String, required: true },
+    collection: { type: String, trim: true },
     price: { type: Number, required: true, min: 0 },
     discountPrice: { type: Number, default: null }, // Optional discounted price
-    images: { type: [String], required: true },
+    sku: { type: String, trim: true, uppercase: true },
+    images: { type: [String], default: [] },
     stock: { type: Number, required: true, min: 0 }, // Available quantity
+    lowStockThreshold: { type: Number, default: 5, min: 0 },
     sold: { type: Number, default: 0 }, // Track the number of sales
     reviews: [reviewSchema], // Array of reviews
     averageRating: { type: Number, default: 0 }, // Average rating calculated from reviews
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
     // Supabase Storage references (added by hybrid storage layer)
     imageUrl: { type: String },
@@ -37,9 +40,20 @@ const productSchema = new mongoose.Schema(
         altText: { type: String },
       },
     ],
+    featured: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ["active", "draft", "archived", "inactive"],
+      default: "active",
+      index: true,
+    },
   },
   { timestamps: true }
 );
+
+productSchema.index({ slug: 1 }, { unique: true, sparse: true });
+productSchema.index({ sku: 1 }, { unique: true, sparse: true });
+productSchema.index({ status: 1, collection: 1 });
 
 // Pre-save middleware to calculate average rating dynamically
 productSchema.pre("save", function (next) {

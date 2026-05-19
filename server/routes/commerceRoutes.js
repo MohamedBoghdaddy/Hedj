@@ -1,4 +1,9 @@
 import express from "express";
+import mongoose from "mongoose";
+import {
+  getPublicProductBySlugOrId,
+  listPublicProducts,
+} from "../controller/adminProductController.js";
 import {
   convertQuote,
   createOrder,
@@ -11,6 +16,7 @@ import {
 const router = express.Router();
 
 const byIdOrSlug = (items, id) => items.find((item) => item.id === id || item.slug === id);
+const isDbConnected = () => mongoose.connection.readyState === 1;
 const getSessionCart = (req) => req.session?.cart || [];
 const setSessionCart = (req, cart) => {
   if (req.session) req.session.cart = cart;
@@ -64,7 +70,12 @@ router.post("/seed/reset", (req, res) => {
   res.json({ data: resetStore() });
 });
 
-router.get("/products", (req, res) => {
+router.get("/products", async (req, res) => {
+  if (isDbConnected()) {
+    const products = await listPublicProducts({ collection: req.query.collection });
+    return res.json({ count: products.length, data: products, products });
+  }
+
   const { collection } = req.query;
   const products = collection
     ? getStore().products.filter(
@@ -75,20 +86,40 @@ router.get("/products", (req, res) => {
   res.json({ count: products.length, data: products });
 });
 
-router.get("/products/low-stock", (req, res) => {
+router.get("/products/low-stock", async (req, res) => {
+  if (isDbConnected()) {
+    const products = await listPublicProducts();
+    const items = products.filter(
+      (product) => Number(product.stock) <= Number(product.lowStockThreshold || 5)
+    );
+    return res.json({ count: items.length, items });
+  }
+
   const items = getStore().products.filter(
     (product) => Number(product.stock) <= Number(product.lowStockThreshold || 5)
   );
   res.json({ count: items.length, items });
 });
 
-router.get("/products/slug/:slug", (req, res) => {
+router.get("/products/slug/:slug", async (req, res) => {
+  if (isDbConnected()) {
+    const product = await getPublicProductBySlugOrId(req.params.slug);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    return res.json({ product });
+  }
+
   const product = byIdOrSlug(getStore().products, req.params.slug);
   if (!product) return res.status(404).json({ message: "Product not found" });
   return res.json({ product });
 });
 
-router.get("/products/:id", (req, res) => {
+router.get("/products/:id", async (req, res) => {
+  if (isDbConnected()) {
+    const product = await getPublicProductBySlugOrId(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    return res.json({ product });
+  }
+
   const product = byIdOrSlug(getStore().products, req.params.id);
   if (!product) return res.status(404).json({ message: "Product not found" });
   return res.json({ product });

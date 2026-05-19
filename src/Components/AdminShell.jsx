@@ -1,4 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useLogout } from "../hooks/useLogout";
 import "../Styles/admin-premium.css";
 
 const adminAvatar =
@@ -12,42 +14,72 @@ const navItems = [
   ["Employees", "badge", "/admin/employees"],
   ["Leads", "leaderboard", "/admin/leads"],
   ["Quotes", "request_quote", "/admin/quotes"],
+  ["Email Outbox", "outgoing_mail", "/admin/emails"],
   ["ERP Architecture", "account_tree", "/admin/erp/overview"],
   ["Reports", "analytics", "/admin/reports"],
   ["Settings", "settings", "/admin/settings"],
 ];
 
-export const AdminSidebar = ({ active = "Overview", profileName = "Julianne Vose", role = "Admin Console" }) => (
-  <aside className="admin-premium-sidebar">
-    <div className="admin-premium-brand">
-      <h1>Hedj OS</h1>
-      <p>Admin Console</p>
-    </div>
+export const AdminSidebar = ({
+  active = "Overview",
+  profileName = "Julianne Vose",
+  role = "Admin Console",
+}) => {
+  const navigate = useNavigate();
+  const { logout } = useLogout();
+  const [loggingOut, setLoggingOut] = useState(false);
 
-    <nav className="admin-premium-nav" aria-label="Admin navigation">
-      {navItems.map(([label, icon, href]) => (
-        <NavLink
-          key={label}
-          to={href}
-          className={({ isActive }) =>
-            `admin-premium-nav-link ${isActive || active === label ? "active" : ""}`
-          }
-        >
-          <span className="material-symbols-outlined">{icon}</span>
-          <span>{label}</span>
-        </NavLink>
-      ))}
-    </nav>
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await logout();
+    navigate("/Login", { replace: true });
+  };
 
-    <div className="admin-premium-profile">
-      <img src={adminAvatar} alt="Admin profile" />
-      <div>
-        <strong>{profileName}</strong>
-        <span>{role}</span>
+  return (
+    <aside className="admin-premium-sidebar">
+      <div className="admin-premium-brand">
+        <h1>Hedj OS</h1>
+        <p>Admin Console</p>
       </div>
-    </div>
-  </aside>
-);
+
+      <nav className="admin-premium-nav" aria-label="Admin navigation">
+        {navItems.map(([label, icon, href]) => (
+          <NavLink
+            key={label}
+            to={href}
+            className={({ isActive }) =>
+              `admin-premium-nav-link ${isActive || active === label ? "active" : ""}`
+            }
+          >
+            <span className="material-symbols-outlined">{icon}</span>
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div className="admin-premium-sidebar-footer">
+        <div className="admin-premium-profile">
+          <img src={adminAvatar} alt="Admin profile" />
+          <div>
+            <strong>{profileName}</strong>
+            <span>{role}</span>
+          </div>
+        </div>
+        <div className="admin-premium-profile-divider" />
+        <button
+          type="button"
+          className="admin-premium-logout"
+          onClick={handleLogout}
+          disabled={loggingOut}
+        >
+          <span className="material-symbols-outlined">logout</span>
+          <span>{loggingOut ? "Signing Out" : "Logout"}</span>
+        </button>
+      </div>
+    </aside>
+  );
+};
 
 export const AdminFooter = () => (
   <footer className="admin-premium-footer">

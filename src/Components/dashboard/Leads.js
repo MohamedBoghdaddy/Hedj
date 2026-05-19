@@ -5,16 +5,29 @@ import { commerceApi } from "../../services/api";
 import "../../Styles/admin-dashboard.css";
 
 const emptyQuote = {
+  leadId: "",
   customerName: "",
+  customerEmail: "",
   project: "",
   amount: "",
   items: "Custom Hedj scope",
+};
+
+const emptyLead = {
+  name: "",
+  email: "",
+  phone: "",
+  company: "",
+  projectType: "",
+  estimatedValue: "",
+  priority: "medium",
 };
 
 const Leads = () => {
   const [leads, setLeads] = useState([]);
   const [quotes, setQuotes] = useState([]);
   const [quoteForm, setQuoteForm] = useState(emptyQuote);
+  const [leadForm, setLeadForm] = useState(emptyLead);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -43,12 +56,43 @@ const Leads = () => {
 
   const startQuote = (lead) => {
     setQuoteForm({
-      leadId: lead.id,
+      leadId: lead._id || lead.id,
       customerName: lead.name,
-      project: lead.project,
-      amount: lead.budget,
+      customerEmail: lead.email,
+      project: lead.projectType || lead.project || "",
+      amount: lead.estimatedValue || lead.budget || "",
       items: "Custom Hedj scope",
     });
+  };
+
+  const submitLead = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    try {
+      const result = await commerceApi.createLead({
+        ...leadForm,
+        estimatedValue: Number(leadForm.estimatedValue || 0),
+      });
+      setLeads((prev) => [result.lead, ...prev]);
+      setLeadForm(emptyLead);
+      toast.success("Lead created.");
+    } catch (error) {
+      toast.error(error.message || "Could not create lead.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const changeLeadStatus = async (lead, status) => {
+    try {
+      const result = await commerceApi.updateLeadStatus(lead._id || lead.id, status);
+      setLeads((prev) =>
+        prev.map((item) => ((item._id || item.id) === (lead._id || lead.id) ? result.lead : item))
+      );
+      toast.success("Lead status updated.");
+    } catch (error) {
+      toast.error(error.message || "Could not update lead.");
+    }
   };
 
   const submitQuote = async (event) => {
@@ -62,8 +106,15 @@ const Leads = () => {
     try {
       const result = await commerceApi.createQuote({
         ...quoteForm,
-        amount: Number(quoteForm.amount),
-        items: quoteForm.items.split(",").map((item) => item.trim()).filter(Boolean),
+        amount: Number(quoteForm.amount || 0),
+        customerEmail: quoteForm.customerEmail,
+        items: [
+          {
+            name: quoteForm.items || "Custom Hedj scope",
+            quantity: 1,
+            unitPrice: Number(quoteForm.amount || 0),
+          },
+        ],
       });
       setQuotes((prev) => [result.quote, ...prev]);
       setQuoteForm(emptyQuote);
@@ -121,14 +172,23 @@ const Leads = () => {
               </thead>
               <tbody>
                 {leads.map((lead) => (
-                  <tr key={lead.id}>
+                  <tr key={lead._id || lead.id}>
                     <td>
                       <strong>{lead.name}</strong>
                       <p className="admin-muted">{lead.email}</p>
                     </td>
-                    <td>{lead.project}</td>
-                    <td>${Number(lead.budget || 0).toLocaleString()}</td>
-                    <td><span className="badge-status badge-amber">{lead.status}</span></td>
+                    <td>{lead.projectType || lead.project}</td>
+                    <td>${Number(lead.estimatedValue || lead.budget || 0).toLocaleString()}</td>
+                    <td>
+                      <select
+                        value={lead.status || "new"}
+                        onChange={(event) => changeLeadStatus(lead, event.target.value)}
+                      >
+                        {["new", "contacted", "qualified", "proposal", "won", "lost"].map((status) => (
+                          <option key={status} value={status}>{status}</option>
+                        ))}
+                      </select>
+                    </td>
                     <td>
                       <button className="admin-ghost-btn" type="button" onClick={() => startQuote(lead)}>
                         Quote
@@ -139,6 +199,32 @@ const Leads = () => {
               </tbody>
             </table>
             {leads.length === 0 && <div className="admin-panel-pad admin-muted">No leads yet.</div>}
+          </div>
+
+          <div className="admin-panel admin-panel-pad">
+            <p className="admin-page-eyebrow">Lead</p>
+            <h3 style={{ fontFamily: "var(--font-serif)", fontWeight: 400, marginBottom: 18 }}>Create Lead</h3>
+            <form className="admin-form-grid" onSubmit={submitLead}>
+              <div className="admin-field">
+                <label htmlFor="leadName">Name</label>
+                <input id="leadName" value={leadForm.name} onChange={(event) => setLeadForm((prev) => ({ ...prev, name: event.target.value }))} required />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="leadEmail">Email</label>
+                <input id="leadEmail" type="email" value={leadForm.email} onChange={(event) => setLeadForm((prev) => ({ ...prev, email: event.target.value }))} required />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="leadProject">Project</label>
+                <input id="leadProject" value={leadForm.projectType} onChange={(event) => setLeadForm((prev) => ({ ...prev, projectType: event.target.value }))} />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="leadValue">Estimated Value</label>
+                <input id="leadValue" type="number" min="0" value={leadForm.estimatedValue} onChange={(event) => setLeadForm((prev) => ({ ...prev, estimatedValue: event.target.value }))} />
+              </div>
+              <button className="btn-hedj-primary admin-field-full" type="submit" disabled={submitting}>
+                Save Lead
+              </button>
+            </form>
           </div>
 
           <div className="admin-panel admin-panel-pad">

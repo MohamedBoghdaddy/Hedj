@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import { ShopContext } from "../context/productContext";
+import { commerceApi } from "../services/api";
 import "../Styles/commerce-premium.css";
 
 const galleryImages = [
@@ -44,7 +45,7 @@ const relatedProducts = [
   },
 ];
 
-const product = {
+const DEFAULT_PRODUCT = {
   id: "obsidian-kitchen-island",
   slug: "obsidian-kitchen-island",
   name: "The Obsidian Kitchen Island",
@@ -58,6 +59,9 @@ const product = {
 const money = (value) => `$${Number(value || 0).toLocaleString()}`;
 
 const ProductDetail = () => {
+  const { slug } = useParams();
+  const [product, setProduct] = useState(DEFAULT_PRODUCT);
+  const [loadError, setLoadError] = useState("");
   const [mainImage, setMainImage] = useState(galleryImages[0]);
   const [material, setMaterial] = useState("Black Marble");
   const [finish, setFinish] = useState("Midnight");
@@ -65,6 +69,50 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("Details");
   const { addToCart, addToWishlist } = useContext(ShopContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let alive = true;
+    commerceApi
+      .getProductBySlug(slug)
+      .then((data) => {
+        if (!alive || !data) return;
+        const images = [
+          data.imageUrl,
+          ...(data.galleryImages || []).map((item) => item.url),
+          ...(data.images || []),
+        ].filter(Boolean);
+        const normalized = {
+          ...data,
+          id: data._id || data.id,
+          slug: data.slug || slug,
+          price: Number(data.price || 0),
+          material: data.material || data.category || "Hedj finish",
+          img: images[0] || DEFAULT_PRODUCT.img,
+        };
+        setProduct(normalized);
+        setMainImage(images[0] || DEFAULT_PRODUCT.img);
+        setLoadError("");
+      })
+      .catch((error) => {
+        if (!alive) return;
+        setLoadError(error.message || "Product details could not be loaded from MongoDB.");
+      });
+
+    return () => {
+      alive = false;
+    };
+  }, [slug]);
+
+  const activeGallery = useMemo(() => {
+    const images = [
+      product.imageUrl,
+      product.img,
+      ...(product.galleryImages || []).map((item) => item.url),
+      ...(product.images || []),
+      ...galleryImages,
+    ].filter(Boolean);
+    return [...new Set(images)];
+  }, [product]);
 
   const handleAddToCart = async () => {
     await addToCart({
@@ -75,7 +123,7 @@ const ProductDetail = () => {
       finish,
       quantity,
     });
-    toast.success("The Obsidian Kitchen Island was added to your cart.");
+    toast.success(`${product.name} was added to your cart.`);
   };
 
   const handleWishlist = () => {
@@ -89,19 +137,19 @@ const ProductDetail = () => {
         <section className="product-layout">
           <div className="product-gallery">
             <div className="product-main-image">
-              <img src={mainImage} alt="The Obsidian Kitchen Island" />
+              <img src={mainImage} alt={product.name} />
             </div>
 
             <div className="product-thumbs">
-              {galleryImages.slice(1).map((image, index) => (
+              {activeGallery.slice(1, 6).map((image, index) => (
                 <button
                   key={image}
                   className={`product-thumb ${mainImage === image ? "active" : ""}`}
                   type="button"
                   onClick={() => setMainImage(image)}
                 >
-                  <img src={image} alt={`Obsidian Kitchen Island view ${index + 2}`} />
-                  {index === 3 && <span>+12 Photos</span>}
+                  <img src={image} alt={`${product.name} view ${index + 2}`} />
+                  {index === 3 && activeGallery.length > 6 && <span>+{activeGallery.length - 5} Photos</span>}
                 </button>
               ))}
             </div>
@@ -120,10 +168,13 @@ const ProductDetail = () => {
             </div>
 
             <h1 className="product-title">{product.name}</h1>
+            {loadError && <p className="product-description">{loadError}</p>}
 
             <div className="product-price-row">
               <span className="product-price">{money(product.price)}</span>
-              <span className="product-stock">In Stock</span>
+              <span className="product-stock">
+                {Number(product.stock || 0) > 0 ? "In Stock" : "Made to Order"}
+              </span>
             </div>
 
             <p className="product-description">{product.description}</p>

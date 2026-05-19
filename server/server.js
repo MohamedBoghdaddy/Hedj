@@ -20,6 +20,9 @@ import settingsRoutes from "./routes/settingsRoutes.js";
 import erpRoutes from "./routes/erpRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import emailAdminRoutes from "./routes/emailAdminRoutes.js";
+import adminProductRoutes from "./routes/adminProductRoutes.js";
+import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js";
+import adminLeadRoutes from "./routes/adminLeadRoutes.js";
 
 dotenv.config();
 
@@ -261,13 +264,17 @@ const configureApp = ({ mongoConnected, sessionStore }) => {
     return res.status(201).json({ file: req.file });
   });
 
+  app.use("/api/admin/products", requireMongoConnection, adminProductRoutes);
+  app.use("/api/admin/employees", requireMongoConnection, adminEmployeeRoutes);
+  app.use("/api/admin", requireMongoConnection, adminLeadRoutes);
+  app.use("/api/admin/erp", requireMongoConnection, erpRoutes);
   app.use("/api", commerceRoutes);
   app.use("/api/employees", requireMongoConnection, employeeRoutes);
   app.use("/api/products", requireMongoConnection, productRoutes);
   app.use("/api/users", userRoutes);
   app.use("/api/analytics", analyticsRoutes);
   app.use("/api/settings", settingsRoutes);
-  app.use("/api/erp", erpRoutes);
+  app.use("/api/erp", requireMongoConnection, erpRoutes);
   // Hybrid storage routes (Supabase Storage + email outbox)
   app.use("/api", requireMongoConnection, uploadRoutes);
   app.use("/api/admin/emails", requireMongoConnection, emailAdminRoutes);

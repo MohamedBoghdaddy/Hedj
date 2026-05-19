@@ -41,24 +41,43 @@ const saveStore = (store) => {
 };
 
 const request = async (path, options = {}) => {
+  const headers = getAuthHeaders({
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  });
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   const response = await fetch(`${API_URL}${path}`, {
     credentials: "include",
-    headers: getAuthHeaders({
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    }),
+    headers,
     ...options,
     body:
-      options.body && typeof options.body !== "string"
+      options.body &&
+      typeof options.body !== "string" &&
+      !(options.body instanceof FormData)
         ? JSON.stringify(options.body)
         : options.body,
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    const text = await response.text();
+    try {
+      const json = JSON.parse(text);
+      const error = new Error(json.message || json.error || `Request failed: ${response.status}`);
+      error.status = response.status;
+      error.payload = json;
+      throw error;
+    } catch (error) {
+      if (error.message && error.message !== "Unexpected end of JSON input") throw error;
+      const fallbackError = new Error(text || `Request failed: ${response.status}`);
+      fallbackError.status = response.status;
+      throw fallbackError;
+    }
   }
 
+  if (response.status === 204) return null;
   return response.json();
 };
 
@@ -254,6 +273,24 @@ export const commerceApi = {
       (payload) => unwrapList(payload, "products")
     ),
 
+  getAdminProducts: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/admin/products${params ? `?${params}` : ""}`).then((payload) =>
+      unwrapList(payload, "products")
+    );
+  },
+
+  createProduct: (payload) =>
+    request("/api/admin/products", { method: "POST", body: payload }),
+
+  updateProduct: (productId, payload) =>
+    request(`/api/admin/products/${productId}`, { method: "PUT", body: payload }),
+
+  deleteProduct: (productId) =>
+    request(`/api/admin/products/${productId}`, { method: "DELETE" }),
+
   getProductBySlug: (slug) =>
     withFallback(
       `/api/products/slug/${slug}`,
@@ -358,41 +395,46 @@ export const commerceApi = {
     ),
 
   getLeads: () =>
-    withFallback(
-      "/api/admin/leads",
-      {},
-      () => readStore().leads,
-      (payload) => unwrapList(payload, "leads")
-    ),
+    request("/api/admin/leads").then((payload) => unwrapList(payload, "leads")),
+
+  createLead: (leadInput) =>
+    request("/api/admin/leads", { method: "POST", body: leadInput }),
+
+  updateLead: (leadId, leadInput) =>
+    request(`/api/admin/leads/${leadId}`, { method: "PUT", body: leadInput }),
+
+  updateLeadStatus: (leadId, status) =>
+    request(`/api/admin/leads/${leadId}/status`, { method: "PATCH", body: { status } }),
+
+  deleteLead: (leadId) =>
+    request(`/api/admin/leads/${leadId}`, { method: "DELETE" }),
 
   getQuotes: () =>
-    withFallback(
-      "/api/admin/quotes",
-      {},
-      () => readStore().quotes,
-      (payload) => unwrapList(payload, "quotes")
-    ),
+    request("/api/admin/quotes").then((payload) => unwrapList(payload, "quotes")),
 
   createQuote: (quoteInput) =>
-    withFallback(
-      "/api/admin/quotes",
-      { method: "POST", body: quoteInput },
-      () => {
-        const store = readStore();
-        const quote = {
-          id: `quote-${Date.now()}`,
-          status: "draft",
-          createdAt: new Date().toISOString(),
-          items: quoteInput.items || ["Custom Hedj scope"],
-          ...quoteInput,
-          amount: Number(quoteInput.amount || 0),
-        };
-        store.quotes = [quote, ...store.quotes];
-        saveStore(store);
-        return { quote };
-      },
-      (payload) => payload
-    ),
+    request("/api/admin/quotes", { method: "POST", body: quoteInput }),
+
+  updateQuote: (quoteId, quoteInput) =>
+    request(`/api/admin/quotes/${quoteId}`, { method: "PUT", body: quoteInput }),
+
+  updateQuoteStatus: (quoteId, status) =>
+    request(`/api/admin/quotes/${quoteId}/status`, { method: "PATCH", body: { status } }),
+
+  sendQuote: (quoteId) =>
+    request(`/api/admin/quotes/${quoteId}/send`, { method: "POST" }),
+
+  downloadQuotePdf: async (quoteId) => {
+    const response = await fetch(`${API_URL}/api/admin/quotes/${quoteId}/pdf`, {
+      credentials: "include",
+      headers: getAuthHeaders({}),
+    });
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || `PDF request failed: ${response.status}`);
+    }
+    return response.blob();
+  },
 
   convertQuoteToOrder: (quoteId) =>
     withFallback(
@@ -403,12 +445,16 @@ export const commerceApi = {
     ),
 
   getEmployees: () =>
-    withFallback(
-      "/api/admin/employees",
-      {},
-      () => readStore().employees,
-      (payload) => unwrapList(payload, "employees")
-    ),
+    request("/api/admin/employees").then((payload) => unwrapList(payload, "employees")),
+
+  createEmployee: (employeeInput) =>
+    request("/api/admin/employees", { method: "POST", body: employeeInput }),
+
+  updateEmployee: (employeeId, employeeInput) =>
+    request(`/api/admin/employees/${employeeId}`, { method: "PUT", body: employeeInput }),
+
+  deleteEmployee: (employeeId) =>
+    request(`/api/admin/employees/${employeeId}`, { method: "DELETE" }),
 
   getAnalytics: () =>
     withFallback(
@@ -430,19 +476,117 @@ export const commerceApi = {
     ),
 
   updateProductStock: (productId, stock) =>
-    withFallback(
-      `/api/admin/inventory/${productId}`,
-      { method: "PATCH", body: { stock } },
-      () => {
-        const store = readStore();
-        store.products = store.products.map((product) =>
-          product.id === productId
-            ? { ...product, stock: Number(stock), inStock: Number(stock) > 0 }
-            : product
-        );
-        saveStore(store);
-        return store.products.find((product) => product.id === productId);
-      },
-      (payload) => unwrapItem(payload, "product")
-    ),
+    request(`/api/admin/products/${productId}/stock`, {
+      method: "PATCH",
+      body: { stock },
+    }).then((payload) => unwrapItem(payload, "product")),
+
+  updateProductStatus: (productId, status) =>
+    request(`/api/admin/products/${productId}/status`, {
+      method: "PATCH",
+      body: { status },
+    }).then((payload) => unwrapItem(payload, "product")),
 };
+
+// ─── Supabase hybrid storage helpers ─────────────────────────────────────────────
+// All uploads go through the Express backend — the browser never touches
+// the Supabase service-role key.
+
+const uploadRequest = async (path, formData) => {
+  const { getAuthHeaders } = await import("./authHeaders");
+  const headers = getAuthHeaders({});
+  // Remove Content-Type so the browser sets the multipart boundary automatically
+  delete headers["Content-Type"];
+
+  const response = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    try {
+      const json = JSON.parse(text);
+      const error = new Error(json.message || json.error || `Upload failed: ${response.status}`);
+      error.status = response.status;
+      error.payload = json;
+      throw error;
+    } catch (error) {
+      if (error.message && error.message !== "Unexpected end of JSON input") throw error;
+      const fallbackError = new Error(text || `Upload failed: ${response.status}`);
+      fallbackError.status = response.status;
+      throw fallbackError;
+    }
+  }
+  return response.json();
+};
+
+export const storageApi = {
+  /** Upload the main image for a product. Returns { product, imageUrl }. */
+  uploadProductImage: (productId, file) => {
+    const fd = new FormData();
+    fd.append("image", file);
+    return uploadRequest(`/api/admin/products/${productId}/image`, fd);
+  },
+
+  /** Upload multiple gallery images for a product. Returns { product, uploaded }. */
+  uploadProductGallery: (productId, files) => {
+    const fd = new FormData();
+    files.forEach((file) => fd.append("images", file));
+    return uploadRequest(`/api/admin/products/${productId}/gallery`, fd);
+  },
+
+  /** Upload the logged-in user's profile photo. Returns { user, photoUrl }. */
+  uploadMyProfilePhoto: (file) => {
+    const fd = new FormData();
+    fd.append("image", file);
+    return uploadRequest("/api/users/me/profile-photo", fd);
+  },
+
+  /** Upload an employee's profile photo (admin). Returns { employee, photoUrl }. */
+  uploadEmployeePhoto: (employeeId, file) => {
+    const fd = new FormData();
+    fd.append("image", file);
+    return uploadRequest(`/api/admin/employees/${employeeId}/profile-photo`, fd);
+  },
+
+  /** Create a new employee record and send an invite email in one step.
+   *  Returns { employee, status, inviteUrl, message }. */
+  createAndInviteEmployee: (data) =>
+    request("/api/admin/employees/invite", { method: "POST", body: data }),
+
+  /** Re-send an invite to an existing employee. Returns { status, inviteUrl }. */
+  sendEmployeeInvite: (employeeId) =>
+    request(`/api/admin/employees/${employeeId}/send-invite`, { method: "POST" }),
+
+  /** List email outbox (admin). Optional filters: status, toEmail, relatedEntityType. */
+  listEmailOutbox: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v))
+    ).toString();
+    return request(`/api/admin/emails/outbox${params ? `?${params}` : ""}`);
+  },
+
+  /** Get email event logs for a specific outbox entry (admin). */
+  getEmailLogs: (outboxId) =>
+    request(`/api/admin/emails/outbox/${outboxId}/logs`),
+
+  retryEmail: (outboxId) =>
+    request(`/api/admin/emails/outbox/${outboxId}/send`, { method: "POST" }),
+};
+
+export const erpApi = {
+  getOverview: () => request("/api/admin/erp/overview"),
+  getApps: () => request("/api/admin/erp/apps"),
+  getSchema: () => request("/api/admin/erp/schema"),
+  getDepartments: () => request("/api/admin/erp/departments"),
+  getJobPositions: () => request("/api/admin/erp/job-positions"),
+  getApprovals: () => request("/api/admin/erp/approvals"),
+  approve: (id) => request(`/api/admin/erp/approvals/${id}/approve`, { method: "POST" }),
+  reject: (id) => request(`/api/admin/erp/approvals/${id}/reject`, { method: "POST" }),
+  checkIntegrations: () => request("/api/admin/erp/integrations/check", { method: "POST" }),
+};
+
+export { API_URL };

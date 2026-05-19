@@ -20,13 +20,14 @@ import Dashboard from "./Components/dashboard/Dashboard";
 import Setting from "./Components/dashboard/Setting";
 import Customers from "./Components/dashboard/CustomersList";
 import Leads from "./Components/dashboard/Leads";
-import AdminProducts from "./Components/dashboard/AdminProducts";
+import AdminProducts from "./Pages/AdminProducts";
 import Quotes from "./Components/dashboard/Quotes";
 import OrderDetail from "./Components/dashboard/OrderDetail";
 import CustomerDetail from "./Components/dashboard/CustomerDetail";
 import AdminOrdersPipeline from "./Pages/AdminOrdersPipeline";
 import AdminAnalytics from "./Pages/AdminAnalytics";
 import AdminEmployees from "./Pages/AdminEmployees";
+import AdminEmailOutbox from "./Pages/AdminEmailOutbox";
 import AdminERPOverview from "./Pages/AdminERPOverview";
 import AdminERPApps from "./Pages/AdminERPApps";
 import AdminERPSchema from "./Pages/AdminERPSchema";
@@ -156,14 +157,8 @@ const App = () => {
         />
         <Route path="/admin/analytics" element={adminStandalonePage(<AdminAnalytics />)} />
         <Route path="/admin/employees" element={adminStandalonePage(<AdminEmployees />)} />
-        <Route
-          path="/admin/products"
-          element={adminPage(<AdminProducts />, {
-            active: "Products",
-            title: "Products",
-            subtitle: "Product catalog, stock visibility, and inventory actions.",
-          })}
-        />
+        <Route path="/admin/emails" element={adminStandalonePage(<AdminEmailOutbox />)} />
+        <Route path="/admin/products" element={adminStandalonePage(<AdminProducts />)} />
         <Route
           path="/admin/settings"
           element={adminPage(<Setting />, { active: "Settings", title: "Settings" })}

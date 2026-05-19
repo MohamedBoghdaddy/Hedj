@@ -35,6 +35,21 @@ const UserSchema = new mongoose.Schema(
     // Supabase Storage reference (added by hybrid storage layer)
     profilePhotoUrl: { type: String },
     profilePhotoAssetId: { type: String },
+    jobTitle: { type: String },
+    seniorityLevel: { type: String },
+    phone: { type: String },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "invited", "suspended"],
+      default: "active",
+    },
+    invitedAt: { type: Date },
+    invitationEmailStatus: {
+      type: String,
+      enum: ["none", "pending", "queued", "sent", "failed", "provider_not_configured"],
+      default: "none",
+    },
+    invitationEmailOutboxId: { type: String },
   },
   { timestamps: true }
 );

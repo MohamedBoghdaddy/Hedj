@@ -3,8 +3,6 @@ import axios from "axios";
 import { useAuthContext } from "../context/AuthContext";
 import { setAxiosAuthToken } from "../services/authHeaders";
 
-// ✅ Backend API Base URL (Production & Local)
-
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (window.location.hostname === "localhost"
@@ -16,26 +14,19 @@ export const useLogout = () => {
 
   const logout = useCallback(async () => {
     try {
-      // ✅ Send Logout Request to Backend
       await axios.post(
         `${API_URL}/api/users/logout`,
         {},
         { withCredentials: true }
       );
-
-      // ✅ Clear Local Storage (Client-side)
+      console.log("Logout successful");
+    } catch (error) {
+      console.error("Logout error:", error.response?.data || error.message);
+    } finally {
       localStorage.removeItem("user");
       localStorage.removeItem("token");
-
-      // ✅ Remove Authorization Header for Future Requests
       setAxiosAuthToken(null);
-
-      // ✅ Dispatch Logout Action to Update State
       dispatch({ type: "LOGOUT_SUCCESS" });
-
-      console.log("✅ Logout successful");
-    } catch (error) {
-      console.error("❌ Logout error:", error.response?.data || error.message);
     }
   }, [dispatch]);
 

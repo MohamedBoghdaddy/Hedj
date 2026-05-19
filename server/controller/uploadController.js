@@ -9,11 +9,7 @@ import {
   buildStoragePath,
 } from "../services/supabaseStorageService.js";
 import { isSupabaseConfigured } from "../config/supabase.js";
-import {
-  queueEmail,
-  listEmailOutbox,
-  getEmailLogs,
-} from "../services/emailOutboxService.js";
+import { queueEmail } from "../services/emailOutboxService.js";
 import { deliverEmail } from "../services/emailDeliveryService.js";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────────
@@ -66,7 +62,7 @@ export const uploadProductImage = async (req, res) => {
   }
 
   const assetRow = await saveImageAssetMetadata({
-    mongoOwnerId: req.employee?._id?.toString(),
+    mongoOwnerId: (req.employee?._id || req.user?._id)?.toString(),
     relatedEntityType: "product",
     relatedEntityId: productId,
     bucket,
@@ -141,7 +137,7 @@ export const uploadProductGallery = async (req, res) => {
     return res.status(500).json({ success: false, message: "All gallery uploads failed." });
   }
 
-  product.galleryImages.push(...uploaded);
+  product.galleryImages = [...(product.galleryImages || []), ...uploaded];
   await product.save();
 
   return res.status(200).json({ success: true, product, uploaded });
@@ -263,6 +259,14 @@ export const uploadEmployeeProfilePhoto = async (req, res) => {
 // ─── POST /api/admin/employees/:employeeId/send-invite ────────────────────────────
 
 export const sendEmployeeInvite = async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res.status(503).json({
+      success: false,
+      status: "supabase_not_configured",
+      message: "Supabase email outbox is not configured.",
+    });
+  }
+
   const { employeeId } = req.params;
   if (!mongoose.isValidObjectId(employeeId)) return invalidId(res);
 
@@ -283,59 +287,137 @@ export const sendEmployeeInvite = async (req, res) => {
   `;
   const bodyText = `Hi ${employee.fname}, you have been invited to join Hedj Commerce as ${employee.role} in ${employee.department}. Accept at: ${inviteUrl}`;
 
-  // If Supabase is not configured, skip queuing but still attempt delivery
-  let outboxRow = null;
-  if (isSupabaseConfigured()) {
-    try {
-      outboxRow = await queueEmail({
-        toEmail: employee.email,
-        toName: `${employee.fname} ${employee.lname}`,
-        subject,
-        bodyHtml,
-        bodyText,
-        templateKey: "employee_invite",
-        templateVariables: {
-          name: employee.fname,
-          role: employee.role,
-          department: employee.department,
-          inviteUrl,
-        },
-        relatedEntityType: "employee",
-        relatedEntityId: employeeId,
-      });
-    } catch (err) {
-      console.warn(`Could not queue invite email in Supabase: ${err.message}`);
-    }
-  }
-
-  const syntheticRow = outboxRow || {
-    id: null,
-    to_email: employee.email,
+  const outboxRow = await queueEmail({
+    toEmail: employee.email,
+    toName: `${employee.fname} ${employee.lname}`,
     subject,
-    body_html: bodyHtml,
-    body_text: bodyText,
-  };
+    bodyHtml,
+    bodyText,
+    templateKey: "employee_invite",
+    templateVariables: {
+      name: employee.fname,
+      role: employee.role,
+      department: employee.department,
+      inviteUrl,
+    },
+    relatedEntityType: "employee",
+    relatedEntityId: employeeId,
+  });
 
-  const deliveryResult = await deliverEmail(syntheticRow);
+  const deliveryResult = await deliverEmail(outboxRow);
 
   // Map delivery status to employee field enum
   const invStatusMap = {
     sent: "sent",
     failed: "failed",
-    queued: isSupabaseConfigured() ? "queued" : "provider_not_configured",
+    queued: "provider_not_configured",
   };
   const invStatus = invStatusMap[deliveryResult.status] || "queued";
 
   employee.invitationEmailStatus = invStatus;
-  if (outboxRow?.id) employee.invitationEmailOutboxId = outboxRow.id;
+  employee.invitationEmailOutboxId = outboxRow.id;
+  employee.invitedAt = new Date();
   await employee.save();
 
   return res.status(200).json({
     success: true,
     status: invStatus,
     message: deliveryResult.message || `Email ${deliveryResult.status}.`,
-    outboxId: outboxRow?.id || null,
-    inviteUrl,
+    outboxId: outboxRow.id,
+    inviteUrl: invStatus === "provider_not_configured" ? inviteUrl : undefined,
     employee: { _id: employee._id, email: employee.email, invitationEmailStatus: invStatus },
+  });
+};
+
+// ─── POST /api/admin/employees/invite (create + invite in one step) ───────────────
+// Body: { fname, lname, email, department, role }
+
+export const createAndInviteEmployee = async (req, res) => {
+  if (!isSupabaseConfigured()) {
+    return res.status(503).json({
+      success: false,
+      status: "supabase_not_configured",
+      message: "Supabase email outbox is not configured.",
+    });
+  }
+
+  const { fname, lname, email, department, role = "readonly" } = req.body;
+
+  if (!fname || !lname || !email || !department) {
+    return res.status(400).json({
+      success: false,
+      message: "fname, lname, email, and department are required.",
+    });
+  }
+
+  // Create employee with a temporary random password (they set their own via invite link)
+  const crypto = (await import("crypto")).default;
+  const tempPassword = crypto.randomBytes(16).toString("hex");
+
+  let employee;
+  try {
+    employee = await Employee.create({ fname, lname, email, department, role, password: tempPassword });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(409).json({ success: false, message: "An employee with this email already exists." });
+    }
+    return res.status(500).json({ success: false, message: `Failed to create employee: ${err.message}` });
+  }
+
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const inviteUrl = `${frontendUrl}/accept-invite?employeeId=${employee._id}`;
+
+  const subject = `You have been invited to join Hedj Commerce`;
+  const bodyHtml = `
+    <h2>Welcome to Hedj Commerce</h2>
+    <p>Hi ${fname},</p>
+    <p>You have been invited as a <strong>${role}</strong> in the
+    <strong>${department}</strong> department.</p>
+    <p><a href="${inviteUrl}" style="padding:10px 20px;background:#1a1a2e;color:#fff;text-decoration:none;border-radius:4px;">Accept Invitation</a></p>
+    <p>Or copy this link: ${inviteUrl}</p>
+  `;
+  const bodyText = `Hi ${fname}, you have been invited to join Hedj Commerce as ${role} in ${department}. Accept at: ${inviteUrl}`;
+
+  const outboxRow = await queueEmail({
+    toEmail: email,
+    toName: `${fname} ${lname}`,
+    subject,
+    bodyHtml,
+    bodyText,
+    templateKey: "employee_invite",
+    templateVariables: { name: fname, role, department, inviteUrl },
+    relatedEntityType: "employee",
+    relatedEntityId: employee._id.toString(),
+  });
+
+  const deliveryResult = await deliverEmail(outboxRow);
+
+  const invStatusMap = {
+    sent: "sent",
+    failed: "failed",
+    queued: "provider_not_configured",
+  };
+  const invStatus = invStatusMap[deliveryResult.status] || "queued";
+
+  employee.invitationEmailStatus = invStatus;
+  employee.invitationEmailOutboxId = outboxRow.id;
+  employee.invitedAt = new Date();
+  await employee.save();
+
+  return res.status(201).json({
+    success: true,
+    status: invStatus,
+    message: deliveryResult.message || `Invitation ${deliveryResult.status}.`,
+    outboxId: outboxRow.id,
+    inviteUrl: invStatus === "provider_not_configured" ? inviteUrl : undefined,
+    employee: {
+      _id: employee._id,
+      fname: employee.fname,
+      lname: employee.lname,
+      email: employee.email,
+      department: employee.department,
+      role: employee.role,
+      invitationEmailStatus: invStatus,
+    },
   });
 };
