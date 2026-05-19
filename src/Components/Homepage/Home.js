@@ -184,17 +184,33 @@ const Home = () => {
         <div className="bestsellers-scroll" ref={scrollRef}>
           {BEST_SELLERS.map((p) => (
             <div className="bs-card" key={p.id}>
-              <div className="bs-card-img">
+              <div
+                className="bs-card-img"
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/products/${p.slug || p.id}`)}
+                onKeyDown={(event) => openWithKeyboard(event, `/products/${p.slug || p.id}`)}
+                aria-label={`View ${p.name}`}
+              >
                 <img src={p.img} alt={p.name} />
                 <button
                   className="bs-card-add"
-                  onClick={() => handleBestSellerAdd(p)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleBestSellerAdd(p);
+                  }}
                   title="Add to cart"
                 >
                   <span className="material-symbols-outlined">add_shopping_cart</span>
                 </button>
               </div>
-              <h4>{p.name}</h4>
+              <button
+                className="bs-card-title-btn"
+                type="button"
+                onClick={() => navigate(`/products/${p.slug || p.id}`)}
+              >
+                {p.name}
+              </button>
               <p className="bs-material">{p.material}</p>
               <p className="bs-price">${p.price.toLocaleString()}</p>
             </div>

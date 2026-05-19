@@ -14,12 +14,9 @@ import {
 } from "../controller/usercontroller.js";
 import { isAuthenticated } from "../middleware/AuthMiddleware.js";
 
-
-
 const router = express.Router();
 
-// Authentication Routes
-router.post("/signup", registerUser); // Ensure it is lowercase
+router.post("/signup", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.get("/checkAuth", checkAuth);
@@ -29,16 +26,25 @@ router.put(
   isAuthenticated,
   upload.single("photoFile"),
   updateUser
-); // apply upload middleware here
+);
 
-// User Management Routes
-router.get("/users", getAllUsers);
-router.get("/users/:userId", getUser);
-router.put("/users/:userId", upload.single("profilePhoto"), updateUser);
-router.delete("/users/:userId", deleteUser);
-router.get("/filter", getUsersByRole); // GET users filtered by role
+router.get("/filter", isAuthenticated, getUsersByRole);
+router.get("/search", isAuthenticated, searchUsers);
+router.get("/", isAuthenticated, getAllUsers);
 
-// Search Route
-router.get("/search", searchUsers);
+// Legacy /api/users/users routes kept for compatibility with older clients.
+router.get("/users", isAuthenticated, getAllUsers);
+router.get("/users/:userId", isAuthenticated, getUser);
+router.put(
+  "/users/:userId",
+  isAuthenticated,
+  upload.single("profilePhoto"),
+  updateUser
+);
+router.delete("/users/:userId", isAuthenticated, deleteUser);
+
+router.get("/:id", isAuthenticated, getUser);
+router.put("/:id", isAuthenticated, upload.single("profilePhoto"), updateUser);
+router.delete("/:id", isAuthenticated, deleteUser);
 
 export default router;

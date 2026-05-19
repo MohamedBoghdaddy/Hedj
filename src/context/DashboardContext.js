@@ -16,8 +16,33 @@ import { toast } from "react-toastify";
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (window.location.hostname === "localhost"
-    ? "http://localhost:8000"
+    ? "http://localhost:4000"
     : "https://hedj.onrender.com");
+
+const asArray = (payload, key) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.[key])) return payload[key];
+  if (Array.isArray(payload?.data)) return payload.data;
+  return [];
+};
+
+const fullName = (user) =>
+  [user?.firstName, user?.middleName, user?.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+const normalizeUser = (user) =>
+  user
+    ? {
+        ...user,
+        id: user.id || user._id,
+        name: user.name || fullName(user) || user.username || user.email || "User",
+      }
+    : null;
+
+const userList = (payload) => asArray(payload, "users").map(normalizeUser);
+const profileFrom = (payload) => normalizeUser(payload?.user || payload);
 
 // ✅ Create Context
 export const DashboardContext = createContext();
@@ -110,14 +135,23 @@ export const DashboardProvider = ({ children }) => {
           settings:
             settingsRes.status === "fulfilled" ? settingsRes.value.data : null,
           products:
-            productsRes.status === "fulfilled" ? productsRes.value.data : [],
+            productsRes.status === "fulfilled"
+              ? asArray(productsRes.value.data, "products")
+              : [],
           customers:
-            customersRes.status === "fulfilled" ? customersRes.value.data : [],
+            customersRes.status === "fulfilled"
+              ? userList(customersRes.value.data)
+              : [],
           employees:
-            employeesRes.status === "fulfilled" ? employeesRes.value.data : [],
-          admins: adminsRes.status === "fulfilled" ? adminsRes.value.data : [],
+            employeesRes.status === "fulfilled"
+              ? userList(employeesRes.value.data)
+              : [],
+          admins:
+            adminsRes.status === "fulfilled" ? userList(adminsRes.value.data) : [],
           profile:
-            profileRes.status === "fulfilled" ? profileRes.value.data : null,
+            profileRes.status === "fulfilled"
+              ? profileFrom(profileRes.value.data)
+              : null,
         },
       });
     } catch (error) {
@@ -157,7 +191,7 @@ export const DashboardProvider = ({ children }) => {
         const response = await axios.get(`${API_URL}/api/users/${user._id}`, {
           withCredentials: true,
         });
-        dispatch({ type: "UPDATE_PROFILE", payload: response.data });
+        dispatch({ type: "UPDATE_PROFILE", payload: profileFrom(response.data) });
       }
     } catch (error) {
       toast.error("Failed to load profile.");
@@ -247,6 +281,7 @@ export const DashboardProvider = ({ children }) => {
       fetchProfile,
       fetchReports,
       handleUpdateProfile,
+      updateProfile: handleUpdateProfile,
       handleUpload,
       handleDownloadReport,
       filterCustomers,

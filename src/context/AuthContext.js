@@ -107,7 +107,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    axios.defaults.headers.common["Authorization"] = null;
+    delete axios.defaults.headers.common["Authorization"];
     dispatch({ type: "LOGOUT_SUCCESS" });
   }, []);
 

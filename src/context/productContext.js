@@ -54,6 +54,9 @@ export const ShopContextProvider = ({ children }) => {
   }, []);
 
   const removeFromCart = useCallback((itemId) => {
+    const currentQty = Number(cartItems[itemId]?.quantity || 0);
+    const nextQty = Math.max(0, currentQty - 1);
+
     setCartItems((prev) => {
       const newCart = { ...prev };
       if (newCart[itemId]?.quantity > 1) {
@@ -62,6 +65,22 @@ export const ShopContextProvider = ({ children }) => {
         delete newCart[itemId];
       }
       return newCart;
+    });
+
+    commerceApi.updateCartItem(itemId, nextQty).catch((error) => {
+      console.error("Error updating cart item:", error);
+    });
+  }, [cartItems]);
+
+  const removeCartItem = useCallback((itemId) => {
+    setCartItems((prev) => {
+      const newCart = { ...prev };
+      delete newCart[itemId];
+      return newCart;
+    });
+
+    commerceApi.removeCartItem(itemId).catch((error) => {
+      console.error("Error removing cart item:", error);
     });
   }, []);
 
@@ -102,6 +121,7 @@ export const ShopContextProvider = ({ children }) => {
     purchaseHistory,
     addToCart,
     removeFromCart,
+    removeCartItem,
     addToWishlist,
     removeFromWishlist,
     getTotalCartAmount,

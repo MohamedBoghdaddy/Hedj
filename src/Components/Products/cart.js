@@ -7,7 +7,7 @@ import "../../Styles/cart.css";
 const STEPS = ["Customer Info", "Delivery", "Payment"];
 
 const Cart = () => {
-  const { cartItems, addToCart, removeFromCart, getTotalCartAmount } = useContext(ShopContext);
+  const { cartItems, addToCart, removeFromCart, removeCartItem, getTotalCartAmount } = useContext(ShopContext);
   const navigate = useNavigate();
   const [promo, setPromo] = useState("");
 
@@ -82,7 +82,7 @@ const Cart = () => {
                             <span>{item.quantity}</span>
                             <button type="button" onClick={() => addToCart({ ...item, quantity: 1 })}>+</button>
                           </div>
-                          <button className="cart-remove-btn" type="button" onClick={() => removeFromCart(item.id)}>
+                          <button className="cart-remove-btn" type="button" onClick={() => removeCartItem(item.id)}>
                             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
                             Remove
                           </button>

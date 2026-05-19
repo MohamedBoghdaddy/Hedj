@@ -1,6 +1,7 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuthContext } from "./context/AuthContext";
 
 // Public layout
 import NavBar from "./Components/Homepage/NavBar";
@@ -44,7 +45,29 @@ import Quotes from "./Components/dashboard/Quotes";
 import OrderDetail from "./Components/dashboard/OrderDetail";
 import CustomerDetail from "./Components/dashboard/CustomerDetail";
 
+const AdminRoute = ({ children }) => {
+  const { state } = useAuthContext();
+  const location = useLocation();
+  const role = state.user?.role;
+
+  if (state.loading) return null;
+  if (!state.isAuthenticated) {
+    return <Navigate to="/Login" state={{ from: location }} replace />;
+  }
+  if (role !== "admin" && role !== "employee") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 const App = () => {
+  const adminPage = (page) => (
+    <AdminRoute>
+      <AdminLayout>{page}</AdminLayout>
+    </AdminRoute>
+  );
+
   return (
     <BrowserRouter>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
@@ -72,28 +95,28 @@ const App = () => {
         <Route path="/Signup" element={<Signup />} />
 
         {/* ── Admin / ERP Routes ── */}
-        <Route path="/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/admin" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/admin/dashboard" element={<AdminLayout><Dashboard /></AdminLayout>} />
-        <Route path="/admin/orders" element={<AdminLayout><Orders /></AdminLayout>} />
-        <Route path="/admin/orders/:orderId" element={<AdminLayout><OrderDetail /></AdminLayout>} />
-        <Route path="/admin/customers" element={<AdminLayout><Customers /></AdminLayout>} />
-        <Route path="/admin/customers/:customerId" element={<AdminLayout><CustomerDetail /></AdminLayout>} />
-        <Route path="/admin/leads" element={<AdminLayout><Leads /></AdminLayout>} />
-        <Route path="/admin/quotes" element={<AdminLayout><Quotes /></AdminLayout>} />
-        <Route path="/admin/analytics" element={<AdminLayout><Analytics /></AdminLayout>} />
-        <Route path="/admin/employees" element={<AdminLayout><Employees /></AdminLayout>} />
-        <Route path="/admin/products" element={<AdminLayout><AdminProducts /></AdminLayout>} />
-        <Route path="/admin/settings" element={<AdminLayout><Setting /></AdminLayout>} />
-        <Route path="/admin/reports" element={<AdminLayout><Reports /></AdminLayout>} />
+        <Route path="/dashboard" element={adminPage(<Dashboard />)} />
+        <Route path="/admin" element={adminPage(<Dashboard />)} />
+        <Route path="/admin/dashboard" element={adminPage(<Dashboard />)} />
+        <Route path="/admin/orders" element={adminPage(<Orders />)} />
+        <Route path="/admin/orders/:orderId" element={adminPage(<OrderDetail />)} />
+        <Route path="/admin/customers" element={adminPage(<Customers />)} />
+        <Route path="/admin/customers/:customerId" element={adminPage(<CustomerDetail />)} />
+        <Route path="/admin/leads" element={adminPage(<Leads />)} />
+        <Route path="/admin/quotes" element={adminPage(<Quotes />)} />
+        <Route path="/admin/analytics" element={adminPage(<Analytics />)} />
+        <Route path="/admin/employees" element={adminPage(<Employees />)} />
+        <Route path="/admin/products" element={adminPage(<AdminProducts />)} />
+        <Route path="/admin/settings" element={adminPage(<Setting />)} />
+        <Route path="/admin/reports" element={adminPage(<Reports />)} />
 
         {/* Legacy admin paths */}
-        <Route path="/Setting" element={<><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></>} />
-        <Route path="/Settings" element={<><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></>} />
-        <Route path="/Reports" element={<AdminLayout><Reports /></AdminLayout>} />
-        <Route path="/Profile" element={<AdminLayout><Customers /></AdminLayout>} />
-        <Route path="/Employees" element={<AdminLayout><Employees /></AdminLayout>} />
-        <Route path="/Customers" element={<AdminLayout><Customers /></AdminLayout>} />
+        <Route path="/Setting" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />
+        <Route path="/Settings" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />
+        <Route path="/Reports" element={adminPage(<Reports />)} />
+        <Route path="/Profile" element={adminPage(<Customers />)} />
+        <Route path="/Employees" element={adminPage(<Employees />)} />
+        <Route path="/Customers" element={adminPage(<Customers />)} />
 
       </Routes>
     </BrowserRouter>

@@ -52,13 +52,17 @@ export const useSignup = () => {
         { withCredentials: true }
       );
 
-      const { user } = response.data;
+      const { token, user } = response.data;
 
-      // Store user in local storage
-      localStorage.setItem("user", JSON.stringify({ user }));
+      if (!token || !user) {
+        throw new Error("Unexpected response format");
+      }
 
-      // Dispatch signup success
-      dispatch({ type: "REGISTRATION_SUCCESS", payload: user });
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      dispatch({ type: "LOGIN_SUCCESS", payload: user });
 
       setSuccessMessage("Registration successful");
     } catch (error) {

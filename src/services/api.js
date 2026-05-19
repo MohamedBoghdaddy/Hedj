@@ -3,7 +3,7 @@ import { createInitialDemoStore } from "./demoData";
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "http://localhost:8000"
+    ? "http://localhost:4000"
     : "https://hedj.onrender.com");
 
 const STORE_KEY = "hedjDemoStore";
@@ -255,7 +255,7 @@ export const commerceApi = {
 
   getProductBySlug: (slug) =>
     withFallback(
-      `/api/products/${slug}`,
+      `/api/products/slug/${slug}`,
       {},
       () => readStore().products.find((product) => product.slug === slug || product.id === slug),
       (payload) => unwrapItem(payload, "product")
@@ -271,9 +271,25 @@ export const commerceApi = {
 
   addCartItem: (item) =>
     withFallback(
-      "/api/cart/add",
+      "/api/cart/items",
       { method: "POST", body: { item } },
       () => ({ cartItem: item }),
+      (payload) => payload
+    ),
+
+  updateCartItem: (itemId, quantity) =>
+    withFallback(
+      `/api/cart/items/${itemId}`,
+      { method: "PATCH", body: { quantity } },
+      () => ({ cart: [] }),
+      (payload) => payload
+    ),
+
+  removeCartItem: (itemId) =>
+    withFallback(
+      `/api/cart/items/${itemId}`,
+      { method: "DELETE" },
+      () => ({ cart: [] }),
       (payload) => payload
     ),
 

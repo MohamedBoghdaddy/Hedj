@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 import signupVisual from "../../Assets/Images/daybedroom.jpg";
 import "../../Styles/signup.css";
 
@@ -49,6 +50,7 @@ const Signup = () => {
   const [message, setMessage] = useState({ error: "", success: "" });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { dispatch } = useAuthContext();
 
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -81,8 +83,9 @@ const Signup = () => {
 
     const nameParts = splitFullName(formData.name);
     const payload = {
-      ...formData,
       username: formData.username || usernameFromName(formData.name, formData.email),
+      email: formData.email,
+      password: formData.password,
       firstName: formData.firstName || nameParts.firstName,
       middleName: formData.middleName || nameParts.middleName,
       lastName: formData.lastName || nameParts.lastName,
@@ -91,12 +94,19 @@ const Signup = () => {
 
     setIsLoading(true);
     try {
-      await axios.post(`${API_URL}/api/users/signup`, payload, {
+      const response = await axios.post(`${API_URL}/api/users/signup`, payload, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
+      const { token, user } = response.data;
+      if (token && user) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
+      }
       setMessage({ error: "", success: "Registration successful" });
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       setMessage({
         error: error.response?.data?.message || "Signup failed",

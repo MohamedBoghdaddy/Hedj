@@ -28,6 +28,7 @@ const {
   MONGO_URL: RAW_MONGO_URL,
   MONGO_URI,
   SESSION_SECRET = "hedj-demo-session-secret",
+  FRONTEND_URL,
   CORS_ORIGIN = "http://localhost:3000",
   NODE_ENV = "development",
 } = process.env;
@@ -51,6 +52,7 @@ if (sessionStore) {
 
 const allowedOrigins = [
   CORS_ORIGIN,
+  FRONTEND_URL,
   "http://localhost:3000",
   "http://localhost:3001",
   "https://hedj.netlify.app",
@@ -108,6 +110,13 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `API route not found: ${req.method} ${req.originalUrl}`,
+  });
+});
+
 app.use((err, req, res, next) => {
   console.error("Error:", err.message);
   res.status(500).json({ message: "Internal Server Error", error: err.message });
@@ -131,11 +140,8 @@ const connectDB = async () => {
     console.log("Connected to MongoDB");
     startServer();
   } catch (error) {
-    console.error("Database connection error:", error);
-    if (isProduction) {
-      process.exit(1);
-    }
-    console.warn("Continuing in demo mode because MongoDB is unreachable in development.");
+    console.error("Failed to connect to MongoDB:", error.message);
+    console.warn("Continuing with database-backed auth unavailable.");
     startServer();
   }
 };

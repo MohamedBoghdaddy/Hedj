@@ -11,9 +11,49 @@ import {
 const router = express.Router();
 
 const byIdOrSlug = (items, id) => items.find((item) => item.id === id || item.slug === id);
+const getSessionCart = (req) => req.session?.cart || [];
+const setSessionCart = (req, cart) => {
+  if (req.session) req.session.cart = cart;
+};
+
+const addCartItem = (req, res) => {
+  const item = req.body.item || req.body;
+  const quantity = Math.max(1, Number(item.quantity || 1));
+  const cart = getSessionCart(req);
+  const existing = cart.find((cartItem) => cartItem.id === item.id);
+
+  if (existing) {
+    existing.quantity += quantity;
+  } else {
+    cart.push({ ...item, quantity });
+  }
+
+  setSessionCart(req, cart);
+  res.json({ message: "Added to cart", cart });
+};
+
+const updateCartItem = (req, res) => {
+  const cart = getSessionCart(req);
+  const quantity = Math.max(0, Number(req.body.quantity || 0));
+  const nextCart = quantity
+    ? cart.map((item) => (item.id === req.params.id ? { ...item, quantity } : item))
+    : cart.filter((item) => item.id !== req.params.id);
+
+  setSessionCart(req, nextCart);
+  res.json({ cart: nextCart });
+};
+
+const removeCartItem = (req, res) => {
+  const cart = getSessionCart(req).filter((item) => item.id !== req.params.id);
+  setSessionCart(req, cart);
+  res.json({ cart });
+};
 
 router.get("/health", (req, res) => {
-  res.json({ ok: true, mode: process.env.MONGO_URL ? "mongo" : "demo" });
+  res.json({
+    ok: true,
+    mode: process.env.MONGO_URL || process.env.MONGO_URI ? "mongo" : "demo",
+  });
 });
 
 router.post("/seed/reset", (req, res) => {
@@ -36,6 +76,12 @@ router.get("/products/low-stock", (req, res) => {
     (product) => Number(product.stock) <= Number(product.lowStockThreshold || 5)
   );
   res.json({ count: items.length, items });
+});
+
+router.get("/products/slug/:slug", (req, res) => {
+  const product = byIdOrSlug(getStore().products, req.params.slug);
+  if (!product) return res.status(404).json({ message: "Product not found" });
+  return res.json({ product });
 });
 
 router.get("/products/:id", (req, res) => {
@@ -82,43 +128,18 @@ router.get("/collections/:slug", (req, res) => {
 });
 
 router.get("/cart", (req, res) => {
-  res.json({ cart: req.session?.cart || [] });
+  res.json({ cart: getSessionCart(req) });
 });
 
-router.post("/cart/add", (req, res) => {
-  const item = req.body.item || req.body;
-  const quantity = Math.max(1, Number(item.quantity || 1));
-  const cart = req.session?.cart || [];
-  const existing = cart.find((cartItem) => cartItem.id === item.id);
-
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    cart.push({ ...item, quantity });
-  }
-
-  if (req.session) req.session.cart = cart;
-  res.json({ message: "Added to cart", cart });
-});
-
-router.patch("/cart/:id", (req, res) => {
-  const cart = req.session?.cart || [];
-  const quantity = Math.max(0, Number(req.body.quantity || 0));
-  const nextCart = quantity
-    ? cart.map((item) => (item.id === req.params.id ? { ...item, quantity } : item))
-    : cart.filter((item) => item.id !== req.params.id);
-  if (req.session) req.session.cart = nextCart;
-  res.json({ cart: nextCart });
-});
-
-router.delete("/cart/:id", (req, res) => {
-  const cart = (req.session?.cart || []).filter((item) => item.id !== req.params.id);
-  if (req.session) req.session.cart = cart;
-  res.json({ cart });
-});
+router.post("/cart/add", addCartItem);
+router.post("/cart/items", addCartItem);
+router.patch("/cart/items/:id", updateCartItem);
+router.patch("/cart/:id", updateCartItem);
+router.delete("/cart/items/:id", removeCartItem);
+router.delete("/cart/:id", removeCartItem);
 
 router.delete("/cart", (req, res) => {
-  if (req.session) req.session.cart = [];
+  setSessionCart(req, []);
   res.json({ cart: [] });
 });
 

@@ -7,25 +7,64 @@ import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import User from "../model/usermodel.js";
-import asyncHandler from "express-async-handler";
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const JWT_SECRET = process.env.JWT_SECRET || "hedj-demo-jwt-secret";
+const USER_ROLES = ["customer", "employee", "admin"];
 
 const isDatabaseReady = () => mongoose.connection.readyState === 1;
 
 const requireAuthDatabase = (res) => {
   if (isDatabaseReady()) return true;
+
   res.status(503).json({
+    success: false,
     message: "Authentication database is unavailable. Please try again later.",
   });
   return false;
 };
 
-// Configure multer for file uploads
+const publicUserFields = "-password -__v";
+
+const toPublicUser = (user) => ({
+  _id: user._id,
+  id: user._id,
+  name:
+    [user.firstName, user.middleName, user.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim() || user.username,
+  username: user.username,
+  email: user.email,
+  role: user.role,
+  gender: user.gender,
+  firstName: user.firstName,
+  middleName: user.middleName,
+  lastName: user.lastName,
+  department: user.department,
+  receiveNotifications: user.receiveNotifications,
+  profilePhoto: user.profilePhoto,
+});
+
+const getTokenFromRequest = (req) => {
+  const authHeader = req.header("Authorization");
+  const headerToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : authHeader;
+
+  return req.cookies?.token || headerToken;
+};
+
+const getRequestedUserId = (req) => req.params.id || req.params.userId;
+
+const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+const createToken = (user) =>
+  jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../uploads"));
@@ -37,15 +76,19 @@ const storage = multer.diskStorage({
     );
   },
 });
-export const upload = multer({ storage: storage });
 
-// Function to create a JWT token
-const createToken = (user) =>
-  jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "30d" });
+export const upload = multer({ storage });
 
-// Register a new user
 export const registerUser = async (req, res) => {
-  const { username, email, password, firstName, lastName, gender } = req.body;
+  const {
+    username,
+    email,
+    password,
+    firstName,
+    middleName,
+    lastName,
+    gender,
+  } = req.body;
 
   if (!username || !email || !password || !firstName || !lastName || !gender) {
     return res.status(400).json({ message: "All fields are required" });
@@ -54,9 +97,16 @@ export const registerUser = async (req, res) => {
   if (!requireAuthDatabase(res)) return;
 
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: "Email already in use" });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+    if (existingUser) {
+      const message =
+        existingUser.email === email
+          ? "Email already in use"
+          : "Username already in use";
+      return res.status(400).json({ message });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
@@ -64,35 +114,25 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       firstName,
+      middleName,
       lastName,
       gender,
     });
     await user.save();
 
     const token = createToken(user);
-    res.status(201).json({ token, 
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        gender: user.gender,
-        firstName: user.firstName,
-        middleName: user.middleName,
-        lastName: user.lastName,
-      },
-     });
+    res.status(201).json({ token, user: toPublicUser(user) });
   } catch (error) {
     console.error("Registration failed:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-// Login user
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password)
+  if (!email || !password) {
     return res.status(400).json({ message: "Email and password required" });
+  }
 
   if (!requireAuthDatabase(res)) return;
 
@@ -101,23 +141,18 @@ export const loginUser = async (req, res) => {
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
 
     const token = createToken(user);
-    res
-      .status(200)
-      .json({
-        token,
-        user: { _id: user._id, username: user.username, email: user.email },
-      });
+    res.status(200).json({ token, user: toPublicUser(user) });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-// Logout user
 export const logoutUser = async (req, res) => {
   try {
     res.status(200).json({ message: "Logout successful" });
@@ -127,127 +162,161 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-// Get all users
 export const getAllUsers = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
+
   try {
-    const users = await User.find().select("-password");
-    res.status(200).json(users);
+    const users = await User.find().select(publicUserFields).sort({ createdAt: -1 });
+    res.status(200).json(users.map(toPublicUser));
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get single user
 export const getUser = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
+
+  const userId = getRequestedUserId(req);
+  if (!isValidObjectId(userId)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user id",
+    });
+  }
+
   try {
-    const user = await User.findById(req.params.userId).select("-password");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.status(200).json(user);
+    const user = await User.findById(userId).select(publicUserFields);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({ success: true, user: toPublicUser(user) });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching user:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-// Update user profile with optional profile photo
 export const updateUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const updates = { ...req.body };
+  if (!requireAuthDatabase(res)) return;
 
+  try {
+    const userId = getRequestedUserId(req);
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user id",
+      });
+    }
+
+    const updates = { ...req.body };
     if (req.file) {
       updates.profilePhoto = `/uploads/${req.file.filename}`;
     }
+
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
-    }).select("-password");
-    if (!updatedUser)
+    }).select(publicUserFields);
+    if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
+    }
 
     res
       .status(200)
-      .json({ message: "User updated successfully", user: updatedUser });
+      .json({
+        message: "User updated successfully",
+        user: toPublicUser(updatedUser),
+      });
   } catch (error) {
     console.error("Error updating user:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
-
-// Delete user
 export const deleteUser = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
+
   try {
-    const user = await User.findByIdAndDelete(req.params.userId);
+    const userId = getRequestedUserId(req);
+    if (!isValidObjectId(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid user id",
+      });
+    }
+
+    const user = await User.findByIdAndDelete(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
+    console.error("Error deleting user:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Search users by username
 export const searchUsers = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
+
   try {
     const { username } = req.query;
-    if (!username)
+    if (!username) {
       return res.status(400).json({ message: "Username required" });
+    }
 
     const users = await User.find({
       username: { $regex: username, $options: "i" },
-    }).select("-password");
-    if (!users.length)
+    }).select(publicUserFields);
+    if (!users.length) {
       return res.status(404).json({ message: "No users found" });
-    res.status(200).json(users);
+    }
+    res.status(200).json(users.map(toPublicUser));
   } catch (error) {
     console.error("Search error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-
 export const checkAuth = async (req, res) => {
   if (!requireAuthDatabase(res)) return;
 
   try {
-    const authHeader = req.header("Authorization");
-    const token =
-      req.cookies.token ||
-      (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : authHeader);
+    const token = getTokenFromRequest(req);
     if (!token) return res.status(401).json({ message: "Not authenticated" });
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
+    const user = await User.findById(decoded.id).select(publicUserFields);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json({ user });
+    res.status(200).json({ user: toPublicUser(user) });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(401).json({ message: "Not authenticated" });
   }
 };
 
+export const getUsersByRole = async (req, res) => {
+  if (!requireAuthDatabase(res)) return;
 
-
-// ✅ Get Users Based on Role
-const getUsersByRole = asyncHandler(async (req, res) => {
   try {
-    const { role } = req.query; // Extract role from query parameters
-
-    if (!role || !["customer", "employee", "admin"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role specified" });
+    const { role } = req.query;
+    if (role && !USER_ROLES.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role specified",
+      });
     }
 
-    const users = await User.find({ role });
+    const filter = role ? { role } : {};
+    const users = await User.find(filter)
+      .select(publicUserFields)
+      .sort({ createdAt: -1 });
 
-    if (users.length === 0) {
-      return res.status(404).json({ message: `No ${role}s found` });
-    }
-
-    res.status(200).json(users);
+    res.status(200).json({ success: true, users: users.map(toPublicUser) });
   } catch (error) {
     console.error("Error fetching users by role:", error);
-    res.status(500).json({ message: "Failed to fetch users" });
+    res.status(500).json({ success: false, message: "Failed to fetch users" });
   }
-});
-
-export { getUsersByRole };
+};

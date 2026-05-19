@@ -254,7 +254,8 @@
   transform: translateY(4px);
 }
 .bs-card:hover .bs-card-add { opacity: 1; transform: translateY(0); }
-.bs-card h4 {
+.bs-card h4,
+.bs-card-title-btn {
   min-height: 54px;
   font-family: var(--font-serif);
   font-size: 20px;
@@ -265,6 +266,14 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  cursor: pointer;
+}
+.bs-card-title-btn {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
 }
 .bs-card .bs-material { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-secondary); margin-bottom: 8px; font-family: var(--font-sans); }
 .bs-card .bs-price { font-size: 16px; font-weight: 600; color: var(--color-on-tertiary-container); font-family: var(--font-sans); }
