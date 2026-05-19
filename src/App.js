@@ -18,10 +18,11 @@ import DayComplement from "./Components/Products/DayComplement";
 import NightComplement from "./Components/Products/NighComplement";
 import Outdoor from "./Components/Products/Outdoor";
 import ProductDetail from "./Components/Products/ProductDetail";
-import Cart from "./Components/Products/cart";
-import Checkout from "./Components/Products/Checkout";
 import Wishlist from "./Components/Products/wishlist";
-import Contact from "./Components/Contact/contact";
+import KitchenCollections from "./Pages/KitchenCollections";
+import PremiumProductDetail from "./Pages/ProductDetail";
+import CartCheckout from "./Pages/CartCheckout";
+import PremiumContact from "./Pages/Contact";
 
 // Auth
 import Signup from "./Components/Loginsystem/Signup";
@@ -37,13 +38,14 @@ import Setting from "./Components/dashboard/Setting";
 import Reports from "./Components/dashboard/Report";
 import Employees from "./Components/dashboard/EmployeeList";
 import Customers from "./Components/dashboard/CustomersList";
-import Orders from "./Components/dashboard/Orders";
 import Leads from "./Components/dashboard/Leads";
-import Analytics from "./Components/dashboard/Analytics";
 import AdminProducts from "./Components/dashboard/AdminProducts";
 import Quotes from "./Components/dashboard/Quotes";
 import OrderDetail from "./Components/dashboard/OrderDetail";
 import CustomerDetail from "./Components/dashboard/CustomerDetail";
+import AdminOrdersPipeline from "./Pages/AdminOrdersPipeline";
+import AdminAnalytics from "./Pages/AdminAnalytics";
+import AdminEmployees from "./Pages/AdminEmployees";
 
 const AdminRoute = ({ children }) => {
   const { state } = useAuthContext();
@@ -67,6 +69,7 @@ const App = () => {
       <AdminLayout>{page}</AdminLayout>
     </AdminRoute>
   );
+  const adminStandalonePage = (page) => <AdminRoute>{page}</AdminRoute>;
 
   return (
     <BrowserRouter>
@@ -76,7 +79,7 @@ const App = () => {
         {/* ── Public Routes ── */}
         <Route path="/" element={<><NavBar /><Slideshow /><Home /><Footer /></>} />
         <Route path="/collections" element={<><NavBar /><Kitchen /><Footer /></>} />
-        <Route path="/collections/kitchens" element={<><NavBar /><Kitchen /><Footer /></>} />
+        <Route path="/collections/kitchens" element={<KitchenCollections />} />
         <Route path="/Kitchen" element={<><NavBar /><Kitchen /><Footer /></>} />
         <Route path="/Bedroom" element={<><NavBar /><Bedrooms /><Footer /></>} />
         <Route path="/DayComplement" element={<><NavBar /><DayComplement /><Footer /></>} />
@@ -84,11 +87,12 @@ const App = () => {
         <Route path="/Outdoor" element={<><NavBar /><Outdoor /><Footer /></>} />
         <Route path="/products" element={<><NavBar /><Products /><Footer /></>} />
         <Route path="/Products" element={<><NavBar /><Products /><Footer /></>} />
+        <Route path="/products/obsidian-kitchen-island" element={<PremiumProductDetail />} />
         <Route path="/products/:slug" element={<><NavBar /><ProductDetail /><Footer /></>} />
-        <Route path="/cart" element={<><NavBar /><Cart /><Footer /></>} />
-        <Route path="/checkout" element={<><NavBar /><Checkout /><Footer /></>} />
+        <Route path="/cart" element={<CartCheckout />} />
+        <Route path="/checkout" element={<CartCheckout />} />
         <Route path="/wishlist" element={<><NavBar /><Wishlist /><Footer /></>} />
-        <Route path="/contact" element={<><NavBar /><Contact /><Footer /></>} />
+        <Route path="/contact" element={<PremiumContact />} />
 
         {/* ── Auth Routes ── */}
         <Route path="/Login" element={<Login />} />
@@ -98,17 +102,17 @@ const App = () => {
         <Route path="/dashboard" element={adminPage(<Dashboard />)} />
         <Route path="/admin" element={adminPage(<Dashboard />)} />
         <Route path="/admin/dashboard" element={adminPage(<Dashboard />)} />
-        <Route path="/admin/orders" element={adminPage(<Orders />)} />
+        <Route path="/admin/orders" element={adminStandalonePage(<AdminOrdersPipeline />)} />
         <Route path="/admin/orders/:orderId" element={adminPage(<OrderDetail />)} />
         <Route path="/admin/customers" element={adminPage(<Customers />)} />
         <Route path="/admin/customers/:customerId" element={adminPage(<CustomerDetail />)} />
         <Route path="/admin/leads" element={adminPage(<Leads />)} />
         <Route path="/admin/quotes" element={adminPage(<Quotes />)} />
-        <Route path="/admin/analytics" element={adminPage(<Analytics />)} />
-        <Route path="/admin/employees" element={adminPage(<Employees />)} />
+        <Route path="/admin/analytics" element={adminStandalonePage(<AdminAnalytics />)} />
+        <Route path="/admin/employees" element={adminStandalonePage(<AdminEmployees />)} />
         <Route path="/admin/products" element={adminPage(<AdminProducts />)} />
         <Route path="/admin/settings" element={adminPage(<Setting />)} />
-        <Route path="/admin/reports" element={adminPage(<Reports />)} />
+        <Route path="/admin/reports" element={adminStandalonePage(<AdminAnalytics />)} />
 
         {/* Legacy admin paths */}
         <Route path="/Setting" element={<AdminRoute><><ToastContainer /><Mininavbar /><Sidebar /><Setting /><Footer /></></AdminRoute>} />

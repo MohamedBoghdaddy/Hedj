@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLogin } from "../../hooks/useLogin";
-import loginVisual from "../../Assets/Images/23.jpg";
-import "../../Styles/login.css";
+import "../../Styles/auth-premium.css";
+
+const loginVisual =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuD0G77Y0EaIuevvsyBlAjXP4n3DqYhdREaa2GehU7zHSGXq6Wkdby2W3m_np3QXxPscKf13xeBUzGqWu-m5cyDqkw6dBOC0gMTYPDSL1xXNU4X4nAp-B07tB8eCZ47lFtYmndhkImOQjMVHukcc-VMxc-TdtHxK1WfjN1AAhNQni1K7sipyMOvz9H3XyEOS9KHxrFazbUsfvge1Jrc7VuiIO_hCBZbEXJafaiXHd06Yd-QSeYy0lgCvZwaGOt9vnW3CaHc7e1KaNFG4";
 
 const Login = () => {
   const {
@@ -29,8 +31,7 @@ const Login = () => {
         <div className="auth-visual-overlay auth-visual-overlay-login" />
         <div className="auth-visual-copy">
           <p className="auth-visual-brand">Hedj</p>
-          <p className="auth-visual-line">Curated living for the modern professional.</p>
-          <p className="auth-visual-muted">Elevating spaces with intentionality and craft.</p>
+          <p className="auth-visual-line">Access your quiet showroom and curated interiors.</p>
         </div>
       </section>
 
@@ -71,7 +72,7 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Password"
                   autoComplete="current-password"
                   required
                 />
@@ -121,7 +122,7 @@ const Login = () => {
           <a href="#privacy">Privacy Policy</a>
           <a href="#terms">Terms of Service</a>
           <a href="#support">Contact Support</a>
-          <p>© 2024 Hedj Commerce OS.</p>
+          <p>(c) 2024 Hedj Commerce OS.</p>
         </div>
       </section>
     </main>

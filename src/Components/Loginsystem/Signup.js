@@ -2,8 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
-import signupVisual from "../../Assets/Images/daybedroom.jpg";
-import "../../Styles/signup.css";
+import "../../Styles/auth-premium.css";
+
+const signupVisual =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuB1nqF1bCZjnrg9d-cBOcYhd5sJWWPfYcTAyBO2i5sTDoONeXQ2vBnXCtNDrf6bAa19zZybFMIE1_ZcpRNNXx09b_tQiDF6rbKjqjkSoQxC-ZNXX2O131oK4NcVR9Z67R8FbiP6tzER-TgDhrEgZhb5YRnMR0qHkdZUNX98M4u_2rkaTsyxYJUNcq4jTgkyQa0uzK3Pwpkfgh8faZOgv_bJj1l75Lbo0_2odMs2w3w3NFOwCu-PdV3KMilvcAhnEPShkY03rUY90C0D";
 
 const API_URL =
   process.env.REACT_APP_API_URL ??
@@ -20,16 +22,6 @@ const splitFullName = (fullName) => {
     middleName: parts.length > 2 ? parts.slice(1, -1).join(" ") : "",
     lastName: parts.length > 1 ? parts[parts.length - 1] : parts[0] || "",
   };
-};
-
-const usernameFromName = (fullName, email) => {
-  const normalized = fullName
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ".")
-    .replace(/^\.+|\.+$/g, "");
-
-  return normalized || email.split("@")[0];
 };
 
 const Signup = () => {
@@ -83,7 +75,7 @@ const Signup = () => {
 
     const nameParts = splitFullName(formData.name);
     const payload = {
-      username: formData.username || usernameFromName(formData.name, formData.email),
+      username: formData.username || formData.name.trim(),
       email: formData.email,
       password: formData.password,
       firstName: formData.firstName || nameParts.firstName,
@@ -215,7 +207,7 @@ const Signup = () => {
         </div>
 
         <div className="auth-legal">
-          <p>© 2024 Hedj Commerce OS. Privacy Policy &amp; Terms of Service.</p>
+          <p>(c) 2024 Hedj Commerce OS. Privacy Policy &amp; Terms of Service.</p>
         </div>
       </section>
     </main>
@@ -241,7 +233,7 @@ const PasswordField = ({
         type={show ? "text" : "password"}
         value={value}
         onChange={onChange}
-        placeholder="••••••••"
+        placeholder="Password"
         autoComplete={autoComplete}
         required
       />
