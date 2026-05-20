@@ -23,6 +23,9 @@ export const PublicNavbar = ({ active = "" }) => {
     (sum, item) => sum + Number(item.quantity || 1),
     0
   );
+  const wishlistCount = Array.isArray(shop?.wishlistItems)
+    ? shop.wishlistItems.length
+    : 0;
 
   const [collOpen, setCollOpen] = useState(false);
   const dropRef = useRef(null);
@@ -139,6 +142,9 @@ export const PublicNavbar = ({ active = "" }) => {
         <div className="commerce-nav-actions">
           <Link aria-label="Wishlist" className="commerce-icon-link" to="/wishlist">
             <span className="material-symbols-outlined">favorite</span>
+            {wishlistCount > 0 && (
+              <span className="commerce-cart-count">{wishlistCount}</span>
+            )}
           </Link>
           <Link
             aria-label="Cart"

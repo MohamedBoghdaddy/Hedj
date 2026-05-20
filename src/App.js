@@ -7,7 +7,7 @@ import { isStaff, isAdmin } from "./utils/permissions";
 
 // Public pages
 import Home from "./Components/Homepage/Home";
-import Wishlist from "./Components/Products/wishlist";
+import Wishlist from "./Pages/Wishlist";
 import PremiumProductDetail from "./Pages/ProductDetail";
 import CartCheckout from "./Pages/CartCheckout";
 import PremiumContact from "./Pages/Contact";

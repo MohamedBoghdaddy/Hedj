@@ -126,9 +126,13 @@ const ProductDetail = () => {
     toast.success(`${product.name} was added to your cart.`);
   };
 
-  const handleWishlist = () => {
-    addToWishlist({ ...product, image: mainImage, img: mainImage, material, finish });
-    toast.success("Saved to wishlist.");
+  const handleWishlist = async () => {
+    try {
+      await addToWishlist({ ...product, image: mainImage, img: mainImage, material, finish });
+      toast.success("Saved to wishlist.");
+    } catch (error) {
+      toast.error(error.message || "Could not save to wishlist.");
+    }
   };
 
   return (

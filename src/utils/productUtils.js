@@ -27,12 +27,17 @@ export const productImage = (product = {}) => {
     : null;
   const galleryUrl =
     typeof galleryImage === "string" ? galleryImage : galleryImage?.url;
+  const imagesImage = Array.isArray(product.images)
+    ? product.images.find(Boolean)
+    : null;
+  const imagesUrl =
+    typeof imagesImage === "string" ? imagesImage : imagesImage?.url;
 
   return (
     product.imageUrl ||
     product.image ||
     product.img ||
-    (Array.isArray(product.images) ? product.images.find(Boolean) : "") ||
+    imagesUrl ||
     galleryUrl ||
     DEFAULT_PRODUCT_IMAGE
   );
@@ -49,7 +54,9 @@ export const productImages = (product = {}) => {
         )
       : []),
     ...(Array.isArray(product.images) ? product.images : []),
-  ].filter(Boolean);
+  ]
+    .map((item) => (typeof item === "string" ? item : item?.url))
+    .filter(Boolean);
 
   return images.length ? [...new Set(images)] : [DEFAULT_PRODUCT_IMAGE];
 };

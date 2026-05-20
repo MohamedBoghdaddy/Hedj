@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import { ShopContext } from "../context/productContext";
+import { productImage } from "../utils/productUtils";
 import "../Styles/commerce-premium.css";
 
 const money = (value) =>
@@ -12,7 +13,7 @@ const money = (value) =>
   })}`;
 
 const CartCheckout = () => {
-  const { cartItems, addToCart, removeFromCart, removeCartItem, checkout } =
+  const { cartItems, addToCart, removeFromCart, removeCartItem, checkout, cartLoading, syncWarning } =
     useContext(ShopContext);
   const [installType, setInstallType] = useState("white-glove");
   const [successOpen, setSuccessOpen] = useState(false);
@@ -106,11 +107,16 @@ const CartCheckout = () => {
           <div className="commerce-cart-main">
             <section className="commerce-cart-card">
               <h2>Your Selection</h2>
+              {syncWarning && <p className="commerce-delivery-note">{syncWarning}</p>}
 
-              {items.length > 0 ? (
+              {cartLoading ? (
+                <div className="commerce-empty-state">
+                  <p>Loading your saved cart...</p>
+                </div>
+              ) : items.length > 0 ? (
                 <div className="commerce-cart-list">
                   {items.map((item) => {
-                    const image = item.image || item.img || item.images?.[0];
+                    const image = productImage(item);
                     return (
                       <article className="commerce-cart-item" key={item.id}>
                         <div className="commerce-cart-item-image">

@@ -230,9 +230,13 @@ export default function ProductCollections() {
     setTimeout(() => setMessage(""), 2500);
   };
 
-  const handleWishlist = (product) => {
-    shop?.addToWishlist?.(product);
-    showMessage(`${product.name} added to wishlist.`);
+  const handleWishlist = async (product) => {
+    try {
+      await shop?.addToWishlist?.(product);
+      showMessage(`${product.name} added to wishlist.`);
+    } catch (error) {
+      showMessage(error.message || "Could not add this product to wishlist.");
+    }
   };
 
   const handleAddToCart = async (product) => {
