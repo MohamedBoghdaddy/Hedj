@@ -289,30 +289,41 @@ const CartCheckout = () => {
                 <strong>{money(total)}</strong>
               </div>
 
-              <p className="commerce-delivery-note">
+              <p className="commerce-delivery-note commerce-summary-delivery">
                 <span className="material-symbols-outlined">schedule</span>
                 Estimated Delivery: Oct 12 - Oct 19
               </p>
 
               {/* Promo codes are not yet implemented — field is hidden to avoid confusion */}
 
-              <button
-                className="commerce-button"
-                type="button"
-                disabled={submitting || items.length === 0}
-                onClick={handleCheckout}
-              >
-                {submitting ? "Processing..." : "Secure Checkout"}
-              </button>
+              <div className="commerce-summary-actions">
+                <button
+                  className="commerce-button commerce-checkout-button"
+                  type="button"
+                  disabled={submitting || items.length === 0}
+                  onClick={handleCheckout}
+                >
+                  {submitting ? "Processing..." : "Secure Checkout"}
+                </button>
 
-              <Link className="quote-button" to="/contact?reason=quote">
-                Request Quote for Project
-              </Link>
+                <Link className="quote-button" to="/contact?reason=quote">
+                  Request Quote for Project
+                </Link>
+              </div>
 
-              <div className="secure-icons" aria-hidden="true">
-                <span className="material-symbols-outlined">security</span>
-                <span className="material-symbols-outlined">payments</span>
-                <span className="material-symbols-outlined">verified</span>
+              <div className="secure-icons" aria-label="Checkout trust signals">
+                <span>
+                  <span className="material-symbols-outlined">security</span>
+                  Secure payment
+                </span>
+                <span>
+                  <span className="material-symbols-outlined">request_quote</span>
+                  Quote available
+                </span>
+                <span>
+                  <span className="material-symbols-outlined">verified</span>
+                  Verified checkout
+                </span>
               </div>
             </div>
 

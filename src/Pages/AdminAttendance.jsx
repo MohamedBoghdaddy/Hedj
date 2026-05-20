@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
 import { AdminShell } from "../Components/AdminShell";
 import { useAuthContext } from "../context/AuthContext";
@@ -26,6 +26,92 @@ const STATUS_OPTIONS = ["present", "late", "absent", "half_day", "leave", "holid
 const formatDate = (d) => (d ? new Date(d).toLocaleDateString() : "—");
 const formatTime = (d) => (d ? new Date(d).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—");
 
+const getEmployeeId = (employee) => {
+  if (!employee) return "";
+  if (typeof employee === "string") return employee;
+  return employee._id || employee.id || "";
+};
+
+const getEmployeeName = (employee) => {
+  if (!employee || typeof employee === "string") return "";
+  const fullName =
+    employee.fullName ||
+    employee.name ||
+    [employee.fname || employee.firstName, employee.lname || employee.lastName]
+      .filter(Boolean)
+      .join(" ");
+  return fullName.trim() || employee.email || "Unnamed employee";
+};
+
+const getEmployeeMeta = (employee) => {
+  if (!employee || typeof employee === "string") return "";
+  return [
+    employee.employeeCode || employee.staffCode || employee.code,
+    employee.department,
+    employee.jobTitle || employee.role,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+};
+
+const employeeMatches = (employee, searchTerm) => {
+  const query = searchTerm.trim().toLowerCase();
+  if (!query) return true;
+
+  return [
+    getEmployeeName(employee),
+    employee?.email,
+    employee?.department,
+    employee?.role,
+    employee?.jobTitle,
+    employee?.employeeCode,
+    employee?.staffCode,
+    employee?.code,
+  ]
+    .filter(Boolean)
+    .some((value) => String(value).toLowerCase().includes(query));
+};
+
+const getRecordEmployee = (record, employees = []) => {
+  const populated = typeof record.employeeId === "object" ? record.employeeId : null;
+  const employeeFromRecord = record.employee || populated;
+  const employeeId = getEmployeeId(employeeFromRecord) || getEmployeeId(record.employeeId);
+  const employeeFromList = employees.find((employee) => getEmployeeId(employee) === String(employeeId));
+
+  if (employeeFromRecord || employeeFromList) {
+    const employee = employeeFromRecord || employeeFromList;
+    return {
+      id: getEmployeeId(employee),
+      name: getEmployeeName(employee),
+      email: employee.email || record.employeeEmail || "",
+      department: employee.department || record.department || "",
+      meta: getEmployeeMeta(employee),
+    };
+  }
+
+  return {
+    id: employeeId,
+    name: record.employeeName || "Employee unavailable",
+    email: record.employeeEmail || "",
+    department: record.department || "",
+    meta: record.department || "",
+  };
+};
+
+const toFriendlyAttendanceError = (message) => {
+  if (!message) return "Save failed";
+  const lower = String(message).toLowerCase();
+  if (
+    lower.includes("employeeid") ||
+    lower.includes("objectid") ||
+    lower.includes("cast to") ||
+    lower.includes("employee not found")
+  ) {
+    return "Selected employee could not be found. Please choose another employee.";
+  }
+  return message;
+};
+
 const emptyForm = {
   employeeId: "",
   date: new Date().toISOString().split("T")[0],
@@ -35,6 +121,90 @@ const emptyForm = {
   status: "present",
   notes: "",
 };
+
+function EmployeePicker({
+  employees,
+  selectedEmployeeId,
+  search,
+  onSearchChange,
+  onSelect,
+  loading,
+  error,
+}) {
+  const filteredEmployees = useMemo(
+    () => employees.filter((employee) => employeeMatches(employee, search)).slice(0, 40),
+    [employees, search]
+  );
+  const selectedEmployee = employees.find(
+    (employee) => getEmployeeId(employee) === String(selectedEmployeeId || "")
+  );
+
+  return (
+    <div className="admin-form-group attendance-employee-picker">
+      <label htmlFor="att-employee-search">Employee *</label>
+      {selectedEmployee && (
+        <div className="attendance-selected-employee" aria-live="polite">
+          <span className="material-symbols-outlined">badge</span>
+          <div>
+            <strong>{getEmployeeName(selectedEmployee)}</strong>
+            <small>{selectedEmployee.email || "No email on file"}</small>
+            {getEmployeeMeta(selectedEmployee) && <em>{getEmployeeMeta(selectedEmployee)}</em>}
+          </div>
+        </div>
+      )}
+      <div className="attendance-employee-search-wrap">
+        <span className="material-symbols-outlined">search</span>
+        <input
+          id="att-employee-search"
+          type="search"
+          className="admin-input"
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder="Search employee by name, email, or department"
+          autoComplete="off"
+        />
+      </div>
+      <div className="attendance-employee-options" role="listbox" aria-label="Employees">
+        {loading ? (
+          <div className="attendance-employee-state">Loading employees...</div>
+        ) : error ? (
+          <div className="attendance-employee-state attendance-employee-state-error">{error}</div>
+        ) : filteredEmployees.length === 0 ? (
+          <div className="attendance-employee-state">No employees found.</div>
+        ) : (
+          filteredEmployees.map((employee) => {
+            const employeeId = getEmployeeId(employee);
+            const active = employeeId === selectedEmployeeId;
+            return (
+              <button
+                key={employeeId}
+                type="button"
+                className={`attendance-employee-option${active ? " is-selected" : ""}`}
+                onClick={() => onSelect(employee)}
+                role="option"
+                aria-selected={active}
+              >
+                <span className="attendance-employee-avatar" aria-hidden="true">
+                  {getEmployeeName(employee)
+                    .split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase() || "HE"}
+                </span>
+                <span>
+                  <strong>{getEmployeeName(employee)}</strong>
+                  <small>{employee.email || "No email on file"}</small>
+                  {getEmployeeMeta(employee) && <em>{getEmployeeMeta(employee)}</em>}
+                </span>
+              </button>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminAttendance() {
   const { state } = useAuthContext();
@@ -55,6 +225,10 @@ export default function AdminAttendance() {
   const [modal, setModal] = useState(null); // null | "add" | "edit"
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [employeesError, setEmployeesError] = useState("");
+  const [employeeSearch, setEmployeeSearch] = useState("");
 
   const [importFile, setImportFile] = useState(null);
   const [importing, setImporting] = useState(false);
@@ -86,13 +260,40 @@ export default function AdminAttendance() {
     }
   }, [page, filters]);
 
-  useEffect(() => { fetchRecords(); }, [fetchRecords]);
+  const fetchEmployees = useCallback(async () => {
+    setEmployeesLoading(true);
+    setEmployeesError("");
+    try {
+      const res = await fetch(`${API_URL}/api/admin/employees`, {
+        headers: getAuthHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Could not load employees.");
+      }
+      setEmployees(Array.isArray(data.employees) ? data.employees : []);
+    } catch (error) {
+      setEmployeesError(error.message || "Could not load employees.");
+    } finally {
+      setEmployeesLoading(false);
+    }
+  }, []);
 
-  const openAdd = () => { setForm(emptyForm); setModal("add"); };
+  useEffect(() => { fetchRecords(); }, [fetchRecords]);
+  useEffect(() => {
+    if (modal) fetchEmployees();
+  }, [modal, fetchEmployees]);
+
+  const openAdd = () => {
+    setForm(emptyForm);
+    setEmployeeSearch("");
+    setModal("add");
+  };
   const openEdit = (rec) => {
+    const recordEmployee = getRecordEmployee(rec, employees);
     setForm({
       _id: rec._id,
-      employeeId: rec.employeeId,
+      employeeId: recordEmployee.id || getEmployeeId(rec.employeeId),
       date: rec.date ? new Date(rec.date).toISOString().split("T")[0] : "",
       clockIn: rec.clockIn ? new Date(rec.clockIn).toISOString().slice(0, 16) : "",
       clockOut: rec.clockOut ? new Date(rec.clockOut).toISOString().slice(0, 16) : "",
@@ -100,6 +301,7 @@ export default function AdminAttendance() {
       status: rec.status || "present",
       notes: rec.notes || "",
     });
+    setEmployeeSearch(recordEmployee.name || "");
     setModal("edit");
   };
 

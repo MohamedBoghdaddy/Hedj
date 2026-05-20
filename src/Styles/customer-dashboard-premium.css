@@ -155,6 +155,7 @@
   display: flex;
   flex-direction: column;
   gap: 48px;
+  min-width: 0;
 }
 
 .customer-dashboard-card,
@@ -183,7 +184,8 @@
   color: #000000;
 }
 
-.customer-dashboard-section-title button {
+.customer-dashboard-section-title button,
+.customer-support-link {
   border: 0;
   background: transparent;
   color: #645d58;
@@ -193,6 +195,18 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.customer-support-link {
+  border: 1px solid #c6c6cd;
+  padding: 10px 14px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.customer-support-link:hover {
+  border-color: #000000;
+  color: #000000;
 }
 
 .customer-orders-list {
@@ -465,6 +479,7 @@
 .customer-account-card {
   background: #e5e2dd;
   box-shadow: none;
+  overflow: hidden;
 }
 
 .customer-account-card h2 {
@@ -491,6 +506,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  text-align: left;
   transition: 0.2s ease;
 }
 
@@ -507,8 +525,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   font-size: 14px;
-  line-height: 1;
+  line-height: 1.3;
   letter-spacing: 0.02em;
   font-weight: 500;
 }
@@ -628,6 +647,322 @@
   font: inherit;
   padding: 13px 14px;
   outline: none;
+}
+
+.customer-profile-settings-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.customer-profile-summary-card,
+.customer-profile-form-card,
+.customer-profile-preferences-card,
+.customer-profile-security-card {
+  border: 1px solid #e1ddd7;
+  background: #fcf9f4;
+  padding: 28px;
+}
+
+.customer-profile-summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+}
+
+.customer-profile-avatar-wrap {
+  position: relative;
+  width: 136px;
+  height: 136px;
+  flex: 0 0 136px;
+}
+
+.customer-profile-avatar {
+  width: 136px;
+  height: 136px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  object-fit: cover;
+  border: 1px solid #c6c6cd;
+  background: #f0ede8;
+  color: #1c1c19;
+  font-family: "Noto Serif", serif;
+  font-size: 36px;
+  font-weight: 400;
+}
+
+.customer-profile-avatar--initials {
+  box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.customer-profile-avatar-uploading {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(28, 28, 25, 0.44);
+  color: #ffffff;
+}
+
+.customer-profile-photo-btn {
+  min-height: 44px;
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-photo-btn:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.customer-profile-photo-hint,
+.customer-profile-identity p,
+.customer-profile-identity span,
+.customer-profile-form-card small,
+.customer-profile-preferences-card small,
+.customer-profile-security-card p {
+  color: #645d58;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.customer-profile-photo-hint {
+  margin: -8px 0 0;
+}
+
+.customer-profile-identity h3,
+.customer-profile-form-card h3,
+.customer-profile-preferences-card h3,
+.customer-profile-security-card h3 {
+  margin: 0 0 14px;
+  font-family: "Noto Serif", serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #000000;
+}
+
+.customer-profile-identity {
+  width: 100%;
+  min-width: 0;
+}
+
+.customer-profile-identity h3 {
+  margin-bottom: 6px;
+  overflow-wrap: anywhere;
+}
+
+.customer-profile-identity p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.customer-profile-identity span {
+  display: block;
+  margin-top: 10px;
+}
+
+.customer-profile-identity strong {
+  display: inline-flex;
+  margin-top: 12px;
+  border: 1px solid #c6c6cd;
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: #1c1c19;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-quick-links {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+}
+
+.customer-profile-quick-links a,
+.customer-profile-quick-links button {
+  min-height: 42px;
+  border: 1px solid #c6c6cd;
+  background: transparent;
+  color: #1c1c19;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-quick-links a:hover,
+.customer-profile-quick-links button:hover {
+  border-color: #000000;
+}
+
+.customer-profile-editor {
+  display: grid;
+  gap: 24px;
+}
+
+.customer-profile-card-kicker {
+  margin: 0 0 8px;
+  color: #a07e48;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.customer-profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.customer-profile-form-grid label,
+.customer-profile-language {
+  display: grid;
+  gap: 8px;
+  color: #645d58;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-form-grid input,
+.customer-profile-language select {
+  min-width: 0;
+  border: 1px solid #c6c6cd;
+  background: #ffffff;
+  color: #1c1c19;
+  font: inherit;
+  padding: 13px 14px;
+  outline: none;
+}
+
+.customer-profile-form-grid input[readonly],
+.customer-profile-language select:disabled {
+  background: #f0ede8;
+  color: #645d58;
+}
+
+.customer-profile-form-wide {
+  grid-column: 1 / -1;
+}
+
+.customer-profile-preferences-card {
+  display: grid;
+  gap: 14px;
+}
+
+.customer-preference-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid #e1ddd7;
+  background: #ffffff;
+}
+
+.customer-preference-row input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: #000000;
+}
+
+.customer-preference-row strong {
+  display: block;
+  color: #1c1c19;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.customer-preference-row.disabled {
+  opacity: 0.62;
+}
+
+.customer-profile-language {
+  margin-top: 4px;
+}
+
+.customer-profile-preferences-card > button {
+  min-height: 52px;
+  margin-top: 8px;
+  border: 1px solid #000000;
+  background: #000000;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.customer-profile-security-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.customer-profile-security-card p {
+  margin: 0;
+}
+
+.customer-profile-security-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.customer-profile-security-actions a,
+.customer-profile-security-actions button {
+  min-height: 44px;
+  border: 1px solid #c6c6cd;
+  background: transparent;
+  color: #1c1c19;
+  padding: 12px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customer-profile-security-actions button {
+  border-color: #000000;
+  background: #000000;
+  color: #ffffff;
 }
 
 .customer-dashboard-footer {
@@ -763,5 +1098,27 @@
 
   .customer-account-panel-item {
     grid-template-columns: 1fr;
+  }
+
+  .customer-profile-settings-panel,
+  .customer-profile-form-grid,
+  .customer-profile-security-card {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-profile-summary-card,
+  .customer-profile-form-card,
+  .customer-profile-preferences-card,
+  .customer-profile-security-card {
+    padding: 22px;
+  }
+
+  .customer-profile-security-actions {
+    justify-content: stretch;
+  }
+
+  .customer-profile-security-actions a,
+  .customer-profile-security-actions button {
+    width: 100%;
   }
 }

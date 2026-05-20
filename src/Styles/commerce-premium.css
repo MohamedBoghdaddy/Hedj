@@ -832,7 +832,7 @@
 .commerce-summary-card {
   background: var(--commerce-surface);
   border-radius: 8px;
-  padding: 32px;
+  padding: 36px;
 }
 
 .commerce-summary-card h3 {
@@ -848,15 +848,18 @@
 
 .commerce-summary-total {
   border-top: 1px solid var(--commerce-border);
-  padding-top: 16px;
-  margin-top: 16px;
+  padding-top: 18px;
+  margin-top: 18px;
+  margin-bottom: 22px;
   align-items: flex-end;
 }
 
 .commerce-summary-total strong {
   font-family: "Noto Serif", serif;
-  font-size: 34px;
+  font-size: clamp(28px, 3vw, 34px);
   font-weight: 400;
+  line-height: 1;
+  text-align: right;
 }
 
 .commerce-delivery-note {
@@ -865,6 +868,17 @@
   gap: 8px;
   font-size: 14px;
   font-style: italic;
+}
+
+.commerce-summary-delivery {
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  border: 1px solid rgba(28, 28, 25, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.52);
+  color: var(--commerce-muted);
+  font-style: normal;
+  line-height: 1.4;
 }
 
 .promo-row {
@@ -889,24 +903,61 @@
   cursor: pointer;
 }
 
+.commerce-summary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.commerce-checkout-button,
 .quote-button {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 54px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.quote-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   border: 1px solid var(--commerce-gold);
   background: transparent;
   color: var(--commerce-gold);
-  padding: 16px;
-  margin-top: 12px;
+  padding: 14px 18px;
+  margin-top: 0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  line-height: 1.25;
+  text-decoration: none;
   cursor: pointer;
 }
 
 .secure-icons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 22px;
+  color: var(--commerce-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.secure-icons > span {
   display: flex;
-  justify-content: center;
-  gap: 16px;
-  opacity: 0.55;
-  margin-top: 24px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.secure-icons .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--commerce-primary);
 }
 
 .consultant-card {

@@ -9,12 +9,14 @@ import {
 import axios from "axios";
 import { setAxiosAuthToken } from "../services/authHeaders";
 
-
 const API_URL =
   process.env.REACT_APP_API_URL ??
   (window.location.hostname === "localhost"
     ? "http://localhost:4000"
     : "https://hedj.onrender.com");
+
+const AUTH_CHECK_TIMEOUT_MS = 10000;
+const DEBUG_AUTH_TIMING = process.env.REACT_APP_DEBUG_AUTH_TIMING === "true";
 
 const AuthContext = createContext();
 
@@ -22,6 +24,12 @@ const initialState = {
   user: null,
   isAuthenticated: false,
   loading: true,
+};
+
+const clearStoredAuth = () => {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  setAxiosAuthToken(null);
 };
 
 const authReducer = (state, action) => {
@@ -52,36 +60,42 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   const checkAuth = useCallback(async () => {
-    if (!state.isAuthenticated && state.loading) {
-      try {
-        const token = localStorage.getItem("token");
+    if (state.isAuthenticated || !state.loading) return;
 
-        if (token) {
-          // ✅ Validate user session
-          const response = await axios.get(`${API_URL}/api/users/checkAuth`, {
-            withCredentials: true, // ✅ Send cookies
-            headers: { Authorization: `Bearer ${token}` },
-          });
+    const startedAt = performance.now();
+    if (DEBUG_AUTH_TIMING) console.time("hedj-auth-check");
 
-          const { user } = response.data;
-
-          if (user) {
-            dispatch({ type: "USER_LOADED", payload: user });
-
-            // ✅ Store user data in localStorage
-            localStorage.setItem("user", JSON.stringify(user));
-
-            // ✅ Ensure Authorization header is set
-            setAxiosAuthToken(token);
-          } else {
-            dispatch({ type: "AUTH_ERROR" });
-          }
-        } else {
-          dispatch({ type: "AUTH_ERROR" });
-        }
-      } catch (error) {
-        console.error("Auth check failed", error);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
         dispatch({ type: "AUTH_ERROR" });
+        return;
+      }
+
+      const response = await axios.get(`${API_URL}/api/users/checkAuth`, {
+        timeout: AUTH_CHECK_TIMEOUT_MS,
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { user } = response.data;
+      if (!user) {
+        clearStoredAuth();
+        dispatch({ type: "AUTH_ERROR" });
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(user));
+      setAxiosAuthToken(token);
+      dispatch({ type: "USER_LOADED", payload: user });
+    } catch (error) {
+      console.error("Auth check failed", error);
+      clearStoredAuth();
+      dispatch({ type: "AUTH_ERROR" });
+    } finally {
+      if (DEBUG_AUTH_TIMING) {
+        console.info(`hedj-auth-check-ms=${Math.round(performance.now() - startedAt)}`);
+        console.timeEnd("hedj-auth-check");
       }
     }
   }, [state.isAuthenticated, state.loading]);
@@ -93,10 +107,11 @@ export const AuthProvider = ({ children }) => {
     if (storedUser && storedToken) {
       try {
         const user = JSON.parse(storedUser);
-        dispatch({ type: "LOGIN_SUCCESS", payload: user });
         setAxiosAuthToken(storedToken);
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
       } catch (error) {
         console.error("Failed to parse user from localStorage:", error);
+        clearStoredAuth();
         dispatch({ type: "AUTH_ERROR" });
       }
     } else {
@@ -105,15 +120,13 @@ export const AuthProvider = ({ children }) => {
   }, [checkAuth]);
 
   const logout = useCallback(() => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setAxiosAuthToken(null);
+    clearStoredAuth();
     dispatch({ type: "LOGOUT_SUCCESS" });
   }, []);
 
   const contextValue = useMemo(
     () => ({ state, dispatch, logout }),
-    [state, logout]
+    [state, logout],
   );
 
   return (

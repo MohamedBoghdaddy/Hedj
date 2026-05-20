@@ -133,17 +133,28 @@ const Cart = () => {
                   <button type="button" onClick={applyPromo}>Apply</button>
                 </div>
 
-                <button className="btn-hedj-primary checkout-cta" type="button" onClick={() => navigate("/checkout")}>
-                  Secure Checkout
-                </button>
-                <button className="quote-cta" type="button" onClick={() => navigate("/contact")}>
-                  Request Quote for Project
-                </button>
+                <div className="order-summary-actions">
+                  <button className="btn-hedj-primary checkout-cta" type="button" onClick={() => navigate("/checkout")}>
+                    Secure Checkout
+                  </button>
+                  <button className="quote-cta" type="button" onClick={() => navigate("/contact?reason=quote")}>
+                    Request Quote for Project
+                  </button>
+                </div>
 
-                <div className="trust-icons">
-                  <span className="material-symbols-outlined">security</span>
-                  <span className="material-symbols-outlined">payments</span>
-                  <span className="material-symbols-outlined">verified</span>
+                <div className="trust-icons" aria-label="Checkout trust signals">
+                  <span>
+                    <span className="material-symbols-outlined">security</span>
+                    Secure payment
+                  </span>
+                  <span>
+                    <span className="material-symbols-outlined">request_quote</span>
+                    Quote available
+                  </span>
+                  <span>
+                    <span className="material-symbols-outlined">verified</span>
+                    Verified checkout
+                  </span>
                 </div>
               </div>
             </aside>

@@ -6,6 +6,7 @@ import path from "path";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { performance } from "node:perf_hooks";
 import User from "../model/usermodel.js";
 
 dotenv.config();
@@ -14,7 +15,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const JWT_SECRET = process.env.JWT_SECRET || "hedj-demo-jwt-secret";
 const isProduction = process.env.NODE_ENV === "production";
+const DEBUG_AUTH_TIMING = process.env.DEBUG_AUTH_TIMING === "true";
 const USER_ROLES = ["customer", "employee", "admin"];
+
+const startAuthTimer = (label) => {
+  if (!DEBUG_AUTH_TIMING) return () => {};
+  const startedAt = performance.now();
+  return () => {
+    const elapsedMs = performance.now() - startedAt;
+    console.info(`${label}: ${elapsedMs.toFixed(1)}ms`);
+  };
+};
 
 const isDatabaseReady = () => mongoose.connection.readyState === 1;
 
@@ -61,6 +72,8 @@ const toPublicUser = (user) => ({
   managerId: user.managerId || null,
   permissions: user.permissions || [],
   deniedPermissions: user.deniedPermissions || [],
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
 });
 
 const getTokenFromRequest = (req) => {
@@ -122,12 +135,14 @@ export const registerUser = async (req, res) => {
   if (!requireAuthDatabase(res)) return;
 
   try {
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedUsername = String(username).trim();
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email: normalizedEmail }, { username: normalizedUsername }],
     });
     if (existingUser) {
       const message =
-        existingUser.email === email
+        existingUser.email === normalizedEmail
           ? "Email already in use"
           : "Username already in use";
       return res.status(400).json({ message });
@@ -135,8 +150,8 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
-      username,
-      email,
+      username: normalizedUsername,
+      email: normalizedEmail,
       password: hashedPassword,
       firstName,
       middleName,
@@ -155,6 +170,9 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
+  const endTotalTimer = startAuthTimer("login-total");
+  res.on("finish", endTotalTimer);
+
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ message: "Email and password required" });
@@ -163,15 +181,30 @@ export const loginUser = async (req, res) => {
   if (!requireAuthDatabase(res)) return;
 
   try {
-    const user = await User.findOne({ email });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    let user;
+    const endFindTimer = startAuthTimer("login-db-user-find");
+    try {
+      user = await User.findOne({ email: normalizedEmail });
+    } finally {
+      endFindTimer();
+    }
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    let isMatch;
+    const endBcryptTimer = startAuthTimer("login-bcrypt-compare");
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+    } finally {
+      endBcryptTimer();
+    }
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    const endJwtTimer = startAuthTimer("login-jwt-sign");
     const token = createToken(user);
+    endJwtTimer();
     setAuthCookie(res, token);
     res.status(200).json({ token, user: toPublicUser(user) });
   } catch (error) {

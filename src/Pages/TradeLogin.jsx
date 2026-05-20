@@ -17,6 +17,7 @@ const benefits = [
 ];
 
 const tradeRoles = new Set(["trade", "trade_user", "trade_admin", "wholesale", "business"]);
+const AUTH_TIMEOUT_MS = 15000;
 
 const hasTradeAccess = (user) => {
   const role = String(user?.role || "").toLowerCase();
@@ -45,9 +46,14 @@ const TradeLogin = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.post(`${API_URL}/api/users/login`, form, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${API_URL}/api/users/login`,
+        { ...form, email: form.email.trim().toLowerCase() },
+        {
+          withCredentials: true,
+          timeout: AUTH_TIMEOUT_MS,
+        },
+      );
       const { token, user } = response.data || {};
 
       if (!token || !user) {
@@ -69,6 +75,11 @@ const TradeLogin = () => {
       dispatch({ type: "LOGIN_SUCCESS", payload: user });
       navigate("/dashboard", { replace: true });
     } catch (requestError) {
+      if (requestError?.code === "ECONNABORTED") {
+        setError("Trade login is taking too long. Please try again in a moment.");
+        return;
+      }
+
       setError(
         requestError?.response?.data?.message ||
           requestError?.message ||

@@ -168,65 +168,46 @@ const isMongoUnavailableError = (error = {}) => {
   );
 };
 
-const createSessionStore = async () => {
+const createSessionStore = () => {
   if (!MONGO_CONNECTION_STRING) return null;
 
-  return new Promise((resolve) => {
-    let settled = false;
-    let initializing = true;
-    let store;
+  try {
+    const store = new MongoDBStore(
+      {
+        uri: MONGO_CONNECTION_STRING,
+        collection: "sessions",
+        connectionOptions: MONGO_CONNECT_OPTIONS,
+      },
+      (error) => {
+        if (error) {
+          console.warn(
+            `MongoDB session store unavailable: ${formatMongoError(error)}`,
+          );
+          return;
+        }
 
-    const finish = (nextStore) => {
-      if (settled) return;
-      settled = true;
-      initializing = false;
-      resolve(nextStore);
-    };
+        console.info("MongoDB session store connected.");
+      },
+    );
 
-    try {
-      store = new MongoDBStore(
-        {
-          uri: MONGO_CONNECTION_STRING,
-          collection: "sessions",
-          connectionOptions: MONGO_CONNECT_OPTIONS,
-        },
-        (error) => {
-          if (error) {
-            console.warn(
-              `MongoDB session store unavailable: ${formatMongoError(error)}`,
-            );
-            if (!isProduction) {
-              console.warn(
-                "Development server will continue with the in-memory session store.",
-              );
-            }
-            finish(null);
-            return;
-          }
+    store.on("error", (error) => {
+      const message = `MongoDB session store warning: ${formatMongoError(error)}`;
+      if (isProduction) console.error(message);
+      else console.warn(message);
+    });
 
-          console.info("MongoDB session store connected.");
-          finish(store);
-        },
-      );
-
-      store.on("error", (error) => {
-        if (initializing) return;
-        const message = `MongoDB session store warning: ${formatMongoError(error)}`;
-        if (isProduction) console.error(message);
-        else console.warn(message);
-      });
-    } catch (error) {
+    return store;
+  } catch (error) {
+    console.warn(
+      `MongoDB session store setup failed: ${formatMongoError(error)}`,
+    );
+    if (!isProduction) {
       console.warn(
-        `MongoDB session store setup failed: ${formatMongoError(error)}`,
+        "Development server will continue with the in-memory session store.",
       );
-      if (!isProduction) {
-        console.warn(
-          "Development server will continue with the in-memory session store.",
-        );
-      }
-      finish(null);
     }
-  });
+    return null;
+  }
 };
 
 const configureApp = ({ mongoConnected, sessionStore }) => {
@@ -385,11 +366,29 @@ mongoose.connection.on("disconnected", () => {
   }
 });
 
-const bootstrap = async () => {
-  const mongoConnected = await connectDB();
-  const sessionStore = mongoConnected ? await createSessionStore() : null;
-  configureApp({ mongoConnected, sessionStore });
+const bootstrap = () => {
+  // Start accepting HTTP requests immediately; database-backed routes return
+  // a clear 503 until MongoDB is connected instead of making the whole service
+  // look hung during cold starts or DNS/session-store delays.
+  const sessionStore = createSessionStore();
+  configureApp({
+    mongoConnected: mongoose.connection.readyState === 1,
+    sessionStore,
+  });
   startServer();
+
+  connectDB()
+    .then((mongoConnected) => {
+      app.locals.mongoAvailable = mongoConnected;
+      app.locals.mongoMode = mongoConnected ? "mongo" : "demo";
+    })
+    .catch((error) => {
+      app.locals.mongoAvailable = false;
+      app.locals.mongoMode = "demo";
+      console.error(
+        `MongoDB startup check failed: ${formatMongoError(error)}`,
+      );
+    });
 };
 
 bootstrap();

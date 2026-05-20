@@ -9,6 +9,23 @@ const API_URL =
     ? "http://localhost:4000"
     : "https://hedj.onrender.com");
 
+const AUTH_TIMEOUT_MS = 15000;
+const DEBUG_AUTH_TIMING = process.env.REACT_APP_DEBUG_AUTH_TIMING === "true";
+
+const getLoginErrorMessage = (error) => {
+  if (error.code === "ECONNABORTED") {
+    return "Login is taking too long. Please try again in a moment.";
+  }
+
+  if (error.response?.status === 503) {
+    return (
+      error.response?.data?.message ||
+      "The secure server is starting. Please try again shortly."
+    );
+  }
+
+  return error.response?.data?.message || "Login failed. Please try again.";
+};
 
 export const useLogin = () => {
   const [email, setEmail] = useState("");
@@ -22,48 +39,65 @@ export const useLogin = () => {
   const handleLogin = useCallback(
     async (e) => {
       e.preventDefault();
+      if (isLoading) return;
+
+      const startedAt = performance.now();
+      if (DEBUG_AUTH_TIMING) console.time("hedj-login-submit");
+
       setIsLoading(true);
       setErrorMessage("");
       setSuccessMessage("");
 
       try {
+        const normalizedEmail = email.trim().toLowerCase();
+        const requestStartedAt = performance.now();
+        if (DEBUG_AUTH_TIMING) console.time("hedj-login-api");
+
         const response = await axios.post(
           `${API_URL}/api/users/login`,
-          { email, password },
+          { email: normalizedEmail, password },
           {
-            withCredentials: true, // ✅ Allows backend to set cookies
+            timeout: AUTH_TIMEOUT_MS,
+            withCredentials: true,
             headers: { "Content-Type": "application/json" },
-          }
+          },
         );
+
+        if (DEBUG_AUTH_TIMING) {
+          console.timeEnd("hedj-login-api");
+          console.info(`hedj-login-api-ms=${Math.round(performance.now() - requestStartedAt)}`);
+        }
 
         const { token, user } = response.data;
 
-        if (token && user) {
-          // ✅ Store token & user in localStorage
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(user));
-
-          // ✅ Set Authorization header globally
-          setAxiosAuthToken(token);
-
-          // ✅ Dispatch login success
-          dispatch({ type: "LOGIN_SUCCESS", payload: user });
-
-          setSuccessMessage("Login successful");
-        } else {
+        if (!token || !user) {
           throw new Error("Unexpected response format");
         }
+
+        const stateStartedAt = performance.now();
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        setAxiosAuthToken(token);
+        dispatch({ type: "LOGIN_SUCCESS", payload: user });
+
+        if (DEBUG_AUTH_TIMING) {
+          console.info(`hedj-login-state-ms=${Math.round(performance.now() - stateStartedAt)}`);
+        }
+
+        setSuccessMessage("Login successful");
       } catch (error) {
         console.error("Login error:", error);
-        setErrorMessage(
-          error.response?.data?.message || "Login failed. Please try again."
-        );
+        setErrorMessage(getLoginErrorMessage(error));
         dispatch({ type: "AUTH_ERROR" });
       } finally {
         setIsLoading(false);
+        if (DEBUG_AUTH_TIMING) {
+          console.info(`hedj-login-total-ms=${Math.round(performance.now() - startedAt)}`);
+          console.timeEnd("hedj-login-submit");
+        }
       }
     },
-    [email, password, dispatch]
+    [dispatch, email, isLoading, password],
   );
 
   return {

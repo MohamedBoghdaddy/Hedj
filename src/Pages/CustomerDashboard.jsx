@@ -21,13 +21,43 @@ const STATUS_LABEL = {
 
 
 const accountLinks = [
-  { key: "orders", label: "Order History", icon: "history" },
-  { key: "addresses", label: "Address Book", icon: "location_on" },
-  { key: "payments", label: "Payment Methods", icon: "payments" },
-  { key: "profile", label: "Profile Settings", icon: "settings" },
+  { key: "profile", label: "Profile Settings", icon: "manage_accounts", panel: "profile" },
+  { key: "orders", label: "Orders", icon: "history", panel: "orders" },
+  { key: "addresses", label: "Addresses", icon: "location_on", panel: "addresses" },
+  { key: "wishlist", label: "Wishlist", icon: "favorite", to: "/wishlist" },
+  { key: "cart", label: "Cart", icon: "shopping_bag", to: "/cart" },
+  { key: "payments", label: "Payment / Checkout Info", icon: "payments", panel: "payments" },
+  { key: "support", label: "Support Requests", icon: "support_agent", to: "/support" },
+  { key: "security", label: "Password / Security", icon: "lock", panel: "security" },
 ];
 
+const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_PROFILE_PHOTO_BYTES = 2 * 1024 * 1024;
 
+const getDisplayName = (user) =>
+  [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
+  user?.name ||
+  user?.username ||
+  "Hedj Member";
+
+const getInitials = (user) =>
+  getDisplayName(user)
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "HC";
+
+const formatMemberSince = (createdAt) => {
+  if (!createdAt) return "Member profile";
+  const date = new Date(createdAt);
+  if (Number.isNaN(date.getTime())) return "Member profile";
+  return `Member since ${date.toLocaleDateString(undefined, {
+    month: "long",
+    year: "numeric",
+  })}`;
+};
 
 const API_URL =
   process.env.REACT_APP_API_URL ??
@@ -118,6 +148,251 @@ function ProfileForm({ user, dispatch, showToast }) {
   );
 }
 
+function SecurityPanel({ onSignOut }) {
+  return (
+    <section className="customer-profile-security-card">
+      <div>
+        <p className="customer-profile-card-kicker">Security</p>
+        <h3>Password & Sessions</h3>
+        <p>
+          Password reset is handled through support until self-service password
+          management is enabled.
+        </p>
+      </div>
+
+      <div className="customer-profile-security-actions">
+        <Link to="/contact?reason=password-reset">Change Password</Link>
+        <button type="button" onClick={onSignOut}>
+          Logout
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function ProfileSettingsPanel({
+  user,
+  dispatch,
+  showToast,
+  photoPreview,
+  photoUploading,
+  photoFileRef,
+  onPhotoSelect,
+  onSelectPanel,
+  onSignOut,
+}) {
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    receiveNotifications: user?.receiveNotifications !== false,
+  });
+
+  useEffect(() => {
+    setForm({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      receiveNotifications: user?.receiveNotifications !== false,
+    });
+  }, [user]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user?._id) {
+      showToast("Cannot update: user ID missing.");
+      return;
+    }
+
+    const payload = {
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      phone: form.phone.trim(),
+      receiveNotifications: form.receiveNotifications,
+    };
+
+    if (!payload.firstName || !payload.lastName) {
+      showToast("First and last name are required.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/api/users/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const updatedUser = data.user || { ...user, ...payload };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        dispatch({ type: "USER_LOADED", payload: updatedUser });
+        showToast("Profile updated successfully.");
+      } else {
+        showToast(data.message || "Update failed.");
+      }
+    } catch {
+      showToast("Network error - could not save profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="customer-profile-settings-panel">
+      <section className="customer-profile-summary-card">
+        <div className="customer-profile-avatar-wrap">
+          {photoPreview ? (
+            <img
+              className="customer-profile-avatar"
+              src={photoPreview}
+              alt={`${getDisplayName(user)} profile`}
+            />
+          ) : (
+            <div className="customer-profile-avatar customer-profile-avatar--initials">
+              {getInitials(user)}
+            </div>
+          )}
+          {photoUploading && (
+            <div className="customer-profile-avatar-uploading">
+              <span className="material-symbols-outlined">hourglass_empty</span>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="customer-profile-photo-btn"
+          onClick={() => photoFileRef.current?.click()}
+          disabled={photoUploading}
+        >
+          <span className="material-symbols-outlined">upload</span>
+          {photoUploading ? "Uploading..." : "Upload Photo"}
+        </button>
+        <p className="customer-profile-photo-hint">JPG, PNG or WebP · max 2MB</p>
+
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          ref={photoFileRef}
+          style={{ display: "none" }}
+          onChange={onPhotoSelect}
+        />
+
+        <div className="customer-profile-identity">
+          <h3>{getDisplayName(user)}</h3>
+          <p>{user?.email}</p>
+          <span>{formatMemberSince(user?.createdAt)}</span>
+          <strong>{user?.status || "active"}</strong>
+        </div>
+
+        <div className="customer-profile-quick-links" aria-label="Account quick links">
+          <button type="button" onClick={() => onSelectPanel("orders")}>Orders</button>
+          <Link to="/wishlist">Wishlist</Link>
+          <Link to="/support">Support</Link>
+        </div>
+      </section>
+
+      <form className="customer-profile-editor" onSubmit={handleSubmit}>
+        <section className="customer-profile-form-card">
+          <p className="customer-profile-card-kicker">Profile Settings</p>
+          <h3>Account Information</h3>
+
+          <div className="customer-profile-form-grid">
+            <label>
+              First Name
+              <input
+                value={form.firstName}
+                onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Last Name
+              <input
+                value={form.lastName}
+                onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
+                required
+              />
+            </label>
+            <label className="customer-profile-form-wide">
+              Email
+              <input type="email" value={form.email} readOnly />
+              <small>To change your email, contact support.</small>
+            </label>
+            <label className="customer-profile-form-wide">
+              Phone
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                placeholder="Optional"
+              />
+            </label>
+          </div>
+        </section>
+
+        <section className="customer-profile-preferences-card">
+          <p className="customer-profile-card-kicker">Preferences</p>
+          <h3>Communication Preferences</h3>
+
+          <div className="customer-preference-row">
+            <input
+              id="customer-pref-order-updates"
+              type="checkbox"
+              checked={form.receiveNotifications}
+              onChange={(e) => setForm((f) => ({ ...f, receiveNotifications: e.target.checked }))}
+            />
+            <label htmlFor="customer-pref-order-updates">
+              <strong>Order updates</strong>
+              <small>Saved to your account notification preference.</small>
+            </label>
+          </div>
+
+          {[
+            ["Wishlist reminders", "Requires a reminder email backend."],
+            ["Promotions", "Marketing consent is not enabled yet."],
+            ["Trade program updates", "Available after trade approval workflows are enabled."],
+          ].map(([label, note]) => {
+            const optionId = `customer-pref-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+            return (
+              <div className="customer-preference-row disabled" key={label}>
+                <input id={optionId} type="checkbox" disabled />
+                <label htmlFor={optionId}>
+                  <strong>{label}</strong>
+                <small>{note}</small>
+                </label>
+              </div>
+            );
+          })}
+
+          <label className="customer-profile-language">
+            Language
+            <select value="en-US" disabled>
+              <option value="en-US">English (US)</option>
+            </select>
+            <small>Language preferences require backend support.</small>
+          </label>
+
+          <button type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+        </section>
+      </form>
+
+      <SecurityPanel onSignOut={onSignOut} />
+    </div>
+  );
+}
+
 function getStoredUser() {
   try {
     return JSON.parse(localStorage.getItem("user") || "null");
@@ -136,7 +411,7 @@ export default function CustomerDashboard() {
   const { logout } = useLogout();
   const { dispatch, state } = useAuthContext();
   const [toast, setToast] = useState("");
-  const [activePanel, setActivePanel] = useState("orders");
+  const [activePanel, setActivePanel] = useState("profile");
   const [myOrders, setMyOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [addresses, setAddresses] = useState([]);
@@ -205,22 +480,34 @@ export default function CustomerDashboard() {
   };
 
   const handleMoveToBag = async (item) => {
+    const itemName = item.name || item.title || "Selected item";
     await shop?.addToCart?.({
       id: item.id,
-      name: item.title,
+      name: itemName,
       price: moneyToNumber(item.price),
       image: item.image,
       img: item.image,
       quantity: 1,
     });
-    showToast(`${item.title} moved to bag.`);
+    showToast(`${itemName} moved to bag.`);
   };
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Optimistic local preview
+    if (!PHOTO_TYPES.includes(file.type)) {
+      showToast("Choose a JPG, PNG, or WebP image.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_PROFILE_PHOTO_BYTES) {
+      showToast("Profile photo must be 2MB or smaller.");
+      e.target.value = "";
+      return;
+    }
+
     const objectUrl = URL.createObjectURL(file);
     setPhotoPreview(objectUrl);
     setPhotoUploading(true);
@@ -240,6 +527,8 @@ export default function CustomerDashboard() {
       setPhotoPreview(user?.profilePhotoUrl || user?.profilePhoto || null);
       showToast(`Photo upload failed: ${err.message}`);
     } finally {
+      URL.revokeObjectURL(objectUrl);
+      e.target.value = "";
       setPhotoUploading(false);
     }
   };
@@ -359,6 +648,26 @@ export default function CustomerDashboard() {
     }
 
     if (activePanel === "profile") {
+      return (
+        <ProfileSettingsPanel
+          user={user}
+          dispatch={dispatch}
+          showToast={showToast}
+          photoPreview={photoPreview}
+          photoUploading={photoUploading}
+          photoFileRef={photoFileRef}
+          onPhotoSelect={handlePhotoChange}
+          onSelectPanel={setActivePanel}
+          onSignOut={handleSignOut}
+        />
+      );
+    }
+
+    if (activePanel === "security") {
+      return <SecurityPanel onSignOut={handleSignOut} />;
+    }
+
+    if (activePanel === "__legacy_profile") {
       return (
         <div className="customer-profile-section">
           {/* ── Profile photo ── */}
@@ -583,9 +892,9 @@ export default function CustomerDashboard() {
                       {accountLinks.find((link) => link.key === activePanel)
                         ?.label || "Order History"}
                     </h2>
-                    <button type="button" onClick={() => navigate("/contact")}>
-                      Need Help?
-                    </button>
+                    <Link className="customer-support-link" to="/support">
+                      Need help? Contact Support
+                    </Link>
                   </div>
                   {renderAccountPanel()}
                 </section>
@@ -614,8 +923,11 @@ export default function CustomerDashboard() {
                       <li key={link.key}>
                         <button
                           type="button"
-                          className={activePanel === link.key ? "active" : ""}
-                          onClick={() => setActivePanel(link.key)}
+                          className={activePanel === link.panel ? "active" : ""}
+                          onClick={() => {
+                            if (link.to) navigate(link.to);
+                            else setActivePanel(link.panel);
+                          }}
                         >
                           <span>
                             <i className="material-symbols-outlined">
