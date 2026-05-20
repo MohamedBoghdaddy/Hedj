@@ -57,6 +57,10 @@ const toPublicUser = (user) => ({
   invitedAt: user.invitedAt,
   invitationEmailStatus: user.invitationEmailStatus,
   invitationEmailOutboxId: user.invitationEmailOutboxId,
+  employeeId: user.employeeId || null,
+  managerId: user.managerId || null,
+  permissions: user.permissions || [],
+  deniedPermissions: user.deniedPermissions || [],
 });
 
 const getTokenFromRequest = (req) => {

@@ -1,5 +1,6 @@
 import AttendanceRecord from "../model/AttendanceRecord.js";
 import Employee from "../model/employeemodel.js";
+import { resolveEmployee } from "../utils/resolveEmployee.js";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -110,10 +111,16 @@ export const deleteAttendance = async (req, res) => {
 // ── Employee: view own attendance ──────────────────────────────────────────
 export const getMyAttendance = async (req, res) => {
   try {
-    const actor = req.actor || req.employee;
+    const actor = req.actor || req.employee || req.user;
     if (!actor) return res.status(401).json({ success: false, message: "Not authenticated." });
 
-    const filter = { employeeId: actor._id };
+    // Resolve to an Employee record (handles User→Employee link automatically)
+    const emp = await resolveEmployee(actor);
+    if (!emp) {
+      return res.json({ success: true, records: [], note: "No linked employee record found." });
+    }
+
+    const filter = { employeeId: emp._id };
     if (req.query.from || req.query.to) {
       filter.date = {};
       if (req.query.from) filter.date.$gte = startOfDay(req.query.from);
@@ -130,18 +137,21 @@ export const getMyAttendance = async (req, res) => {
 // ── Employee: clock in ─────────────────────────────────────────────────────
 export const clockIn = async (req, res) => {
   try {
-    const actor = req.actor || req.employee;
+    const actor = req.actor || req.employee || req.user;
     if (!actor) return res.status(401).json({ success: false, message: "Not authenticated." });
 
+    const emp = await resolveEmployee(actor);
+    if (!emp) return res.status(404).json({ success: false, message: "No linked employee record found. Contact your administrator." });
+
     const today = startOfDay(new Date());
-    let record = await AttendanceRecord.findOne({ employeeId: actor._id, date: today });
+    let record = await AttendanceRecord.findOne({ employeeId: emp._id, date: today });
 
     if (record?.clockIn) {
       return res.status(409).json({ success: false, message: "Already clocked in today." });
     }
 
     const now = new Date();
-    const lateThreshold = new Date(today); lateThreshold.setHours(9, 15, 0, 0); // 09:15
+    const lateThreshold = new Date(today); lateThreshold.setHours(9, 15, 0, 0);
     const status = now > lateThreshold ? "late" : "present";
 
     if (record) {
@@ -150,10 +160,10 @@ export const clockIn = async (req, res) => {
       await record.save();
     } else {
       record = await AttendanceRecord.create({
-        employeeId: actor._id,
-        employeeName: `${actor.fname} ${actor.lname}`,
-        employeeEmail: actor.email,
-        department: actor.department,
+        employeeId: emp._id,
+        employeeName: `${emp.fname} ${emp.lname}`,
+        employeeEmail: emp.email,
+        department: emp.department,
         date: today,
         clockIn: now,
         status,
@@ -170,11 +180,14 @@ export const clockIn = async (req, res) => {
 // ── Employee: clock out ────────────────────────────────────────────────────
 export const clockOut = async (req, res) => {
   try {
-    const actor = req.actor || req.employee;
+    const actor = req.actor || req.employee || req.user;
     if (!actor) return res.status(401).json({ success: false, message: "Not authenticated." });
 
+    const emp = await resolveEmployee(actor);
+    if (!emp) return res.status(404).json({ success: false, message: "No linked employee record found." });
+
     const today = startOfDay(new Date());
-    const record = await AttendanceRecord.findOne({ employeeId: actor._id, date: today });
+    const record = await AttendanceRecord.findOne({ employeeId: emp._id, date: today });
 
     if (!record?.clockIn) {
       return res.status(400).json({ success: false, message: "No clock-in record found for today." });

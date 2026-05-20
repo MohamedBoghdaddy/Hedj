@@ -48,6 +48,7 @@ const employeeSchema = new mongoose.Schema(
     },
 
     managerId: { type: mongoose.Schema.Types.ObjectId, ref: "Employee" },
+    userId:    { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     level: { type: Number, default: 0 },
 
     profilePhotoUrl: { type: String },

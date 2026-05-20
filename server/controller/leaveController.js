@@ -1,6 +1,7 @@
 import LeaveRequest from "../model/LeaveRequest.js";
 import AttendanceRecord from "../model/AttendanceRecord.js";
 import Employee from "../model/employeemodel.js";
+import { resolveEmployee } from "../utils/resolveEmployee.js";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -22,7 +23,11 @@ const buildFilter = (query) => {
 export const getMyLeaveRequests = async (req, res) => {
   try {
     const actor = req.actor || req.employee || req.user;
-    const requests = await LeaveRequest.find({ employeeId: actor._id })
+    const emp = await resolveEmployee(actor);
+
+    // Search by either the Employee._id (if resolved) or the raw actor._id
+    const employeeIdFilter = emp ? emp._id : actor._id;
+    const requests = await LeaveRequest.find({ employeeId: employeeIdFilter })
       .sort({ createdAt: -1 })
       .lean();
     res.json({ success: true, requests });
@@ -41,11 +46,20 @@ export const submitLeaveRequest = async (req, res) => {
       return res.status(400).json({ success: false, message: "type, startDate, endDate are required." });
     }
 
+    // Resolve to Employee for consistent ID storage
+    const emp = await resolveEmployee(actor);
+    const storedId   = emp ? emp._id : actor._id;
+    const storedName = emp
+      ? `${emp.fname} ${emp.lname}`
+      : (actor.firstName ? `${actor.firstName} ${actor.lastName}` : (actor.fname ? `${actor.fname} ${actor.lname}` : actor.username || ""));
+    const storedEmail = actor.email || emp?.email || "";
+    const storedDept  = actor.department || emp?.department || "";
+
     const request = await LeaveRequest.create({
-      employeeId: actor._id,
-      employeeName: actor.fname ? `${actor.fname} ${actor.lname}` : (actor.firstName ? `${actor.firstName} ${actor.lastName}` : actor.username),
-      employeeEmail: actor.email,
-      department: actor.department,
+      employeeId: storedId,
+      employeeName: storedName,
+      employeeEmail: storedEmail,
+      department: storedDept,
       type,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
@@ -64,7 +78,9 @@ export const submitLeaveRequest = async (req, res) => {
 export const cancelLeaveRequest = async (req, res) => {
   try {
     const actor = req.actor || req.employee || req.user;
-    const request = await LeaveRequest.findOne({ _id: req.params.id, employeeId: actor._id });
+    const emp = await resolveEmployee(actor);
+    const employeeIdFilter = emp ? emp._id : actor._id;
+    const request = await LeaveRequest.findOne({ _id: req.params.id, employeeId: employeeIdFilter });
 
     if (!request) return res.status(404).json({ success: false, message: "Request not found." });
     if (request.status !== "pending") {

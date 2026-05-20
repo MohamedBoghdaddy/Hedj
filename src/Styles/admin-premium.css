@@ -1543,3 +1543,169 @@
   .admin-form-row { grid-template-columns: 1fr; }
 }
 
+/* ── Mobile admin nav (hamburger + slide-in drawer) ──────────────────────── */
+
+/* Mobile top bar — hidden on desktop, visible ≤1024px */
+.admin-mobile-topbar {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  /* Show mobile top bar */
+  .admin-mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    padding: 0 16px;
+    z-index: 200;
+    color: #fff;
+  }
+
+  /* Push main content below the fixed top bar */
+  .admin-premium-main {
+    padding-top: 56px;
+  }
+}
+
+/* Hamburger button */
+.admin-mobile-hamburger {
+  background: transparent;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 160ms;
+}
+.admin-mobile-hamburger:hover { background: rgba(255,255,255,0.1); }
+
+/* Brand label in mobile bar */
+.admin-mobile-brand {
+  flex: 1;
+  font-family: "Noto Serif", serif;
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* Logout icon in mobile bar */
+.admin-mobile-logout-btn {
+  background: transparent;
+  border: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: color 160ms, background 160ms;
+}
+.admin-mobile-logout-btn:hover:not(:disabled) { color: #fff; background: rgba(255,255,255,0.1); }
+.admin-mobile-logout-btn:disabled { opacity: 0.5; cursor: wait; }
+
+/* Drawer overlay (dim background) */
+.admin-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 300;
+  border: 0;
+  cursor: default;
+}
+
+/* Slide-in drawer */
+.admin-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  max-width: 90vw;
+  height: 100vh;
+  background: #0f172a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 400;
+  transform: translateX(-100%);
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Only rendered in DOM when needed — hidden from assistive tech when closed */
+}
+.admin-drawer--open {
+  transform: translateX(0);
+}
+
+/* Drawer is never shown on desktop */
+@media (min-width: 1025px) {
+  .admin-drawer,
+  .admin-drawer-overlay,
+  .admin-mobile-topbar { display: none !important; }
+}
+
+/* Drawer header (brand + close button) */
+.admin-drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+  flex-shrink: 0;
+}
+
+/* Drawer close button */
+.admin-drawer-close {
+  background: transparent;
+  border: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  transition: color 160ms;
+  flex-shrink: 0;
+}
+.admin-drawer-close:hover { color: #fff; }
+
+/* Inside drawer, nav scrolls */
+.admin-drawer .admin-premium-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* Inside drawer, footer sticks to bottom */
+.admin-drawer .admin-premium-sidebar-footer {
+  flex-shrink: 0;
+  border-top: 1px solid #1e293b;
+}
+
+/* Ensure admin-premium-main doesn't shift on desktop */
+@media (min-width: 1025px) {
+  .admin-premium-main {
+    padding-top: 0;
+  }
+}
+
+/* Responsive topbar: on mobile stack title below actions */
+@media (max-width: 640px) {
+  .admin-premium-topbar {
+    padding: 16px 18px;
+    gap: 10px;
+  }
+  .admin-premium-actions {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+

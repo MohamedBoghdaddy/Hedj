@@ -144,7 +144,8 @@ const UserSchema = new mongoose.Schema(
       },
     },
 
-    managerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    managerId:  { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    employeeId: { type: mongoose.Schema.Types.ObjectId, ref: "Employee", default: null },
     level: { type: Number, default: 0 },
 
     receiveNotifications: {
