@@ -16,3 +16,16 @@ Supabase Auth invite failed for resend.1779282731661@hedj.test: email rate limit
 Supabase Auth invite failed for resend.1779282731661@hedj.test: email rate limit exceeded. Falling back to email outbox.
 [0mPOST /api/admin/employees/6a0db32ca19f786edb4161d6/send-invite [32m200[0m 1002.954 ms - 484[0m
 [0mGET /api/admin/emails/outbox [32m200[0m 339.177 ms - 3682[0m
+[0mOPTIONS /api/admin/customers [32m204[0m 2.001 ms - 0[0m
+[0mOPTIONS /api/admin/customers [32m204[0m 0.083 ms - 0[0m
+[0mOPTIONS /api/analytics [32m204[0m 0.083 ms - 0[0m
+[0mOPTIONS /api/analytics [32m204[0m 0.150 ms - 0[0m
+[0mOPTIONS /api/settings [32m204[0m 0.127 ms - 0[0m
+[0mOPTIONS /api/products [32m204[0m 0.060 ms - 0[0m
+[0mOPTIONS /api/users/6a0c7b645261c26218acb874 [32m204[0m 0.079 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=customer [32m204[0m 0.118 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=employee [32m204[0m 0.072 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=admin [32m204[0m 0.104 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=customer [32m204[0m 0.062 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=employee [32m204[0m 0.051 ms - 0[0m
+[0mOPTIONS /api/users/filter?role=admin [32m204[0m 0.044 ms - 0[0m
