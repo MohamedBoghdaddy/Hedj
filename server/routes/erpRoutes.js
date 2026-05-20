@@ -1,5 +1,10 @@
 import express from "express";
-import { verifyAdmin } from "../middleware/AuthMiddleware.js";
+import {
+  isAuthenticated,
+  verifyAdmin,
+  requirePermission,
+  requireRole,
+} from "../middleware/AuthMiddleware.js";
 import {
   getERPOverview,
   getERPApps, createERPApp, updateERPApp, deleteERPApp,
@@ -15,56 +20,62 @@ import {
 
 const router = express.Router();
 
-router.use(verifyAdmin);
+// All ERP routes require at minimum an authenticated user
+router.use(isAuthenticated);
 
-router.get("/overview", getERPOverview);
+// ── Overview & Hierarchy (visible to anyone with erp.view) ──────────────────
+router.get("/overview",   requirePermission("erp.view"),     getERPOverview);
+router.get("/hierarchy",  requirePermission("erp.view"),     getERPHierarchy);
 
-// ERP Apps
-router.get("/apps", getERPApps);
-router.post("/apps", createERPApp);
-router.patch("/apps/:id", updateERPApp);
-router.delete("/apps/:id", deleteERPApp);
+// ── ERP Apps (admin-managed — create/update/delete require admin) ────────────
+router.get("/apps",           requirePermission("erp.view"),   getERPApps);
+router.post("/apps",          requirePermission("erp.manage"), createERPApp);
+router.patch("/apps/:id",     requirePermission("erp.manage"), updateERPApp);
+router.delete("/apps/:id",    requirePermission("erp.manage"), deleteERPApp);
 
-// Schema
-router.get("/schema", getERPSchema);
-router.get("/schema-relations", getSchemaRelations);
-router.post("/schema-relations", createSchemaRelation);
-router.patch("/schema-relations/:id", updateSchemaRelation);
-router.put("/schema-relations/:id", updateSchemaRelation);
-router.delete("/schema-relations/:id", deleteSchemaRelation);
+// ── Schema (admin-managed) ────────────────────────────────────────────────────
+router.get("/schema",                    requirePermission("erp.view"),   getERPSchema);
+router.get("/schema-relations",          requirePermission("erp.view"),   getSchemaRelations);
+router.post("/schema-relations",         requirePermission("erp.manage"), createSchemaRelation);
+router.patch("/schema-relations/:id",    requirePermission("erp.manage"), updateSchemaRelation);
+router.put("/schema-relations/:id",      requirePermission("erp.manage"), updateSchemaRelation);
+router.delete("/schema-relations/:id",   requirePermission("erp.manage"), deleteSchemaRelation);
 
-// Departments
-router.get("/departments", getDepartments);
-router.post("/departments", createDepartment);
-router.patch("/departments/:id", updateDepartment);
-router.delete("/departments/:id", deleteDepartment);
+// ── Departments (admin-managed) ───────────────────────────────────────────────
+router.get("/departments",       requirePermission("erp.view"),   getDepartments);
+router.post("/departments",      requirePermission("erp.manage"), createDepartment);
+router.patch("/departments/:id", requirePermission("erp.manage"), updateDepartment);
+router.delete("/departments/:id",requirePermission("erp.manage"), deleteDepartment);
 
-// Job Positions
-router.get("/job-positions", getJobPositions);
-router.post("/job-positions", createJobPosition);
-router.patch("/job-positions/:id", updateJobPosition);
-router.delete("/job-positions/:id", deleteJobPosition);
+// ── Job Positions (admin-managed) ─────────────────────────────────────────────
+router.get("/job-positions",       requirePermission("erp.view"),   getJobPositions);
+router.post("/job-positions",      requirePermission("erp.manage"), createJobPosition);
+router.patch("/job-positions/:id", requirePermission("erp.manage"), updateJobPosition);
+router.delete("/job-positions/:id",requirePermission("erp.manage"), deleteJobPosition);
 
-// ERP Employees
-router.get("/employees/hierarchy", getERPHierarchy);
-router.get("/employees", getERPEmployees);
-router.post("/employees", createERPEmployee);
-router.patch("/employees/:id", updateERPEmployee);
-router.delete("/employees/:id", deleteERPEmployee);
+// ── ERP Employees ─────────────────────────────────────────────────────────────
+router.get("/employees/hierarchy", requirePermission("erp.view"),     getERPHierarchy);
+router.get("/employees",           requirePermission("erp.view"),     getERPEmployees);
+router.post("/employees",          requirePermission("erp.manage"),   createERPEmployee);
+router.patch("/employees/:id",     requirePermission("erp.manage"),   updateERPEmployee);
+router.delete("/employees/:id",    requirePermission("erp.manage"),   deleteERPEmployee);
 
-// Approval Requests
-router.get("/approval-requests", getApprovalRequests);
-router.post("/approval-requests", createApprovalRequest);
-router.patch("/approval-requests/:id/status", updateApprovalStatus);
+// ── Approval Requests (manager, HR, admin can view/approve) ─────────────────
+// Legacy path kept for compatibility
+router.get("/approval-requests",             requirePermission("approvals.view"),    getApprovalRequests);
+router.post("/approval-requests",            requirePermission("erp.manage"),        createApprovalRequest);
+router.patch("/approval-requests/:id/status",requirePermission("approvals.approve"), updateApprovalStatus);
 
-router.get("/approvals", getApprovalRequests);
-router.post("/approvals", createApprovalRequest);
-router.get("/approvals/:id", getApprovalRequest);
-router.patch("/approvals/:id", updateApprovalRequest);
-router.put("/approvals/:id", updateApprovalRequest);
-router.post("/approvals/:id/approve", approveApprovalRequest);
-router.post("/approvals/:id/reject", rejectApprovalRequest);
+// Primary approval paths
+router.get("/approvals",           requirePermission("approvals.view"),     getApprovalRequests);
+router.post("/approvals",          requirePermission("erp.manage"),         createApprovalRequest);
+router.get("/approvals/:id",       requirePermission("approvals.view"),     getApprovalRequest);
+router.patch("/approvals/:id",     requirePermission("approvals.approve"),  updateApprovalRequest);
+router.put("/approvals/:id",       requirePermission("approvals.approve"),  updateApprovalRequest);
+router.post("/approvals/:id/approve", requirePermission("approvals.approve"), approveApprovalRequest);
+router.post("/approvals/:id/reject",  requirePermission("approvals.reject"),  rejectApprovalRequest);
 
-router.post("/integrations/check", checkERPIntegrations);
+// ── Integrations check (admin-manage) ────────────────────────────────────────
+router.post("/integrations/check", requirePermission("erp.manage"), checkERPIntegrations);
 
 export default router;

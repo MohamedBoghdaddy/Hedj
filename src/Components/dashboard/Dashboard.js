@@ -1,103 +1,68 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { commerceApi } from "../../services/api";
+import { useAuthContext } from "../../context/AuthContext";
+import { can } from "../../utils/permissions";
 import "../../Styles/admin-dashboard.css";
 
-const CHART_DATA = [
-  { month: "Jan", value: 0.5, amount: "$38k" },
-  { month: "Feb", value: 0.65, amount: "$49k" },
-  { month: "Mar", value: 0.35, amount: "$26k" },
-  { month: "Apr", value: 0.78, amount: "$58k" },
-  { month: "May", value: 0.82, amount: "$62k" },
-  { month: "Jun", value: 0.55, amount: "$42k" },
-  { month: "Jul", value: 0.70, amount: "$53k" },
-  { month: "Aug", value: 0.88, amount: "$67k" },
-];
+const initials = (name = "") =>
+  (name || "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
-const RECENT_ORDERS = [
-  { id: "#HJ-9402", customer: "Adrian Laurent",  initials: "AL", amount: "$12,450", status: "In Production", statusClass: "badge-amber" },
-  { id: "#HJ-9401", customer: "Sophie Martin",   initials: "SM", amount: "$4,200",  status: "In Production", statusClass: "badge-amber" },
-  { id: "#HJ-9399", customer: "Robert King",      initials: "RK", amount: "$28,900", status: "Shipped",       statusClass: "badge-info" },
-  { id: "#HJ-9388", customer: "Eleanor Vance",   initials: "EV", amount: "$7,500",  status: "Installed",     statusClass: "badge-success" },
-];
+const money = (v) => `$${Number(v || 0).toLocaleString()}`;
 
-const ALERTS = [
-  {
-    type: "error",
-    tag: "Low Stock Alert",
-    name: "Midnight Brass Handles",
-    desc: "Only 4 units remaining in main warehouse.",
-    action: "Reorder Now",
-  },
-  {
-    type: "gold",
-    tag: "New Quote Request",
-    name: "Custom Dining Suite",
-    desc: "Inquiry from Studio Arches regarding Bulk pricing.",
-    time: "2 hours ago",
-  },
-];
-
-const REV_COLLECTIONS = [
-  { name: "Heritage Oak",     pct: 42, color: "var(--color-primary)" },
-  { name: "Minimalist Slate", pct: 35, color: "var(--color-on-tertiary-container)" },
-  { name: "Outdoor Series",   pct: 23, color: "var(--color-secondary)" },
-];
+const STATUS_CLASS = {
+  new: "badge-amber", confirmed: "badge-info", in_production: "badge-amber",
+  ready: "badge-info", delivered: "badge-success", cancelled: "badge-muted",
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    totalSales: 450210,
-    totalOrders: 124,
-    totalCustomers: 890,
-    pendingQuotes: 12,
-    lowStockCount: 1,
-  });
-  const [recentOrders, setRecentOrders] = useState(RECENT_ORDERS);
-  const [alerts, setAlerts] = useState(ALERTS);
-  const [collections, setCollections] = useState(REV_COLLECTIONS);
-  const [chartData, setChartData] = useState(CHART_DATA);
+  const { state } = useAuthContext();
+  const user = state.user;
+  const [summary, setSummary] = useState(null);
+  const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchStats = async () => {
+    (async () => {
       try {
         const data = await commerceApi.getDashboard();
-        setStats(data);
-        if (data.recentOrders?.length) setRecentOrders(data.recentOrders);
-        if (data.notifications?.length) setAlerts(data.notifications);
-        if (data.revenueByCollection?.length) setCollections(data.revenueByCollection);
+        setSummary(data);
+
         if (data.salesTrend?.length && data.salesMonths?.length) {
+          const maxVal = Math.max(...data.salesTrend, 1);
           setChartData(
-            data.salesMonths.map((month, index) => ({
+            data.salesMonths.map((month, i) => ({
               month,
-              value: Math.max(0.12, Number(data.salesTrend[index] || 0) / 80000),
-              amount: `$${Math.round(Number(data.salesTrend[index] || 0) / 1000)}k`,
+              value: Math.max(0.05, (data.salesTrend[i] || 0) / maxVal),
+              amount: money(data.salesTrend[i] || 0),
             }))
           );
         }
         setError("");
-      } catch {
-        setError("Dashboard data is using local demo fallback.");
+      } catch (err) {
+        setError(err.message || "Failed to load dashboard data.");
       } finally {
         setLoading(false);
       }
-    };
-    fetchStats();
+    })();
   }, []);
 
+  const stats = summary || {};
+  const recentOrders = stats.recentOrders || [];
+  const alerts = stats.alerts || [];
+  const lowStockProducts = stats.lowStockProducts || [];
+
   const KPI_CARDS = [
-    { label: "Total Sales",     value: `$${stats.totalSales?.toLocaleString() || "450,210"}`, icon: "payments",        iconClass: "kpi-icon-navy", trend: "+12.4%", trendClass: "up" },
-    { label: "Orders",          value: stats.totalOrders || 124,                               icon: "shopping_basket", iconClass: "kpi-icon-sand", trend: "+8%",    trendClass: "up" },
-    { label: "Customers",       value: stats.totalCustomers || 890,                            icon: "person_add",      iconClass: "kpi-icon-gold", trend: "Stable", trendClass: "neutral" },
-    { label: "Pending Quotes",  value: stats.pendingQuotes || 12,                              icon: "pending_actions", iconClass: "kpi-icon-red",  trend: "High Priority", trendClass: "high" },
+    { label: "Total Sales",    value: stats.totalSales != null ? money(stats.totalSales) : "—",     icon: "payments",        iconClass: "kpi-icon-navy" },
+    { label: "Orders",         value: stats.totalOrders ?? "—",                                      icon: "shopping_basket", iconClass: "kpi-icon-sand" },
+    { label: "Customers",      value: stats.totalCustomers ?? "—",                                   icon: "person_add",      iconClass: "kpi-icon-gold" },
+    { label: "Pending Quotes", value: stats.pendingQuotes ?? "—",                                    icon: "pending_actions", iconClass: "kpi-icon-red" },
   ];
 
   return (
     <div className="dash-page">
-
-      {/* Header */}
       <div className="dash-header">
         <div className="dash-header-left">
           <p className="dash-eyebrow">Overview Dashboard</p>
@@ -108,175 +73,178 @@ const Dashboard = () => {
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>calendar_today</span>
             Last 30 Days
           </button>
-          <button className="dash-export-btn">
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>download</span>
-            Export Report
-          </button>
         </div>
       </div>
 
-      {loading && <div className="kitchen-state">Loading dashboard...</div>}
-      {error && <div className="kitchen-state">{error}</div>}
-
-      {/* KPI Cards */}
-      <div className="kpi-grid">
-        {KPI_CARDS.map(c => (
-          <div className="kpi-card" key={c.label}>
-            <div className="kpi-card-top">
-              <div className={`kpi-icon ${c.iconClass}`}>
-                <span className="material-symbols-outlined">{c.icon}</span>
-              </div>
-              <span className={`kpi-trend ${c.trendClass}`}>
-                {c.trendClass === "up" && <span className="material-symbols-outlined" style={{ fontSize: 14 }}>trending_up</span>}
-                {c.trend}
-              </span>
-            </div>
-            <p className="kpi-label">{c.label}</p>
-            <p className="kpi-value">{c.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Bento Grid */}
-      <div className="dash-bento">
-
-        {/* Monthly Sales Chart */}
-        <div className="dash-card bento-chart">
-          <div className="dash-card-header">
-            <span className="dash-card-title">Monthly Sales Trend</span>
-            <div className="chart-legend">
-              <div className="chart-legend-item"><div className="chart-legend-dot" style={{ background: "var(--color-primary)" }} /> Current Year</div>
-              <div className="chart-legend-item"><div className="chart-legend-dot" style={{ background: "var(--color-outline-variant)" }} /> Previous</div>
-            </div>
-          </div>
-          <div className="dash-card-body">
-            <div style={{ position: "relative" }}>
-              <div className="chart-bars">
-                {chartData.map(d => (
-                  <div
-                    key={d.month}
-                    className="chart-bar"
-                    style={{ height: `${d.value * 100}%` }}
-                    title={`${d.month}: ${d.amount}`}
-                  >
-                    <span className="tooltip">{d.amount}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="chart-x-labels">
-                {chartData.map(d => (
-                  <span key={d.month} className="chart-x-label">{d.month}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+      {loading && <div className="kitchen-state">Loading dashboard…</div>}
+      {!loading && error && (
+        <div className="kitchen-state" style={{ color: "#dc2626" }}>
+          {error}
         </div>
+      )}
 
-        {/* Quick Actions */}
-        <div className="bento-quick" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <div className="quick-actions-card">
-            <p className="quick-actions-title">Quick Actions</p>
-            {[
-              { icon: "add_circle",    label: "Create New Quote",      path: "/admin/leads" },
-              { icon: "inventory",     label: "Add Product",            path: "/admin/products" },
-              { icon: "meeting_room",  label: "New Showroom Booking",   path: "/contact" },
-            ].map(({ icon, label, path }) => (
-              <button key={label} className="quick-action-btn" onClick={() => navigate(path)}>
-                <span className="material-symbols-outlined">{icon}</span>
-                {label}
-              </button>
-            ))}
-          </div>
-          <div className="rev-collection">
-            <p className="rev-title">Revenue by Collection</p>
-            {collections.map(c => (
-              <div className="rev-row" key={c.name}>
-                <div className="rev-dot" style={{ background: c.color }} />
-                <div className="rev-bar-wrap">
-                  <div className="rev-bar-label">
-                    <span>{c.name}</span>
-                    <span>{c.pct}%</span>
-                  </div>
-                  <div className="rev-bar-track">
-                    <div className="rev-bar-fill" style={{ width: `${c.pct}%`, background: c.color }} />
+      {!loading && !error && (
+        <>
+          {/* KPI Cards */}
+          <div className="kpi-grid">
+            {KPI_CARDS.map((c) => (
+              <div className="kpi-card" key={c.label}>
+                <div className="kpi-card-top">
+                  <div className={`kpi-icon ${c.iconClass}`}>
+                    <span className="material-symbols-outlined">{c.icon}</span>
                   </div>
                 </div>
+                <p className="kpi-label">{c.label}</p>
+                <p className="kpi-value">{c.value}</p>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Recent Orders */}
-        <div className="dash-card bento-orders">
-          <div className="dash-card-header">
-            <span className="dash-card-title">Recent Orders</span>
-            <button className="dash-card-link" onClick={() => navigate("/admin/orders")}>View All Orders</button>
-          </div>
-          <div style={{ overflowX: "auto" }}>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map(o => (
-                  <tr key={o.id}>
-                    <td><span className="order-id">{o.id}</span></td>
-                    <td>
-                      <div className="customer-cell">
-                        <div className="customer-initials">{o.initials}</div>
-                        <span>{o.customerName || o.customer}</span>
-                      </div>
-                    </td>
-                    <td style={{ fontWeight: 500 }}>{o.amountLabel || o.amount}</td>
-                    <td><span className={`badge-status ${o.statusClass || "badge-amber"}`}>{String(o.status || "new").replace(/-/g, " ")}</span></td>
-                    <td>
-                      <button className="action-dot-btn">
-                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>more_horiz</span>
-                      </button>
-                    </td>
-                  </tr>
+          <div className="dash-bento">
+            {/* Monthly Sales Chart */}
+            <div className="dash-card bento-chart">
+              <div className="dash-card-header">
+                <span className="dash-card-title">Monthly Revenue</span>
+              </div>
+              <div className="dash-card-body">
+                {chartData.length === 0 ? (
+                  <p style={{ color: "#94a3b8", fontSize: 13, padding: "16px 0" }}>
+                    No sales data yet.
+                  </p>
+                ) : (
+                  <div style={{ position: "relative" }}>
+                    <div className="chart-bars">
+                      {chartData.map((d) => (
+                        <div
+                          key={d.month}
+                          className="chart-bar"
+                          style={{ height: `${d.value * 100}%` }}
+                          title={`${d.month}: ${d.amount}`}
+                        >
+                          <span className="tooltip">{d.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="chart-x-labels">
+                      {chartData.map((d) => (
+                        <span key={d.month} className="chart-x-label">{d.month}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bento-quick" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div className="quick-actions-card">
+                <p className="quick-actions-title">Quick Actions</p>
+                {[
+                  { icon: "add_circle",   label: "Create New Quote",   path: "/admin/leads",     permission: "quotes.create" },
+                  { icon: "inventory",    label: "Add Product",         path: "/admin/products",  permission: "products.create" },
+                  { icon: "badge",        label: "Invite Employee",     path: "/admin/employees", permission: "employees.invite" },
+                  { icon: "receipt_long", label: "View All Orders",     path: "/admin/orders",    permission: "orders.viewAll" },
+                ].filter(({ permission }) => can(user, permission))
+                 .map(({ icon, label, path }) => (
+                  <button key={label} className="quick-action-btn" onClick={() => navigate(path)}>
+                    <span className="material-symbols-outlined">{icon}</span>
+                    {label}
+                  </button>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Alerts Panel */}
-        <div className="dash-card bento-alerts">
-          <div className="dash-card-header">
-            <span className="dash-card-title">Alerts</span>
-            <div className="alert-dot" />
-          </div>
-          <div className="dash-card-body alerts-card" style={{ padding: "16px 20px" }}>
-            {alerts.map((a, i) => (
-              <div key={a.id || i} className={`alert-item alert-${a.type}`}>
-                <p className="alert-tag">{a.tag}</p>
-                <p className="alert-name">{a.name}</p>
-                <p className="alert-desc">{a.desc}</p>
-                {a.action && <button className="alert-action" type="button" onClick={() => navigate("/admin/products")}>{a.action}</button>}
-                {a.time && <p className="alert-time">{a.time}</p>}
               </div>
-            ))}
-            {/* Promo card */}
-            <div className="alert-promo">
-              <div className="alert-promo-img" style={{ position: "relative" }}>
-                <img
-                  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80"
-                  alt="New Collection"
-                />
-                <p className="alert-promo-label">New Collection Launch</p>
+
+              {/* Low-stock products */}
+              {lowStockProducts.length > 0 && (
+                <div className="rev-collection">
+                  <p className="rev-title">Low Stock Products</p>
+                  {lowStockProducts.map((p) => (
+                    <div className="rev-row" key={p._id || p.name}>
+                      <div className="rev-dot" style={{ background: "#dc2626" }} />
+                      <div className="rev-bar-wrap">
+                        <div className="rev-bar-label">
+                          <span style={{ fontSize: 12 }}>{p.name}</span>
+                          <span style={{ color: "#dc2626", fontWeight: 600 }}>{p.stock} left</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Recent Orders */}
+            <div className="dash-card bento-orders">
+              <div className="dash-card-header">
+                <span className="dash-card-title">Recent Orders</span>
+                <button className="dash-card-link" onClick={() => navigate("/admin/orders")}>
+                  View All
+                </button>
+              </div>
+              {recentOrders.length === 0 ? (
+                <p style={{ padding: "16px", color: "#94a3b8", fontSize: 13 }}>
+                  No orders yet.
+                </p>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentOrders.map((o) => (
+                        <tr key={o._id || o.orderNumber}>
+                          <td><span className="order-id">#{o.orderNumber}</span></td>
+                          <td>
+                            <div className="customer-cell">
+                              <div className="customer-initials">{initials(o.customerName)}</div>
+                              <span>{o.customerName || "Customer"}</span>
+                            </div>
+                          </td>
+                          <td style={{ fontWeight: 500 }}>{money(o.total)}</td>
+                          <td>
+                            <span className={`badge-status ${STATUS_CLASS[o.status] || "badge-amber"}`}>
+                              {String(o.status || "new").replace(/_/g, " ")}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Alerts */}
+            <div className="dash-card bento-alerts">
+              <div className="dash-card-header">
+                <span className="dash-card-title">Alerts</span>
+                {alerts.length > 0 && <div className="alert-dot" />}
+              </div>
+              <div className="dash-card-body alerts-card" style={{ padding: "16px 20px" }}>
+                {alerts.length === 0 ? (
+                  <p style={{ color: "#94a3b8", fontSize: 13 }}>No alerts. All systems normal.</p>
+                ) : (
+                  alerts.map((a) => (
+                    <div key={a.link || a.message} className={`alert-item alert-${a.type || "info"}`}>
+                      <p className="alert-name">{a.message}</p>
+                      {a.link && (
+                        <button className="alert-action" type="button" onClick={() => navigate(a.link)}>
+                          View
+                        </button>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
-        </div>
-
-      </div>
+        </>
+      )}
     </div>
   );
 };

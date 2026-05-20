@@ -288,12 +288,7 @@ const CartCheckout = () => {
                 Estimated Delivery: Oct 12 - Oct 19
               </p>
 
-              <div className="promo-row">
-                <input aria-label="Promo Code" placeholder="Promo Code" type="text" />
-                <button type="button" onClick={() => toast.info("Promo codes are not connected yet.")}>
-                  Apply
-                </button>
-              </div>
+              {/* Promo codes are not yet implemented — field is hidden to avoid confusion */}
 
               <button
                 className="commerce-button"
@@ -304,13 +299,9 @@ const CartCheckout = () => {
                 {submitting ? "Processing..." : "Secure Checkout"}
               </button>
 
-              <button
-                className="quote-button"
-                type="button"
-                onClick={() => toast.info("Quote requests are handled through the contact form.")}
-              >
+              <Link className="quote-button" to="/contact?reason=quote">
                 Request Quote for Project
-              </button>
+              </Link>
 
               <div className="secure-icons" aria-hidden="true">
                 <span className="material-symbols-outlined">security</span>
@@ -331,19 +322,23 @@ const CartCheckout = () => {
         <div className="success-modal-backdrop" role="dialog" aria-modal="true">
           <div className="success-modal">
             <div className="success-icon">
-              <span className="material-symbols-outlined">check</span>
+              <span className="material-symbols-outlined">check_circle</span>
             </div>
-            <h2>The Selection is Made.</h2>
-            <p>Thank you for choosing Hedj. Your design journey begins now.</p>
+            <h2>Order Placed Successfully.</h2>
+            <p>
+              Thank you for choosing Hedj. Your order has been received and is
+              pending confirmation. Our team will contact you to arrange payment
+              and delivery.
+            </p>
+            <p style={{ fontSize: 13, color: "#a07e48", marginTop: 8 }}>
+              Payment is collected offline. You will receive a confirmation once
+              payment is processed.
+            </p>
 
             <div className="success-actions">
-              <button
-                className="commerce-button"
-                type="button"
-                onClick={() => toast.info("Design timeline is not connected yet.")}
-              >
-                View Design Timeline
-              </button>
+              <Link className="commerce-button" to="/dashboard">
+                View My Orders
+              </Link>
               <Link className="commerce-button-outline" to="/collections/kitchens">
                 Return to Collections
               </Link>

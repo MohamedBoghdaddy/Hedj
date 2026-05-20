@@ -1,0 +1,33 @@
+(node:28500) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/Moham/Documents/GitHub/Hedj/src/services/demoData.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\Moham\Documents\GitHub\Hedj\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Supabase admin client initialised.
+MongoDB config: using MONGO_URI (mongodb://<credentials>@ac-pjkqq2o-shard-00-00.7zwqxot.mongodb.net:27017,ac-pjkqq2o-shard-00-01.7zwqxot.mongodb.net:27017,ac-pjkqq2o-shard-00-02.7zwqxot.mongodb.net:27017/).
+(node:28500) [MONGOOSE] Warning: `collection` is a reserved schema pathname and may break some functionality. You are allowed to use it, but use at your own risk. To disable this warning pass `suppressReservedKeysWarning` as a schema option.
+(node:28500) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+Connected to MongoDB Atlas using MONGO_URI.
+MongoDB session store connected.
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+    at listenInCluster (node:net:2005:12)
+    at Server.listen (node:net:2110:7)
+    at app.listen (C:\Users\Moham\Documents\GitHub\Hedj\server\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/Users/Moham/Documents/GitHub/Hedj/server/server.js:335:7)
+    at bootstrap (file:///C:/Users/Moham/Documents/GitHub/Hedj/server/server.js:386:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1984:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v24.14.1

@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyAdmin } from "../middleware/AuthMiddleware.js";
+import { isAuthenticated, requirePermission } from "../middleware/AuthMiddleware.js";
 import {
   getEmailOutboxById,
   listEmailOutbox,
@@ -15,7 +15,7 @@ const supabaseMissing = (res) =>
 
 // ─── GET /api/admin/emails/outbox ─────────────────────────────────────────────────
 // Query params: status, toEmail, relatedEntityType, dateFrom, dateTo
-router.get("/outbox", verifyAdmin, async (req, res) => {
+router.get("/outbox", isAuthenticated, requirePermission("emails.view"), async (req, res) => {
   if (!isSupabaseConfigured()) return supabaseMissing(res);
 
   try {
@@ -31,23 +31,38 @@ router.get("/outbox", verifyAdmin, async (req, res) => {
     });
     return res.status(200).json({ success: true, ...result });
   } catch (err) {
+    // Supabase table not yet created → degrade to 503, not 500
+    if (err.message?.includes("schema cache") || err.message?.includes("email_outbox")) {
+      return res.status(503).json({
+        success: false,
+        message: "Email outbox table not found. Run server/supabase/schema.sql in the Supabase SQL Editor.",
+        hint: "schema_not_applied",
+      });
+    }
     return res.status(500).json({ success: false, message: err.message });
   }
 });
 
 // ─── GET /api/admin/emails/outbox/:id/logs ────────────────────────────────────────
-router.get("/outbox/:id/logs", verifyAdmin, async (req, res) => {
+router.get("/outbox/:id/logs", isAuthenticated, requirePermission("emails.view"), async (req, res) => {
   if (!isSupabaseConfigured()) return supabaseMissing(res);
 
   try {
     const logs = await getEmailLogs(req.params.id);
     return res.status(200).json({ success: true, count: logs.length, logs });
   } catch (err) {
+    if (err.message?.includes("schema cache") || err.message?.includes("email_outbox") || err.message?.includes("email_event_log")) {
+      return res.status(503).json({
+        success: false,
+        message: "Email outbox table not found. Run server/supabase/schema.sql in the Supabase SQL Editor.",
+        hint: "schema_not_applied",
+      });
+    }
     return res.status(500).json({ success: false, message: err.message });
   }
 });
 
-router.post("/outbox/:id/send", verifyAdmin, async (req, res) => {
+router.post("/outbox/:id/send", isAuthenticated, requirePermission("emails.view"), async (req, res) => {
   if (!isSupabaseConfigured()) return supabaseMissing(res);
   if (!isEmailProviderConfigured()) {
     return res.status(503).json({

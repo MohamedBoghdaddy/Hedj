@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useMemo, useState } from "react";
 import { AdminShell } from "../Components/AdminShell";
-import { commerceApi, storageApi } from "../services/api";
+import { useAuthContext } from "../context/AuthContext";
+import { can } from "../utils/permissions";
+import { commerceApi, storageApi, API_URL } from "../services/api";
 import "../Styles/admin-premium.css";
 
 // Static demo roster (will be replaced by live data once an employee list endpoint exists)
@@ -51,6 +53,11 @@ const STATUS_LABEL = {
 // ─── main component ───────────────────────────────────────────────────────────────
 
 const AdminEmployees = () => {
+  const { state } = useAuthContext();
+  const user = state.user;
+  const canInvite = can(user, "employees.invite");
+  const canExport = can(user, "employees.exportExcel");
+
   const [employees, setEmployees] = useState([]);
   const [query, setQuery] = useState("");
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -132,8 +139,6 @@ const AdminEmployees = () => {
     <AdminShell
       active="Employees"
       title="Employee Directory"
-      profileName="Julian Hedj"
-      role="Administrator"
       actions={
         <>
           <label className="employee-search">
@@ -145,16 +150,32 @@ const AdminEmployees = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </label>
-          <button
-            className="admin-premium-button primary"
-            type="button"
-            onClick={() => setInviteOpen(true)}
-          >
-            <span className="material-symbols-outlined">person_add</span>
-            Invite New Employee
-          </button>
-          <span className="material-symbols-outlined">notifications</span>
-          <span className="material-symbols-outlined">help</span>
+          {canInvite && (
+            <button
+              className="admin-premium-button primary"
+              type="button"
+              onClick={() => setInviteOpen(true)}
+            >
+              <span className="material-symbols-outlined">person_add</span>
+              Invite New Employee
+            </button>
+          )}
+          {canExport && (
+            <a
+              className="admin-premium-button"
+              href={`${API_URL}/api/admin/export/employees.xlsx`}
+              download="employees.xlsx"
+              onClick={(e) => {
+                e.preventDefault();
+                const token = localStorage.getItem("token");
+                window.open(`${API_URL}/api/admin/export/employees.xlsx?token=${token}`, "_blank");
+              }}
+              style={{ textDecoration: "none" }}
+            >
+              <span className="material-symbols-outlined">download</span>
+              Export
+            </a>
+          )}
         </>
       }
     >

@@ -370,18 +370,59 @@ export const getERPEmployees = async (req, res) => {
 
 export const getERPHierarchy = async (req, res) => {
   try {
-    let employees;
-    if (isDbConnected()) {
-      const emps = await ERPEmployee.find({ status: "active" })
-        .select("-__v")
-        .sort({ level: 1, fullName: 1 });
-      if (emps.length > 0) {
-        employees = emps.map((e) => e.toObject());
-      }
+    if (!ensureDb(res)) return;
+
+    // 1. Try ERPEmployee first (dedicated hierarchy model)
+    const erpEmps = await ERPEmployee.find({ status: "active" })
+      .select("-__v")
+      .sort({ level: 1, fullName: 1 });
+
+    if (erpEmps.length > 0) {
+      const hierarchy = buildHierarchy(erpEmps.map((e) => e.toObject()));
+      return res.json({ success: true, data: hierarchy, source: "erp_employees" });
     }
-    if (!employees) employees = demoEmployees;
-    const hierarchy = buildHierarchy(employees);
-    res.json({ success: true, data: hierarchy });
+
+    // 2. Fall back to the regular Employee model — normalise to the shape buildHierarchy expects
+    const realEmps = await Employee.find({ status: { $ne: "inactive" } })
+      .select("fname lname email department jobTitle seniorityLevel role status _id")
+      .sort({ seniorityLevel: 1, fname: 1 });
+
+    if (realEmps.length > 0) {
+      // Build a simple department-based hierarchy:
+      // Group employees by seniority: C-Suite/Director → manager, others are leaves
+      const LEVEL_MAP = {
+        "C-Suite": "executive", Director: "manager", Manager: "manager",
+        Senior: "senior", "Mid-Level": "junior", Junior: "junior",
+      };
+      const empObjects = realEmps.map((e) => ({
+        _id: e._id.toString(),
+        id: e._id.toString(),
+        fullName: `${e.fname} ${e.lname}`,
+        email: e.email,
+        level: LEVEL_MAP[e.seniorityLevel] || "junior",
+        dept: e.department,
+        position: e.jobTitle || `${e.role} — ${e.department}`,
+        code: "",
+        assignedModules: [],
+        managerId: null, // flat list — no explicit manager chain in Employee model
+        children: [],
+      }));
+
+      // Simple grouping: executives/managers are roots, others are department leaves
+      const roots = empObjects.filter((e) => ["executive", "manager"].includes(e.level));
+      const leaves = empObjects.filter((e) => !["executive", "manager"].includes(e.level));
+
+      // Attach leaves to the first manager sharing their department
+      leaves.forEach((leaf) => {
+        const mgr = roots.find((r) => r.dept === leaf.dept) || roots[0];
+        if (mgr) mgr.children.push(leaf);
+      });
+
+      return res.json({ success: true, data: roots, source: "employees" });
+    }
+
+    // 3. No employee data at all — return empty production state
+    return res.json({ success: true, data: [], source: "empty" });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -424,10 +465,29 @@ export const getApprovalRequests = async (req, res) => {
   try {
     if (isDbConnected()) {
       const requests = await ApprovalRequest.find()
-        .populate("employeeId", "fullName employeeCode")
-        .populate("currentApproverId", "fullName")
+        .populate("employeeId", "fname lname email department jobTitle")
+        .populate("currentApproverId", "fname lname email department jobTitle")
         .sort({ createdAt: -1 });
-      if (requests.length > 0) return res.json({ success: true, data: requests });
+      if (requests.length > 0) {
+        // Normalise each record so the frontend always gets resolved name fields
+        const normalised = requests.map((r) => {
+          const obj = r.toObject();
+          // Resolve requester name: populated ref > stored string fields
+          if (obj.employeeId) {
+            obj._resolvedEmployeeName = `${obj.employeeId.fname} ${obj.employeeId.lname}`.trim();
+          } else {
+            obj._resolvedEmployeeName = obj.employeeName || obj.requestedBy || "";
+          }
+          // Resolve approver name
+          if (obj.currentApproverId) {
+            obj._resolvedApproverName = `${obj.currentApproverId.fname} ${obj.currentApproverId.lname}`.trim();
+          } else {
+            obj._resolvedApproverName = obj.currentApproverName || "";
+          }
+          return obj;
+        });
+        return res.json({ success: true, data: normalised });
+      }
     }
     res.json({ success: true, data: demoApprovalRequests, source: "demo" });
   } catch (err) {

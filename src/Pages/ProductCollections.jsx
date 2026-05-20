@@ -152,20 +152,24 @@ export default function ProductCollections() {
     const sourceProducts = usingServer ? serverProducts : allProducts;
     const allowedIds = !usingServer && meta.ids ? new Set(meta.ids) : null;
     const result = sourceProducts.filter((product) => {
-      const bucket = slugify(`${product.collection || product.category || ""}`);
+      const collectionBucket = slugify(product.collection || "");
+      const categoryBucket = slugify(product.category || "");
       if (allowedIds && !allowedIds.has(product.id)) return false;
       if (usingServer && routeCollection) {
         const route = slugify(routeCollection);
+        const routeSingular = route.replace(/s$/, "");
         if (route === "complements") {
-          return ["complements", "decor", "lighting", "textiles"].includes(bucket);
+          return ["complements", "decor", "lighting", "textiles"].includes(collectionBucket) ||
+                 ["complements", "decor", "lighting", "textiles"].includes(categoryBucket);
         }
-        return bucket === route || bucket === route.replace(/s$/, "");
+        return collectionBucket === route || collectionBucket === routeSingular ||
+               categoryBucket === route || categoryBucket === routeSingular;
       }
       if (routeCollection === "complements" && typeFilter === "day") {
-        return ["Decor", "Lighting"].includes(product.category);
+        return ["Decor", "Lighting", "Complements"].includes(product.category);
       }
       if (routeCollection === "complements" && typeFilter === "night") {
-        return ["Textiles", "Lighting"].includes(product.category);
+        return ["Textiles", "Lighting", "Complements"].includes(product.category);
       }
       return true;
     });

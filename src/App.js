@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuthContext } from "./context/AuthContext";
 import { AdminShell } from "./Components/AdminShell";
+import { isStaff, isAdmin } from "./utils/permissions";
 
 // Public pages
 import Home from "./Components/Homepage/Home";
@@ -15,7 +16,7 @@ import PremiumContact from "./Pages/Contact";
 import Signup from "./Components/Loginsystem/Signup";
 import Login from "./Components/Loginsystem/Login";
 
-// Admin pages
+// Admin / staff pages
 import Dashboard from "./Components/dashboard/Dashboard";
 import Setting from "./Components/dashboard/Setting";
 import Customers from "./Components/dashboard/CustomersList";
@@ -34,29 +35,84 @@ import AdminERPSchema from "./Pages/AdminERPSchema";
 import AdminERPHierarchy from "./Pages/AdminERPHierarchy";
 import AdminERPWorkflows from "./Pages/AdminERPWorkflows";
 import AdminERPApprovals from "./Pages/AdminERPApprovals";
+import AdminAttendance from "./Pages/AdminAttendance";
+import AdminLeave from "./Pages/AdminLeave";
+
+// Public / customer pages
 import ProductCollections from "./Pages/ProductCollections";
 import VirtualShowroom from "./Pages/VirtualShowroom";
 import CustomerDashboard from "./Pages/CustomerDashboard";
 import StaticPlaceholder from "./Pages/StaticPlaceholder";
+import AcceptInvite from "./Pages/AcceptInvite";
 
+/**
+ * StaffRoute: accessible by admin, super_admin, manager, HR, accountant,
+ * operations, designer, and employee roles.
+ * Customers and unauthenticated users are redirected.
+ */
+const StaffRoute = ({ children }) => {
+  const { state } = useAuthContext();
+  const location = useLocation();
+
+  if (state.loading) return null;
+
+  if (!state.isAuthenticated || !state.user) {
+    return <Navigate to="/Login" state={{ from: location }} replace />;
+  }
+
+  if (!isStaff(state.user)) {
+    // Customers go to their own dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
+/**
+ * AdminRoute: only admin and super_admin.
+ * Other staff are redirected to the main admin dashboard.
+ */
 const AdminRoute = ({ children }) => {
   const { state } = useAuthContext();
   const location = useLocation();
-  const role = state.user?.role;
 
   if (state.loading) return null;
-  if (!state.isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+
+  if (!state.isAuthenticated || !state.user) {
+    return <Navigate to="/Login" state={{ from: location }} replace />;
   }
-  if (role !== "admin" && role !== "employee") {
-    return <Navigate to="/" replace />;
+
+  if (!isStaff(state.user)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (!isAdmin(state.user)) {
+    // Staff but not admin — redirect to overview (they can see their permitted items)
+    return <Navigate to="/admin/dashboard" replace />;
   }
 
   return children;
 };
 
 const App = () => {
-  const adminPage = (page, shellProps = {}) => (
+  // Wraps a page with AdminShell (title bar + sidebar) behind StaffRoute
+  const staffPage = (page, shellProps = {}) => (
+    <StaffRoute>
+      <AdminShell
+        active={shellProps.active}
+        title={shellProps.title}
+        subtitle={shellProps.subtitle}
+      >
+        {page}
+      </AdminShell>
+    </StaffRoute>
+  );
+
+  // Standalone page without explicit AdminShell wrapper (page manages its own shell)
+  const staffStandalonePage = (page) => <StaffRoute>{page}</StaffRoute>;
+
+  // Admin-only pages (only admin/super_admin can reach these)
+  const adminOnlyPage = (page, shellProps = {}) => (
     <AdminRoute>
       <AdminShell
         active={shellProps.active}
@@ -67,10 +123,9 @@ const App = () => {
       </AdminShell>
     </AdminRoute>
   );
-  const adminStandalonePage = (page) => <AdminRoute>{page}</AdminRoute>;
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
       <Routes>
 
@@ -116,70 +171,90 @@ const App = () => {
         <Route path="/Login" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/Signup" element={<Signup />} />
+        <Route path="/accept-invite" element={<AcceptInvite />} />
         <Route path="/signup" element={<Signup />} />
 
         {/* ── Customer Dashboard ── */}
         <Route path="/dashboard" element={<CustomerDashboard />} />
 
-        {/* ── Admin / ERP Routes ── */}
+        {/* ── Admin / Staff Overview ── */}
         <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route
           path="/admin/dashboard"
-          element={adminPage(<Dashboard />, {
+          element={staffPage(<Dashboard />, {
             active: "Overview",
-            title: "Admin Dashboard",
+            title: "Dashboard",
             subtitle: "Revenue, orders, stock alerts, and daily operating signals.",
           })}
         />
-        <Route path="/admin/orders" element={adminStandalonePage(<AdminOrdersPipeline />)} />
+
+        {/* ── Orders (staff with orders.viewAll permission) ── */}
+        <Route path="/admin/orders" element={staffStandalonePage(<AdminOrdersPipeline />)} />
         <Route
           path="/admin/orders/:orderId"
-          element={adminPage(<OrderDetail />, { active: "Orders", title: "Order Detail" })}
+          element={staffPage(<OrderDetail />, { active: "Orders", title: "Order Detail" })}
         />
+
+        {/* ── Customers (staff with customers.view) ── */}
         <Route
           path="/admin/customers"
-          element={adminPage(<Customers />, { active: "Customers", title: "Customers" })}
+          element={staffPage(<Customers />, { active: "Customers", title: "Customers" })}
         />
         <Route
           path="/admin/customers/:customerId"
-          element={adminPage(<CustomerDetail />, {
-            active: "Customers",
-            title: "Customer Detail",
-          })}
+          element={staffPage(<CustomerDetail />, { active: "Customers", title: "Customer Detail" })}
         />
+
+        {/* ── Leads & Quotes ── */}
         <Route
           path="/admin/leads"
-          element={adminPage(<Leads />, { active: "Leads", title: "Leads" })}
+          element={staffPage(<Leads />, { active: "Leads", title: "Leads" })}
         />
         <Route
           path="/admin/quotes"
-          element={adminPage(<Quotes />, { active: "Quotes", title: "Quotes" })}
+          element={staffPage(<Quotes />, { active: "Quotes", title: "Quotes" })}
         />
-        <Route path="/admin/analytics" element={adminStandalonePage(<AdminAnalytics />)} />
-        <Route path="/admin/employees" element={adminStandalonePage(<AdminEmployees />)} />
-        <Route path="/admin/emails" element={adminStandalonePage(<AdminEmailOutbox />)} />
-        <Route path="/admin/products" element={adminStandalonePage(<AdminProducts />)} />
+
+        {/* ── Attendance & Leave ── */}
+        <Route path="/admin/attendance" element={staffStandalonePage(<AdminAttendance />)} />
+        <Route path="/admin/leave" element={staffStandalonePage(<AdminLeave />)} />
+
+        {/* ── Analytics / Reports (staff with analytics.view) ── */}
+        <Route path="/admin/analytics" element={staffStandalonePage(<AdminAnalytics />)} />
+        <Route path="/admin/reports"   element={staffStandalonePage(<AdminAnalytics />)} />
+
+        {/* ── Employees (staff with employees.view) ── */}
+        <Route path="/admin/employees" element={staffStandalonePage(<AdminEmployees />)} />
+
+        {/* ── Products (staff with products.view) ── */}
+        <Route path="/admin/products" element={staffStandalonePage(<AdminProducts />)} />
+
+        {/* ── Email Outbox (staff with emails.view) ── */}
+        <Route path="/admin/emails" element={staffStandalonePage(<AdminEmailOutbox />)} />
+
+        {/* ── Settings (admin-only) ── */}
         <Route
           path="/admin/settings"
-          element={adminPage(<Setting />, { active: "Settings", title: "Settings" })}
+          element={adminOnlyPage(<Setting />, { active: "Settings", title: "Settings" })}
         />
-        <Route path="/admin/reports" element={adminStandalonePage(<AdminAnalytics />)} />
+
+        {/* ── ERP (staff with erp.view) ── */}
         <Route path="/admin/erp" element={<Navigate to="/admin/erp/overview" replace />} />
-        <Route path="/admin/erp/overview" element={adminStandalonePage(<AdminERPOverview />)} />
-        <Route path="/admin/erp/apps" element={adminStandalonePage(<AdminERPApps />)} />
-        <Route path="/admin/erp/schema" element={adminStandalonePage(<AdminERPSchema />)} />
-        <Route path="/admin/erp/hierarchy" element={adminStandalonePage(<AdminERPHierarchy />)} />
-        <Route path="/admin/erp/workflow" element={adminStandalonePage(<AdminERPWorkflows />)} />
-        <Route path="/admin/erp/workflows" element={<Navigate to="/admin/erp/workflow" replace />} />
-        <Route path="/admin/erp/approvals" element={adminStandalonePage(<AdminERPApprovals />)} />
+        <Route path="/admin/erp/overview"   element={staffStandalonePage(<AdminERPOverview />)} />
+        <Route path="/admin/erp/apps"       element={staffStandalonePage(<AdminERPApps />)} />
+        <Route path="/admin/erp/schema"     element={staffStandalonePage(<AdminERPSchema />)} />
+        <Route path="/admin/erp/hierarchy"  element={staffStandalonePage(<AdminERPHierarchy />)} />
+        <Route path="/admin/erp/workflow"   element={staffStandalonePage(<AdminERPWorkflows />)} />
+        <Route path="/admin/erp/workflows"  element={<Navigate to="/admin/erp/workflow" replace />} />
+        <Route path="/admin/erp/approvals"  element={staffStandalonePage(<AdminERPApprovals />)} />
 
         {/* Legacy admin paths */}
-        <Route path="/Setting" element={<Navigate to="/admin/settings" replace />} />
-        <Route path="/Settings" element={<Navigate to="/admin/settings" replace />} />
-        <Route path="/Reports" element={<Navigate to="/admin/reports" replace />} />
-        <Route path="/Profile" element={<Navigate to="/admin/customers" replace />} />
-        <Route path="/Employees" element={<Navigate to="/admin/employees" replace />} />
-        <Route path="/Customers" element={<Navigate to="/admin/customers" replace />} />
+        <Route path="/Setting"   element={<Navigate to="/admin/settings"   replace />} />
+        <Route path="/Settings"  element={<Navigate to="/admin/settings"   replace />} />
+        <Route path="/Reports"   element={<Navigate to="/admin/reports"    replace />} />
+        <Route path="/Profile"   element={<Navigate to="/admin/customers"  replace />} />
+        <Route path="/Employees" element={<Navigate to="/admin/employees"  replace />} />
+        <Route path="/Customers" element={<Navigate to="/admin/customers"  replace />} />
 
       </Routes>
     </BrowserRouter>

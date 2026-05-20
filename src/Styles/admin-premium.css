@@ -26,12 +26,13 @@
 
 .admin-premium-sidebar {
   width: 256px;
-  min-height: 100vh;
+  height: 100vh;
   position: sticky;
   top: 0;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background: var(--admin-premium-navy);
   border-right: 1px solid #1e293b;
   color: #ffffff;
@@ -104,6 +105,24 @@
   height: 40px;
   border-radius: 999px;
   object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Fallback when no profile photo is available */
+.admin-premium-profile-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+  user-select: none;
 }
 
 .admin-premium-profile strong,
@@ -175,6 +194,7 @@
 .admin-premium-main {
   flex: 1;
   min-width: 0;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1344,3 +1364,182 @@
     flex-direction: column;
   }
 }
+
+/* ── Utility classes used by new pages (Attendance, Leave, etc.) ──────────── */
+
+/* Buttons */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 0;
+  font: 500 13px/1 inherit;
+  cursor: pointer;
+  transition: 160ms ease;
+  white-space: nowrap;
+}
+.admin-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.admin-btn-primary { background: #0f172a; color: #fff; }
+.admin-btn-primary:hover:not(:disabled) { background: #1e293b; }
+
+.admin-btn-secondary { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+.admin-btn-secondary:hover:not(:disabled) { background: #e2e8f0; }
+
+.admin-btn-success { background: #dcfce7; color: #166534; }
+.admin-btn-success:hover:not(:disabled) { background: #bbf7d0; }
+
+.admin-btn-danger { background: #fee2e2; color: #991b1b; }
+.admin-btn-danger:hover:not(:disabled) { background: #fecaca; }
+
+.admin-btn-ghost { background: transparent; color: #64748b; }
+.admin-btn-ghost:hover:not(:disabled) { background: #f1f5f9; color: #0f172a; }
+.admin-btn-ghost.admin-btn-danger:hover:not(:disabled) { background: #fee2e2; color: #991b1b; }
+
+/* Inputs & selects */
+.admin-input,
+.admin-select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  background: #fff;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 160ms;
+  min-height: 36px;
+}
+.admin-input:focus,
+.admin-select:focus { border-color: #6366f1; }
+.admin-input { min-width: 0; }
+.admin-select { appearance: auto; cursor: pointer; }
+
+/* Card */
+.admin-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+/* Table wrapper */
+.admin-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* Empty state */
+.admin-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: #94a3b8;
+  text-align: center;
+}
+.admin-empty-state p { margin: 0; font-size: 14px; }
+
+/* Modal overlay */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Form groups */
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.admin-form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Modal actions */
+.admin-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+/* Modal form spacing */
+.admin-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+}
+
+/* Modal header close button */
+.admin-modal-close {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  padding: 4px;
+  border-radius: 6px;
+}
+.admin-modal-close:hover { background: #f1f5f9; color: #1e293b; }
+
+/* Invisible full-screen backdrop button that closes the modal when clicked */
+.admin-modal-backdrop-btn {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: default;
+  z-index: 0;
+}
+
+/* Override existing .admin-modal for the overlay layout */
+.admin-modal-overlay .admin-modal {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border-radius: 16px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+}
+.admin-modal-overlay .admin-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0;
+}
+.admin-modal-overlay .admin-modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+@media (max-width: 480px) {
+  .admin-form-row { grid-template-columns: 1fr; }
+}
+

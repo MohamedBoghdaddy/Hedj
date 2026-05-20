@@ -51,9 +51,9 @@ export default function AdminERPApprovals() {
       const live = (payload.data || []).map((request) => ({
         id: request._id,
         requestType: request.requestType,
-        employeeName: request.employeeId?.fullName || request.employeeName || "Employee",
+        employeeName: request._resolvedEmployeeName || request.employeeId?.fullName || request.employeeName || request.requestedBy || "Employee",
         employeeCode: request.employeeId?.employeeCode || "",
-        currentApproverName: request.currentApproverId?.fullName || request.currentApproverName || "Approver",
+        currentApproverName: request._resolvedApproverName || request.currentApproverId?.fullName || request.currentApproverName || "Approver",
         status: request.status,
         description: request.description,
         date: new Date(request.createdAt).toLocaleDateString(),

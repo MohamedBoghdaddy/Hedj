@@ -1,114 +1,112 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AdminShell } from "../Components/AdminShell";
+import { erpApi } from "../services/api";
 import "../Styles/admin-erp-premium.css";
 
-const departments = [
-  { id: "all", label: "All Departments" },
-  { id: "dept_exec", label: "Executive" },
-  { id: "dept_sales", label: "Sales" },
-  { id: "dept_finance", label: "Finance" },
-  { id: "dept_ops", label: "Operations" },
-  { id: "dept_design", label: "Design" },
-  { id: "dept_it", label: "IT" },
-];
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const levelBadge = { executive: "erp-badge-executive", manager: "erp-badge-manager", senior: "erp-badge-senior", junior: "erp-badge-junior", team_lead: "erp-badge-manager" };
+const DEPT_LABELS = {
+  dept_exec: "Executive", dept_sales: "Sales", dept_finance: "Finance",
+  dept_ops: "Operations", dept_design: "Design", dept_it: "IT",
+  Executive: "Executive", Sales: "Sales", Finance: "Finance",
+  Operations: "Operations", Design: "Design", IT: "IT",
+  Logistics: "Logistics", HR: "HR", Inventory: "Inventory",
+};
 
-const orgTree = [
-  {
-    id: "emp_ceo", fullName: "Alexander Voss", code: "HJ-001", level: "executive",
-    dept: "dept_exec", position: "CEO", email: "a.voss@hedj.com",
-    assignedModules: ["all"],
-    children: [
-      {
-        id: "emp_sales_mgr", fullName: "Eleanor Vance", code: "HJ-002", level: "manager",
-        dept: "dept_sales", position: "Sales Manager", email: "e.vance@hedj.com",
-        assignedModules: ["sales", "crm", "contacts"],
-        children: [
-          { id: "emp_sr_sales", fullName: "David Harrington", code: "HJ-006", level: "senior", dept: "dept_sales", position: "Senior Sales Executive", email: "d.harrington@hedj.com", assignedModules: ["sales", "crm"], children: [] },
-          { id: "emp_jr_sales", fullName: "Priya Mehta", code: "HJ-011", level: "junior", dept: "dept_sales", position: "Junior Sales Executive", email: "p.mehta@hedj.com", assignedModules: ["sales"], children: [] },
-        ],
-      },
-      {
-        id: "emp_fin_mgr", fullName: "Julianne Vose", code: "HJ-003", level: "manager",
-        dept: "dept_finance", position: "Finance Manager", email: "j.vose@hedj.com",
-        assignedModules: ["accounting", "reports"],
-        children: [
-          { id: "emp_sr_acct", fullName: "Thomas Berg", code: "HJ-007", level: "senior", dept: "dept_finance", position: "Senior Accountant", email: "t.berg@hedj.com", assignedModules: ["accounting"], children: [] },
-          { id: "emp_jr_acct", fullName: "Lena Park", code: "HJ-012", level: "junior", dept: "dept_finance", position: "Junior Accountant", email: "l.park@hedj.com", assignedModules: ["accounting"], children: [] },
-        ],
-      },
-      {
-        id: "emp_ops_mgr", fullName: "Marcus Thorne", code: "HJ-004", level: "manager",
-        dept: "dept_ops", position: "Operations Manager", email: "m.thorne@hedj.com",
-        assignedModules: ["orders", "fulfillment", "inventory"],
-        children: [
-          { id: "emp_wh_spec", fullName: "Carlos Reyes", code: "HJ-008", level: "junior", dept: "dept_ops", position: "Warehouse Specialist", email: "c.reyes@hedj.com", assignedModules: ["inventory"], children: [] },
-        ],
-      },
-      {
-        id: "emp_des_mgr", fullName: "Sienna Blake", code: "HJ-005", level: "manager",
-        dept: "dept_design", position: "Design Manager", email: "s.blake@hedj.com",
-        assignedModules: ["showroom", "consultations", "products"],
-        children: [
-          { id: "emp_sr_des", fullName: "Isabelle Laurent", code: "HJ-009", level: "senior", dept: "dept_design", position: "Senior Interior Designer", email: "i.laurent@hedj.com", assignedModules: ["showroom", "products"], children: [] },
-          { id: "emp_jr_des", fullName: "Omar Hassan", code: "HJ-013", level: "junior", dept: "dept_design", position: "Junior Interior Designer", email: "o.hassan@hedj.com", assignedModules: ["showroom"], children: [] },
-        ],
-      },
-      {
-        id: "emp_it_mgr", fullName: "James Knight", code: "HJ-010", level: "manager",
-        dept: "dept_it", position: "IT Manager", email: "j.knight@hedj.com",
-        assignedModules: ["base", "settings"],
-        children: [
-          { id: "emp_sr_dev", fullName: "Nadia Sorensen", code: "HJ-014", level: "senior", dept: "dept_it", position: "Senior Developer", email: "n.sorensen@hedj.com", assignedModules: ["base", "ecommerce"], children: [] },
-          { id: "emp_jr_dev", fullName: "Kevin Liu", code: "HJ-015", level: "junior", dept: "dept_it", position: "Junior Developer", email: "k.liu@hedj.com", assignedModules: ["ecommerce"], children: [] },
-        ],
-      },
-    ],
-  },
-];
+const LEVEL_BADGE = {
+  executive: "erp-badge-executive", manager: "erp-badge-manager",
+  senior: "erp-badge-senior", junior: "erp-badge-junior",
+  "C-Suite": "erp-badge-executive", Director: "erp-badge-manager",
+  Manager: "erp-badge-manager", Senior: "erp-badge-senior", Junior: "erp-badge-junior",
+  "Mid-Level": "erp-badge-junior",
+};
 
-const initials = (name) => name.split(" ").map((w) => w[0]).join("").slice(0, 2);
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+const initials = (name = "") =>
+  (name || "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+
+const resolveName = (node) =>
+  node.fullName || node.name ||
+  [node.fname, node.lname].filter(Boolean).join(" ") ||
+  node.email || "Employee";
+
+const resolveLevel = (node) =>
+  node.level || node.seniorityLevel || "junior";
+
+const resolveDept = (node) =>
+  node.dept || node.department || node.departmentId?.name || "";
+
+const resolvePosition = (node) =>
+  node.position || node.jobTitle || node.jobPositionId?.title || "";
+
+const resolveCode = (node) =>
+  node.code || node.employeeCode || "";
 
 const flattenTree = (nodes) => {
   const result = [];
-  const walk = (n) => { result.push(n); n.children.forEach(walk); };
+  const walk = (n) => { result.push(n); (n.children || []).forEach(walk); };
   nodes.forEach(walk);
   return result;
 };
 
-const allEmployees = flattenTree(orgTree);
+// Build unique department list from flattened nodes
+const buildDeptList = (flat) => {
+  const seen = new Set(["all"]);
+  const depts = [{ id: "all", label: "All Departments" }];
+  flat.forEach((node) => {
+    const dept = resolveDept(node);
+    if (dept && !seen.has(dept)) {
+      seen.add(dept);
+      depts.push({ id: dept, label: DEPT_LABELS[dept] || dept });
+    }
+  });
+  return depts;
+};
+
+// ─── TreeNode component ───────────────────────────────────────────────────────
 
 function TreeNode({ node, deptFilter, onSelect, selectedId, depth = 0 }) {
-  const matchesDept = deptFilter === "all" || node.dept === deptFilter;
-  const childrenMatchDept = node.children.some((c) => deptFilter === "all" || c.dept === deptFilter || flattenTree([c]).some((x) => x.dept === deptFilter));
+  const dept = resolveDept(node);
+  const level = resolveLevel(node);
+  const name = resolveName(node);
+  const matchesDept = deptFilter === "all" || dept === deptFilter;
+  const childrenMatch = (node.children || []).some((c) =>
+    flattenTree([c]).some((x) => deptFilter === "all" || resolveDept(x) === deptFilter)
+  );
 
-  if (!matchesDept && !childrenMatchDept) return null;
+  if (!matchesDept && !childrenMatch) return null;
+
+  const nodeId = node._id || node.id;
 
   return (
     <div className="erp-tree-item">
       <div
-        className={`erp-emp-card${selectedId === node.id ? " selected" : ""}`}
+        className={`erp-emp-card${selectedId === nodeId ? " selected" : ""}`}
         onClick={() => onSelect(node)}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && onSelect(node)}
         style={{ opacity: matchesDept ? 1 : 0.4 }}
       >
-        <div className="erp-emp-avatar">{initials(node.fullName)}</div>
+        <div className="erp-emp-avatar">{initials(name)}</div>
         <div className="erp-emp-info">
-          <div className="erp-emp-name">{node.fullName}</div>
-          <div className="erp-emp-meta">{node.position}</div>
+          <div className="erp-emp-name">{name}</div>
+          <div className="erp-emp-meta">{resolvePosition(node)}</div>
         </div>
-        <span className={`erp-badge ${levelBadge[node.level] || "erp-badge-junior"}`}>{node.level}</span>
-        <div className="erp-emp-code">{node.code}</div>
+        <span className={`erp-badge ${LEVEL_BADGE[level] || "erp-badge-junior"}`}>
+          {level}
+        </span>
+        {resolveCode(node) && (
+          <div className="erp-emp-code">{resolveCode(node)}</div>
+        )}
       </div>
 
-      {node.children.length > 0 && (
+      {(node.children || []).length > 0 && (
         <div className="erp-tree-children">
           {node.children.map((child) => (
             <TreeNode
-              key={child.id}
+              key={child._id || child.id || child.fullName}
               node={child}
               deptFilter={deptFilter}
               onSelect={onSelect}
@@ -122,16 +120,60 @@ function TreeNode({ node, deptFilter, onSelect, selectedId, depth = 0 }) {
   );
 }
 
+// ─── Main page ────────────────────────────────────────────────────────────────
+
 export default function AdminERPHierarchy() {
+  const [hierarchy, setHierarchy] = useState([]);
+  const [flat, setFlat] = useState([]);
+  const [depts, setDepts] = useState([{ id: "all", label: "All Departments" }]);
   const [deptFilter, setDeptFilter] = useState("all");
-  const [selected, setSelected] = useState(allEmployees[0]);
+  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [isDemo, setIsDemo] = useState(false);
 
-  const managerOf = selected ? allEmployees.filter((e) => {
-    const parent = allEmployees.find((x) => x.children.some((c) => c.id === e.id));
-    return parent?.id === selected.id;
-  }) : [];
+  const loadHierarchy = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const payload = await erpApi.getEmployeeHierarchy();
+      const tree = payload.data || [];
+      const flattened = flattenTree(tree);
+      setHierarchy(tree);
+      setFlat(flattened);
+      setDepts(buildDeptList(flattened));
+      setSelected(flattened[0] || null);
+      setIsDemo(payload.source === "demo"); // only true when explicitly falling back to hardcoded demo
+    } catch (err) {
+      setError(err.message || "Could not load hierarchy from server.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const managerNode = selected ? allEmployees.find((e) => e.children.some((c) => c.id === selected.id)) : null;
+  useEffect(() => { loadHierarchy(); }, [loadHierarchy]);
+
+  const managerOf = selected
+    ? flat.filter((e) => {
+        const parent = flat.find((x) =>
+          (x.children || []).some((c) => (c._id || c.id) === (selected._id || selected.id))
+        );
+        return parent && (parent._id || parent.id) === (selected._id || selected.id);
+      })
+    : [];
+
+  const managerNode = selected
+    ? flat.find((e) =>
+        (e.children || []).some((c) => (c._id || c.id) === (selected._id || selected.id))
+      )
+    : null;
+
+  const stats = [
+    { label: "Total Employees", value: flat.length, icon: "badge" },
+    { label: "Departments", value: depts.length - 1, icon: "corporate_fare" },
+    { label: "Managers", value: flat.filter((e) => /manager|director|ceo|c-suite/i.test(resolveLevel(e))).length, icon: "manage_accounts" },
+    { label: "Senior Staff", value: flat.filter((e) => /senior/i.test(resolveLevel(e))).length, icon: "star" },
+  ];
 
   return (
     <AdminShell
@@ -139,122 +181,175 @@ export default function AdminERPHierarchy() {
       title="Organization Hierarchy"
       subtitle="Employee reporting lines, departments, and manager chains"
     >
-      {/* Stats row */}
-      <div className="erp-kpi-row" style={{ marginBottom: 24 }}>
-        {[
-          { label: "Total Employees", value: allEmployees.length, icon: "badge" },
-          { label: "Departments", value: 6, icon: "corporate_fare" },
-          { label: "Managers", value: allEmployees.filter((e) => e.level === "manager").length, icon: "manage_accounts" },
-          { label: "Senior Staff", value: allEmployees.filter((e) => e.level === "senior").length, icon: "star" },
-        ].map((k) => (
-          <div className="erp-kpi-card" key={k.label}>
-            <div className="erp-kpi-icon">
-              <span className="material-symbols-outlined">{k.icon}</span>
-            </div>
-            <div className="erp-kpi-label">{k.label}</div>
-            <div className="erp-kpi-value">{k.value}</div>
-          </div>
-        ))}
-      </div>
+      {/* Demo banner */}
+      {isDemo && (
+        <div style={{ padding: "10px 16px", background: "#fef3c7", borderRadius: 6, marginBottom: 16, fontSize: 13, color: "#92400e" }}>
+          <strong>Demo data:</strong> No ERPEmployee records found in MongoDB. Showing organizational fallback data.
+          Create ERPEmployee records via the ERP API to see real hierarchy.
+        </div>
+      )}
 
-      {/* Department filter */}
-      <div className="erp-filter-bar">
-        {departments.map((d) => (
-          <button
-            key={d.id}
-            className={`erp-filter-btn${deptFilter === d.id ? " active" : ""}`}
-            onClick={() => setDeptFilter(d.id)}
-          >
-            {d.label}
+      {/* Error */}
+      {error && (
+        <div style={{ padding: "12px 16px", background: "#fff1f0", borderRadius: 6, marginBottom: 16, color: "#dc2626", fontSize: 13 }}>
+          <strong>Error:</strong> {error}
+          <button className="admin-premium-button" type="button" onClick={loadHierarchy}
+            style={{ marginLeft: 12, padding: "2px 10px", fontSize: 12 }}>
+            Retry
           </button>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className="erp-hierarchy-layout">
-        {/* Tree */}
-        <div>
-          <div className="erp-tree">
-            <div className="erp-tree-root-label">Organizational Chart — Hedj Commerce</div>
-            {orgTree.map((root) => (
-              <TreeNode
-                key={root.id}
-                node={root}
-                deptFilter={deptFilter}
-                onSelect={setSelected}
-                selectedId={selected?.id}
-              />
+      {/* Loading */}
+      {loading && (
+        <div style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
+          Loading hierarchy…
+        </div>
+      )}
+
+      {!loading && !error && (
+        <>
+          {/* Stats row */}
+          <div className="erp-kpi-row" style={{ marginBottom: 24 }}>
+            {stats.map((k) => (
+              <div className="erp-kpi-card" key={k.label}>
+                <div className="erp-kpi-icon">
+                  <span className="material-symbols-outlined">{k.icon}</span>
+                </div>
+                <div className="erp-kpi-label">{k.label}</div>
+                <div className="erp-kpi-value">{k.value}</div>
+              </div>
             ))}
           </div>
-        </div>
 
-        {/* Employee Detail */}
-        {selected && (
-          <div className="erp-emp-detail">
-            <div className="erp-emp-detail-avatar">{initials(selected.fullName)}</div>
-            <h2>{selected.fullName}</h2>
-            <div className="erp-emp-detail-meta">{selected.position} · {selected.code}</div>
+          {/* Department filter */}
+          <div className="erp-filter-bar">
+            {depts.map((d) => (
+              <button
+                key={d.id}
+                className={`erp-filter-btn${deptFilter === d.id ? " active" : ""}`}
+                onClick={() => setDeptFilter(d.id)}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
 
-            <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
-              <span className={`erp-badge ${levelBadge[selected.level] || "erp-badge-junior"}`}>{selected.level}</span>
-              <span className="erp-badge erp-badge-active">active</span>
+          {hierarchy.length === 0 ? (
+            <div style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
+              No active employees found. Add employees in the <strong>Employees</strong> section to build the hierarchy.
             </div>
-
-            <div className="erp-detail-section">
-              <h4>Email</h4>
-              <p style={{ fontFamily: "monospace", fontSize: 12 }}>{selected.email}</p>
-            </div>
-
-            {managerNode && (
-              <div className="erp-detail-section">
-                <h4>Reports To</h4>
-                <div className="erp-emp-card" style={{ cursor: "default" }}>
-                  <div className="erp-emp-avatar">{initials(managerNode.fullName)}</div>
-                  <div className="erp-emp-info">
-                    <div className="erp-emp-name">{managerNode.fullName}</div>
-                    <div className="erp-emp-meta">{managerNode.position}</div>
-                  </div>
-                  <span className={`erp-badge ${levelBadge[managerNode.level]}`}>{managerNode.level}</span>
-                </div>
-              </div>
-            )}
-
-            {managerOf.length > 0 && (
-              <div className="erp-detail-section">
-                <h4>Manages ({managerOf.length})</h4>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {managerOf.map((e) => (
-                    <div
-                      key={e.id}
-                      className="erp-emp-card"
-                      role="button"
-                      tabIndex={0}
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setSelected(e)}
-                      onKeyDown={(ev) => ev.key === "Enter" && setSelected(e)}
-                    >
-                      <div className="erp-emp-avatar">{initials(e.fullName)}</div>
-                      <div className="erp-emp-info">
-                        <div className="erp-emp-name">{e.fullName}</div>
-                        <div className="erp-emp-meta">{e.position}</div>
-                      </div>
-                      <span className={`erp-badge ${levelBadge[e.level]}`}>{e.level}</span>
-                    </div>
+          ) : (
+            <div className="erp-hierarchy-layout">
+              {/* Tree */}
+              <div>
+                <div className="erp-tree">
+                  <div className="erp-tree-root-label">Organizational Chart — Hedj Commerce</div>
+                  {hierarchy.map((root) => (
+                    <TreeNode
+                      key={root._id || root.id || root.fullName}
+                      node={root}
+                      deptFilter={deptFilter}
+                      onSelect={setSelected}
+                      selectedId={selected?._id || selected?.id}
+                    />
                   ))}
                 </div>
               </div>
-            )}
 
-            <div className="erp-detail-section">
-              <h4>Assigned Modules</h4>
-              <div className="erp-module-tags">
-                {selected.assignedModules.map((m) => (
-                  <span key={m} className="erp-module-tag">{m}</span>
-                ))}
-              </div>
+              {/* Employee Detail panel */}
+              {selected && (
+                <div className="erp-emp-detail">
+                  <div className="erp-emp-detail-avatar">{initials(resolveName(selected))}</div>
+                  <h2>{resolveName(selected)}</h2>
+                  <div className="erp-emp-detail-meta">
+                    {resolvePosition(selected)}
+                    {resolveCode(selected) && ` · ${resolveCode(selected)}`}
+                  </div>
+
+                  <div style={{ display: "flex", gap: 6, marginBottom: 20, flexWrap: "wrap" }}>
+                    <span className={`erp-badge ${LEVEL_BADGE[resolveLevel(selected)] || "erp-badge-junior"}`}>
+                      {resolveLevel(selected)}
+                    </span>
+                    {resolveDept(selected) && (
+                      <span className="erp-badge erp-badge-active">{resolveDept(selected)}</span>
+                    )}
+                  </div>
+
+                  {selected.email && (
+                    <div className="erp-detail-section">
+                      <h4>Email</h4>
+                      <p style={{ fontFamily: "monospace", fontSize: 12 }}>{selected.email}</p>
+                    </div>
+                  )}
+
+                  {managerNode && (
+                    <div className="erp-detail-section">
+                      <h4>Reports To</h4>
+                      <div
+                        className="erp-emp-card"
+                        role="button"
+                        tabIndex={0}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setSelected(managerNode)}
+                        onKeyDown={(e) => e.key === "Enter" && setSelected(managerNode)}
+                      >
+                        <div className="erp-emp-avatar">{initials(resolveName(managerNode))}</div>
+                        <div className="erp-emp-info">
+                          <div className="erp-emp-name">{resolveName(managerNode)}</div>
+                          <div className="erp-emp-meta">{resolvePosition(managerNode)}</div>
+                        </div>
+                        <span className={`erp-badge ${LEVEL_BADGE[resolveLevel(managerNode)] || "erp-badge-junior"}`}>
+                          {resolveLevel(managerNode)}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {managerOf.length > 0 && (
+                    <div className="erp-detail-section">
+                      <h4>Manages ({managerOf.length})</h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {managerOf.map((e) => (
+                          <div
+                            key={e._id || e.id}
+                            className="erp-emp-card"
+                            role="button"
+                            tabIndex={0}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setSelected(e)}
+                            onKeyDown={(ev) => ev.key === "Enter" && setSelected(e)}
+                          >
+                            <div className="erp-emp-avatar">{initials(resolveName(e))}</div>
+                            <div className="erp-emp-info">
+                              <div className="erp-emp-name">{resolveName(e)}</div>
+                              <div className="erp-emp-meta">{resolvePosition(e)}</div>
+                            </div>
+                            <span className={`erp-badge ${LEVEL_BADGE[resolveLevel(e)] || "erp-badge-junior"}`}>
+                              {resolveLevel(e)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(selected.assignedModules || []).length > 0 && (
+                    <div className="erp-detail-section">
+                      <h4>Assigned Modules</h4>
+                      <div className="erp-module-tags">
+                        {selected.assignedModules.map((m) => (
+                          <span key={m} className="erp-module-tag">{m}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </>
+      )}
     </AdminShell>
   );
 }

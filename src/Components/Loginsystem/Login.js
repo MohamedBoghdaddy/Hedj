@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+
 import { useLogin } from "../../hooks/useLogin";
 import { useAuthContext } from "../../context/AuthContext";
 import "../../Styles/auth-premium.css";
@@ -27,7 +27,7 @@ const Login = () => {
   useEffect(() => {
     if (state.isAuthenticated && !state.loading) {
       const role = String(state.user?.role || state.user?.userType || "").toLowerCase();
-      if (role === "admin" || role === "employee") {
+      if (role === "admin") {
         navigate("/admin/dashboard", { replace: true });
       } else {
         navigate("/dashboard", { replace: true });
@@ -35,9 +35,6 @@ const Login = () => {
     }
   }, [state.isAuthenticated, state.loading, state.user, navigate]);
 
-  const handleSocialClick = () => {
-    toast.info("Social login is not configured yet.");
-  };
 
   return (
     <main className="auth-shell auth-shell-login">
@@ -77,13 +74,9 @@ const Login = () => {
             <div className="auth-field">
               <div className="auth-label-row">
                 <label htmlFor="login-password">Password</label>
-                <button
-                  type="button"
-                  className="auth-text-link"
-                  onClick={() => toast.info("Password reset is not connected yet.")}
-                >
+                <Link to="/contact?reason=password-reset" className="auth-text-link">
                   Forgot Password?
-                </button>
+                </Link>
               </div>
               <div className="auth-password-wrap">
                 <input
@@ -115,20 +108,7 @@ const Login = () => {
               {isLoading ? "Signing In..." : "Sign In"}
             </button>
 
-            <div className="auth-divider">
-              <span>Or Continue With</span>
-            </div>
-
-            <div className="auth-social-grid">
-              <button type="button" className="auth-social-btn" onClick={handleSocialClick}>
-                <span className="material-symbols-outlined">account_circle</span>
-                Google
-              </button>
-              <button type="button" className="auth-social-btn" onClick={handleSocialClick}>
-                <span className="material-symbols-outlined">phone_iphone</span>
-                Apple
-              </button>
-            </div>
+            {/* Social login removed — no OAuth provider configured */}
           </form>
 
           <footer className="auth-switch">

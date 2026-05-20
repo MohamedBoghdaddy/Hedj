@@ -94,8 +94,14 @@ export const DashboardProvider = ({ children }) => {
   const fetchDashboardData = useCallback(async () => {
     if (!isAuthenticated || !user) return;
 
+    // Do not fire any protected API calls until the token is confirmed in localStorage
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     try {
-      const canLoadAdminData = ["admin", "employee"].includes(user.role);
+      // Only admin role may call admin-only user listing endpoints.
+      // Employees and customers must never fire /api/users/filter requests.
+      const canLoadAdminData = user.role === "admin";
       const [
         analyticsRes,
         settingsRes,
@@ -105,7 +111,7 @@ export const DashboardProvider = ({ children }) => {
         axios.get(`${API_URL}/api/analytics`, withAuth()),
         axios.get(`${API_URL}/api/settings`, withAuth()),
         axios.get(`${API_URL}/api/products`, withAuth()),
-        user?._id
+        user?._id && token
           ? axios.get(`${API_URL}/api/users/${user._id}`, {
               ...withAuth(),
             })
@@ -198,14 +204,14 @@ export const DashboardProvider = ({ children }) => {
 
   // ✅ Fetch Profile Information
   const fetchProfile = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!user?._id || !token) return;
     try {
-      if (user?._id) {
-        const response = await axios.get(`${API_URL}/api/users/${user._id}`, withAuth());
-        dispatch({ type: "UPDATE_PROFILE", payload: profileFrom(response.data) });
-      }
+      const response = await axios.get(`${API_URL}/api/users/${user._id}`, withAuth());
+      dispatch({ type: "UPDATE_PROFILE", payload: profileFrom(response.data) });
     } catch (error) {
-      toast.error("Failed to load profile.");
-      console.error("Error fetching profile:", error);
+      // Silently ignore profile fetch failures — non-fatal
+      console.warn("Profile fetch failed:", error.response?.status, error.message);
     }
   }, [user]);
 

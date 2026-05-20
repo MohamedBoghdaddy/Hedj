@@ -264,6 +264,8 @@ export const commerceApi = {
       "/api/products",
       {},
       () => {
+        // Demo fallback: only used in development when the backend is unreachable
+        if (process.env.NODE_ENV === "production") return [];
         const products = readStore().products;
         if (!filters.collection) return products;
         return products.filter(
@@ -331,52 +333,60 @@ export const commerceApi = {
       (payload) => payload
     ),
 
-  checkout: (payload) =>
-    withFallback(
-      "/api/checkout",
-      { method: "POST", body: payload },
-      () => createOrderFromCheckout(payload),
-      (payload) => payload
-    ),
+  checkout: async (payload) => {
+    // Try the real Mongo order endpoint first; fall back to demo store if not authenticated
+    try {
+      const result = await request("/api/orders", { method: "POST", body: payload });
+      return result;
+    } catch (err) {
+      // 401 = not logged in — fall back to demo store checkout
+      if (err.status === 401) return createOrderFromCheckout(payload);
+      throw err;
+    }
+  },
 
   getDashboard: () =>
-    withFallback(
-      "/api/admin/dashboard",
-      {},
-      () => buildDashboard(readStore()),
-      (payload) => unwrapItem(payload, "dashboard")
-    ),
+    request("/api/admin/dashboard/summary").catch(() => buildDashboard(readStore())),
 
-  getOrders: () =>
-    withFallback(
-      "/api/admin/orders",
-      {},
-      () => readStore().orders.map(orderDisplay),
-      (payload) => unwrapList(payload, "orders").map(orderDisplay)
-    ),
+  getOrders: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/admin/orders${params ? `?${params}` : ""}`).then(
+      (payload) => unwrapList(payload, "orders")
+    );
+  },
 
   getOrder: (orderId) =>
-    withFallback(
-      `/api/admin/orders/${orderId}`,
-      {},
-      () => orderDisplay(readStore().orders.find((order) => order.id === orderId)),
-      (payload) => orderDisplay(unwrapItem(payload, "order"))
-    ),
+    request(`/api/admin/orders/${orderId}`).then((payload) => unwrapItem(payload, "order")),
+
+  createOrder: (payload) =>
+    request("/api/admin/orders", { method: "POST", body: payload }),
+
+  updateOrder: (orderId, payload) =>
+    request(`/api/admin/orders/${orderId}`, { method: "PATCH", body: payload }),
 
   updateOrderStatus: (orderId, status) =>
-    withFallback(
-      `/api/admin/orders/${orderId}/status`,
-      { method: "PATCH", body: { status } },
-      () => {
-        const store = readStore();
-        store.orders = store.orders.map((order) =>
-          order.id === orderId ? { ...order, status } : order
-        );
-        saveStore(store);
-        return orderDisplay(store.orders.find((order) => order.id === orderId));
-      },
-      (payload) => orderDisplay(unwrapItem(payload, "order"))
-    ),
+    request(`/api/admin/orders/${orderId}/status`, {
+      method: "PATCH",
+      body: { status },
+    }).then((payload) => unwrapItem(payload, "order")),
+
+  cancelOrder: (orderId) =>
+    request(`/api/admin/orders/${orderId}`, { method: "DELETE" }),
+
+  // ── Customer order routes (own orders only) ─────────────────────────────────
+  placeOrder: (payload) =>
+    request("/api/orders", { method: "POST", body: payload }),
+
+  getMyOrders: () =>
+    request("/api/orders/my").then((payload) => unwrapList(payload, "orders")),
+
+  getMyOrder: (orderId) =>
+    request(`/api/orders/${orderId}`).then((payload) => unwrapItem(payload, "order")),
+
+  cancelMyOrder: (orderId) =>
+    request(`/api/orders/${orderId}/cancel`, { method: "PATCH" }),
 
   getCustomers: () =>
     withFallback(
@@ -577,6 +587,30 @@ export const storageApi = {
     request(`/api/admin/emails/outbox/${outboxId}/send`, { method: "POST" }),
 };
 
+// ─── Customer account APIs ────────────────────────────────────────────────────
+
+export const customerApi = {
+  // Address book
+  getAddresses: () => request("/api/customer/addresses").then((p) => p.addresses || []),
+  createAddress: (data) => request("/api/customer/addresses", { method: "POST", body: data }),
+  updateAddress: (id, data) => request(`/api/customer/addresses/${id}`, { method: "PATCH", body: data }),
+  deleteAddress: (id) => request(`/api/customer/addresses/${id}`, { method: "DELETE" }),
+  setDefaultAddress: (id, type = "shipping") =>
+    request(`/api/customer/addresses/${id}/default`, { method: "PATCH", body: { type } }),
+
+  // Payment methods (metadata only — no card processing)
+  getPaymentMethods: () => request("/api/customer/payment-methods").then((p) => p.paymentMethods || []),
+  removePaymentMethod: (id) => request(`/api/customer/payment-methods/${id}`, { method: "DELETE" }),
+  setDefaultPaymentMethod: (id) =>
+    request(`/api/customer/payment-methods/${id}/default`, { method: "PATCH" }),
+
+  // Wishlist
+  getWishlist: () => request("/api/customer/wishlist").then((p) => p.wishlist || []),
+  addToWishlist: (productId) => request(`/api/customer/wishlist/${productId}`, { method: "POST" }),
+  removeFromWishlist: (productId) => request(`/api/customer/wishlist/${productId}`, { method: "DELETE" }),
+  clearWishlist: () => request("/api/customer/wishlist", { method: "DELETE" }),
+};
+
 export const erpApi = {
   getOverview: () => request("/api/admin/erp/overview"),
   getApps: () => request("/api/admin/erp/apps"),
@@ -584,9 +618,91 @@ export const erpApi = {
   getDepartments: () => request("/api/admin/erp/departments"),
   getJobPositions: () => request("/api/admin/erp/job-positions"),
   getApprovals: () => request("/api/admin/erp/approvals"),
+  getApproval: (id) => request(`/api/admin/erp/approvals/${id}`),
   approve: (id) => request(`/api/admin/erp/approvals/${id}/approve`, { method: "POST" }),
   reject: (id) => request(`/api/admin/erp/approvals/${id}/reject`, { method: "POST" }),
   checkIntegrations: () => request("/api/admin/erp/integrations/check", { method: "POST" }),
+  getEmployeeHierarchy: () => request("/api/admin/erp/hierarchy"),
+  getERPEmployees: () => request("/api/admin/erp/employees"),
+};
+
+// ─── Attendance API ───────────────────────────────────────────────────────────
+export const attendanceApi = {
+  // Admin/HR: all records
+  list: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/admin/attendance${params ? `?${params}` : ""}`);
+  },
+  create: (data) => request("/api/admin/attendance", { method: "POST", body: data }),
+  update: (id, data) => request(`/api/admin/attendance/${id}`, { method: "PATCH", body: data }),
+  delete: (id) => request(`/api/admin/attendance/${id}`, { method: "DELETE" }),
+
+  // Employee self-service
+  getMy: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v))
+    ).toString();
+    return request(`/api/attendance/my${params ? `?${params}` : ""}`);
+  },
+  clockIn:  () => request("/api/attendance/clock-in",  { method: "POST" }),
+  clockOut: (data = {}) => request("/api/attendance/clock-out", { method: "POST", body: data }),
+
+  // Export (direct download)
+  exportUrl: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return `${API_URL}/api/admin/export/attendance.xlsx${params ? `?${params}` : ""}`;
+  },
+};
+
+// ─── Leave Request API ────────────────────────────────────────────────────────
+export const leaveApi = {
+  // Admin/HR/Manager
+  list: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/admin/leave${params ? `?${params}` : ""}`);
+  },
+  get: (id) => request(`/api/admin/leave/${id}`),
+  approve: (id) => request(`/api/admin/leave/${id}/approve`, { method: "PATCH" }),
+  reject: (id, reason) => request(`/api/admin/leave/${id}/reject`, { method: "PATCH", body: { rejectionReason: reason } }),
+  escalate: (id, data = {}) => request(`/api/admin/leave/${id}/escalate`, { method: "PATCH", body: data }),
+
+  // Employee self-service
+  getMy: () => request("/api/leave/my"),
+  request: (data) => request("/api/leave/request", { method: "POST", body: data }),
+  cancel: (id) => request(`/api/leave/${id}/cancel`, { method: "PATCH" }),
+
+  // Export
+  exportUrl: (filters = {}) => {
+    const params = new URLSearchParams(filters).toString();
+    return `${API_URL}/api/admin/export/leave.xlsx${params ? `?${params}` : ""}`;
+  },
+};
+
+// ─── Import / Export API ──────────────────────────────────────────────────────
+export const importExportApi = {
+  importFile: async (file, type) => {
+    const { getAuthHeaders: getH } = await import("./authHeaders");
+    const headers = getH({});
+    delete headers["Content-Type"];
+    const fd = new FormData();
+    fd.append("file", file);
+    const url = `${API_URL}/api/admin/import${type ? `?type=${type}` : ""}`;
+    const res = await fetch(url, { method: "POST", headers, body: fd });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: "Import failed" }));
+      throw new Error(err.message || "Import failed");
+    }
+    return res.json();
+  },
+
+  templateUrl: (type) => `${API_URL}/api/admin/export/template/${type}`,
+  exportEmployeesUrl: () => `${API_URL}/api/admin/export/employees.xlsx`,
+  exportAttendanceUrl: (filters = {}) => `${API_URL}/api/admin/export/attendance.xlsx?${new URLSearchParams(filters)}`,
+  exportLeaveUrl: (filters = {}) => `${API_URL}/api/admin/export/leave.xlsx?${new URLSearchParams(filters)}`,
 };
 
 export { API_URL };

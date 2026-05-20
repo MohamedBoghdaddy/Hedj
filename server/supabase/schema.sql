@@ -1,8 +1,12 @@
 -- ============================================================
 -- Hedj Commerce – Supabase Postgres Schema
--- Run this in: Supabase Dashboard → SQL Editor
+-- ⚠️  REQUIRED for production — run ONCE in: Supabase Dashboard → SQL Editor
 -- MongoDB remains the source of truth for all business data.
 -- These tables store email outbox / logs and image-asset metadata.
+--
+-- If image_assets table is missing:
+--   → imageAssetId falls back to "bucket:path" string (upload still works)
+--   → Run this file to get real UUID asset IDs
 -- ============================================================
 
 -- ─── Helpers ────────────────────────────────────────────────

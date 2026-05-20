@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyAdmin } from "../middleware/AuthMiddleware.js";
+import { isAuthenticated, requirePermission } from "../middleware/AuthMiddleware.js";
 import {
   archiveAdminProduct,
   createAdminProduct,
@@ -14,15 +14,15 @@ const router = express.Router();
 const asyncRoute = (handler) => (req, res, next) =>
   Promise.resolve(handler(req, res, next)).catch(next);
 
-router.use(verifyAdmin);
+router.use(isAuthenticated);
 
-router.get("/", asyncRoute(getAdminProducts));
-router.get("/:id", asyncRoute(getAdminProduct));
-router.post("/", asyncRoute(createAdminProduct));
-router.put("/:id", asyncRoute(updateAdminProduct));
-router.patch("/:id/stock", asyncRoute(updateAdminProductStock));
-router.patch("/:id/status", asyncRoute(updateAdminProductStatus));
-router.patch("/:id", asyncRoute(updateAdminProduct));
-router.delete("/:id", asyncRoute(archiveAdminProduct));
+router.get("/",             requirePermission("products.view"),       asyncRoute(getAdminProducts));
+router.get("/:id",          requirePermission("products.view"),       asyncRoute(getAdminProduct));
+router.post("/",            requirePermission("products.create"),     asyncRoute(createAdminProduct));
+router.put("/:id",          requirePermission("products.update"),     asyncRoute(updateAdminProduct));
+router.patch("/:id/stock",  requirePermission("products.update"),     asyncRoute(updateAdminProductStock));
+router.patch("/:id/status", requirePermission("products.update"),     asyncRoute(updateAdminProductStatus));
+router.patch("/:id",        requirePermission("products.update"),     asyncRoute(updateAdminProduct));
+router.delete("/:id",       requirePermission("products.delete"),     asyncRoute(archiveAdminProduct));
 
 export default router;

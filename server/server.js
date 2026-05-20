@@ -23,6 +23,12 @@ import emailAdminRoutes from "./routes/emailAdminRoutes.js";
 import adminProductRoutes from "./routes/adminProductRoutes.js";
 import adminEmployeeRoutes from "./routes/adminEmployeeRoutes.js";
 import adminLeadRoutes from "./routes/adminLeadRoutes.js";
+import adminOrderRoutes from "./routes/adminOrderRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+import leaveRoutes from "./routes/leaveRoutes.js";
+import importExportRoutes from "./routes/importExportRoutes.js";
 
 dotenv.config();
 
@@ -264,20 +270,37 @@ const configureApp = ({ mongoConnected, sessionStore }) => {
     return res.status(201).json({ file: req.file });
   });
 
-  app.use("/api/admin/products", requireMongoConnection, adminProductRoutes);
+  // ── Specific routes first (more specific path → mounted before catch-alls) ──────
+  // ── Attendance & Leave ────────────────────────────────────────────────────
+  app.use("/api/attendance",      requireMongoConnection, attendanceRoutes);
+  app.use("/api/admin/attendance",requireMongoConnection, attendanceRoutes);
+  app.use("/api/leave",           requireMongoConnection, leaveRoutes);
+  app.use("/api/admin/leave",     requireMongoConnection, leaveRoutes);
+  // ── Import / Export ───────────────────────────────────────────────────────
+  app.use("/api/admin/export",  requireMongoConnection, importExportRoutes);
+  app.use("/api/admin/import",  requireMongoConnection, importExportRoutes);
+
+  // ── Specific routes first (more specific path → mounted before catch-alls) ──
+  app.use("/api/admin/products",  requireMongoConnection, adminProductRoutes);
   app.use("/api/admin/employees", requireMongoConnection, adminEmployeeRoutes);
-  app.use("/api/admin", requireMongoConnection, adminLeadRoutes);
-  app.use("/api/admin/erp", requireMongoConnection, erpRoutes);
-  app.use("/api", commerceRoutes);
-  app.use("/api/employees", requireMongoConnection, employeeRoutes);
-  app.use("/api/products", requireMongoConnection, productRoutes);
-  app.use("/api/users", userRoutes);
-  app.use("/api/analytics", analyticsRoutes);
-  app.use("/api/settings", settingsRoutes);
-  app.use("/api/erp", requireMongoConnection, erpRoutes);
+  app.use("/api/admin/orders",    requireMongoConnection, adminOrderRoutes);
+  app.use("/api/admin/dashboard", requireMongoConnection, analyticsRoutes);
+  app.use("/api/admin/analytics", requireMongoConnection, analyticsRoutes);
+  app.use("/api/admin/emails",    requireMongoConnection, emailAdminRoutes);
+  app.use("/api/admin/erp",       requireMongoConnection, erpRoutes);
+  app.use("/api/admin",           requireMongoConnection, adminLeadRoutes);
+  app.use("/api/analytics",       analyticsRoutes);
+  app.use("/api/orders",          requireMongoConnection, orderRoutes);
+  app.use("/api/customer",        requireMongoConnection, customerRoutes);
+  app.use("/api/employees",       requireMongoConnection, employeeRoutes);
+  app.use("/api/products",        requireMongoConnection, productRoutes);
+  app.use("/api/users",           userRoutes);
+  app.use("/api/erp",             requireMongoConnection, erpRoutes);
+  app.use("/api/settings",        settingsRoutes);
   // Hybrid storage routes (Supabase Storage + email outbox)
   app.use("/api", requireMongoConnection, uploadRoutes);
-  app.use("/api/admin/emails", requireMongoConnection, emailAdminRoutes);
+  // commerceRoutes last under /api — provides demo fallback for /collections, /cart, /checkout
+  app.use("/api", commerceRoutes);
 
   app.get("/", (req, res) => {
     res.json({

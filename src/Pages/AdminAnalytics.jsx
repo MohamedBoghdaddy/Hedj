@@ -1,178 +1,249 @@
+import { useCallback, useEffect, useState } from "react";
 import { AdminShell } from "../Components/AdminShell";
+import { getAuthHeaders } from "../services/authHeaders";
 import "../Styles/admin-premium.css";
 
-const textureImage =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBA9DnpZlKE8mE55QCBqq4rvYqRgRIj7YyEW9N8u8MGfM2mbOuzQ9ZFl2IW1cF7CspSyhhh3XsNaFmLvXE0jKgweWBMZHGb1JwkFZldGIMDpY0kDgM07s7OBOMPFvSiIoS_-4irVkq3w2QWBC4cgd78-cmiKAUdVRjIFjDZCdD8vEH3TR5BWASiXeoAKR36A8PZsdURhGdJEpArO37sfJJ71P8rAamdpZdnjGSIG2c1UBvAbKv_U57Ac1lnleQgQY1YW1q-MZDrxENJ";
+const API_URL =
+  process.env.REACT_APP_API_URL ??
+  (typeof window !== "undefined" && window.location.hostname === "localhost"
+    ? "http://localhost:4000"
+    : "https://hedj.onrender.com");
 
-const bars = [
-  ["Seating", 85],
-  ["Tables", 60],
-  ["Lighting", 95],
-  ["Storage", 40],
-  ["Decor", 70],
-  ["Outdoor", 55],
-];
+const money = (v) => `$${Number(v || 0).toLocaleString()}`;
 
-const rows = [
-  ["#ORD-98421", "Mid-Century Modern", "1,240", "42.5%", "1.2 Days", "Active"],
-  ["#ORD-98422", "Industrial Luxe", "890", "38.2%", "3.4 Days", "In Review"],
-  ["#ORD-98423", "Scandinavian Minimal", "2,105", "51.0%", "0.8 Days", "Active"],
-  ["#ORD-98424", "Heritage Oak", "450", "29.5%", "5.2 Days", "Flagged"],
-];
+const STATUS_CLASS = {
+  Active: "status-active",
+  "In Review": "status-review",
+  Low: "status-flagged",
+};
 
-const AdminAnalytics = () => (
-  <AdminShell
-    active="Reports"
-    title="Analytics Dashboard"
-    subtitle="Detailed performance metrics for Hedj Commerce OS"
-    profileName="Marcus Hedj"
-    role="System Admin"
-    actions={
-      <>
-        <button className="admin-premium-button" type="button">
-          <span className="material-symbols-outlined">file_download</span>
-          Export CSV Data
-        </button>
-        <button className="admin-premium-button primary" type="button">
-          <span className="material-symbols-outlined">picture_as_pdf</span>
-          Export Full Report
-        </button>
-      </>
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export default function AdminAnalytics() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [months, setMonths] = useState("6");
+
+  const loadAnalytics = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const resp = await fetch(`${API_URL}/api/admin/analytics/overview?months=${months}`, {
+        credentials: "include",
+        headers: getAuthHeaders({}),
+      });
+      if (!resp.ok) {
+        const t = await resp.text();
+        throw new Error(JSON.parse(t).message || `HTTP ${resp.status}`);
+      }
+      setData(await resp.json());
+    } catch (err) {
+      setError(err.message || "Failed to load analytics.");
+    } finally {
+      setLoading(false);
     }
-  >
-    <section className="admin-filter-card">
-      <div className="admin-filter-grid">
-        <AdminField label="Custom Date Range">
-          <input defaultValue="Jan 01, 2024 - Mar 31, 2024" />
-        </AdminField>
-        <AdminField label="Collection">
-          <select defaultValue="All Collections">
-            <option>All Collections</option>
-            <option>Mid-Century Modern</option>
-            <option>Scandinavian Minimal</option>
-            <option>Industrial Luxe</option>
-          </select>
-        </AdminField>
-        <AdminField label="Region">
-          <select defaultValue="Global Reach">
-            <option>Global Reach</option>
-            <option>North America</option>
-            <option>Europe (EMEA)</option>
-            <option>Asia Pacific</option>
-          </select>
-        </AdminField>
-        <button className="admin-premium-button" type="button">
-          Apply Filters
-        </button>
-      </div>
-    </section>
+  }, [months]);
 
-    <section className="admin-metrics-grid">
-      <Metric title="Order Velocity" value="142 orders/day" badge="+12.4%" progress={75} />
-      <Metric title="Inventory Turnover" value="4.2x" badge="Optimal" />
-      <Metric title="CAC Avg" value="$45.20" badge="+$12" />
-      <Metric title="Retention Rate" value="68%" badge="Trending" progress={50} />
-    </section>
+  useEffect(() => { loadAnalytics(); }, [loadAnalytics]);
 
-    <section className="admin-analytics-grid">
-      <div className="admin-chart-card">
-        <div className="admin-card-header">
-          <h2>Sales by Category</h2>
-          <span className="admin-card-kicker">Revenue / Forecast</span>
+  const handleExportCSV = async () => {
+    setExporting(true);
+    try {
+      const resp = await fetch(`${API_URL}/api/admin/analytics/export.csv`, {
+        credentials: "include",
+        headers: getAuthHeaders({}),
+      });
+      if (!resp.ok) throw new Error(`Export failed: ${resp.status}`);
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `hedj-analytics-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      alert(`CSV export failed: ${err.message}`);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const categoryBars = data?.categoryBars || [];
+  const performanceRows = data?.performanceRows || [];
+
+  const metrics = data
+    ? [
+        { title: "Total Revenue", value: money(data.totalSales), badge: `${data.totalOrders} orders` },
+        { title: "Avg Order Value", value: money(data.avgOrderValue), badge: "per order" },
+        { title: "Lead Conversion", value: `${data.leadConversionRate}%`, badge: "of leads won" },
+        { title: "Quote Conversion", value: `${data.quoteConversionRate}%`, badge: "of quotes accepted" },
+      ]
+    : [];
+
+  return (
+    <AdminShell
+      active="Reports"
+      title="Analytics Dashboard"
+      subtitle="Real performance metrics from MongoDB"
+      actions={
+        <>
+          <button
+            className="admin-premium-button"
+            type="button"
+            onClick={handleExportCSV}
+            disabled={exporting || loading}
+          >
+            <span className="material-symbols-outlined">file_download</span>
+            {exporting ? "Exporting…" : "Export CSV"}
+          </button>
+        </>
+      }
+    >
+      {/* Filters */}
+      <section className="admin-filter-card">
+        <div className="admin-filter-grid">
+          <div className="admin-field">
+            <label htmlFor="analytics-months">Time Range</label>
+            <select id="analytics-months" value={months} onChange={(e) => setMonths(e.target.value)}>
+              <option value="3">Last 3 months</option>
+              <option value="6">Last 6 months</option>
+              <option value="12">Last 12 months</option>
+            </select>
+          </div>
+          <button
+            className="admin-premium-button"
+            type="button"
+            onClick={loadAnalytics}
+            disabled={loading}
+          >
+            {loading ? "Loading…" : "Apply"}
+          </button>
         </div>
-        <div className="admin-bar-chart">
-          {bars.map(([label, height]) => (
-            <div className="admin-bar" key={label}>
-              <div className="admin-bar-fill" style={{ height: `${height}%` }} />
-              <span>{label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      </section>
 
-      <aside className="admin-insights-card">
-        <img src={textureImage} alt="Subtle dark marble texture" />
-        <div className="admin-insights-content">
-          <h2>Strategic Insights</h2>
-          <p>
-            Inventory turnover in Lighting has peaked. High-margin items in Seating are
-            showing early signs of seasonal slowdown. Consider reallocating budget to
-            Scandinavian Minimal.
-          </p>
-          <p>
-            <span className="material-symbols-outlined">warning</span> Stock Warning:
-            2 products below safety threshold.
-          </p>
-          <p>
-            <span className="material-symbols-outlined">check_circle</span> LTV
-            Optimization: loyalty campaign active.
-          </p>
+      {/* Error */}
+      {error && (
+        <div style={{ background: "#fff1f0", padding: "12px 16px", borderRadius: 8, color: "#dc2626", marginBottom: 24 }}>
+          {error}
+          <button className="admin-premium-button" type="button" onClick={loadAnalytics} style={{ marginLeft: 12 }}>
+            Retry
+          </button>
         </div>
-      </aside>
-    </section>
+      )}
 
-    <section className="admin-table-card">
-      <div className="admin-card-header">
-        <h2>Granular Performance Log</h2>
-      </div>
-      <div className="admin-premium-table-wrap">
-        <table className="admin-premium-table">
-          <thead>
-            <tr>
-              <th>Reference ID</th>
-              <th>Collection Category</th>
-              <th>Units Sold</th>
-              <th>Gross Margin</th>
-              <th>Fulfillment Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row[0]}>
-                {row.slice(0, 5).map((cell) => (
-                  <td key={cell}>{cell}</td>
-                ))}
-                <td>
-                  <span
-                    className={`status-pill ${
-                      row[5] === "Active"
-                        ? "status-active"
-                        : row[5] === "Flagged"
-                          ? "status-flagged"
-                          : "status-review"
-                    }`}
-                  >
-                    {row[5]}
-                  </span>
-                </td>
-              </tr>
+      {/* Loading */}
+      {loading && <div className="kitchen-state">Loading analytics…</div>}
+
+      {!loading && !error && data && (
+        <>
+          {/* KPI metrics */}
+          <section className="admin-metrics-grid">
+            {metrics.map((m) => (
+              <div key={m.title} className="admin-metric-card">
+                <p className="admin-card-kicker">{m.title}</p>
+                <span>{m.badge}</span>
+                <h3>{m.value}</h3>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </AdminShell>
-);
+          </section>
 
-const AdminField = ({ label, children }) => (
-  <div className="admin-field">
-    <label>{label}</label>
-    {children}
-  </div>
-);
+          <section className="admin-analytics-grid">
+            {/* Category bars */}
+            <div className="admin-chart-card">
+              <div className="admin-card-header">
+                <h2>Revenue by Category</h2>
+                <span className="admin-card-kicker">
+                  {categoryBars.length} categories
+                </span>
+              </div>
+              {categoryBars.length === 0 ? (
+                <p style={{ color: "#94a3b8", fontSize: 13, padding: "16px 0" }}>
+                  No order data yet. Place orders to see category revenue.
+                </p>
+              ) : (
+                <div className="admin-bar-chart">
+                  {categoryBars.map((bar) => (
+                    <div className="admin-bar" key={bar.label} title={`${bar.label}: ${money(bar.revenue)} — ${bar.unitsSold} units`}>
+                      <div className="admin-bar-fill" style={{ height: `${bar.height}%` }} />
+                      <span>{bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-const Metric = ({ title, value, badge, progress }) => (
-  <div className="admin-metric-card">
-    <p className="admin-card-kicker">{title}</p>
-    <span>{badge}</span>
-    <h3>{value}</h3>
-    {progress && (
-      <div className="mini-progress">
-        <span style={{ width: `${progress}%` }} />
-      </div>
-    )}
-  </div>
-);
+            {/* Insights */}
+            <aside className="admin-insights-card">
+              <div className="admin-insights-content" style={{ padding: "24px" }}>
+                <h2>Live Insights</h2>
+                <p>
+                  {data.totalCustomers} customers have placed {data.totalOrders} orders
+                  generating {money(data.totalSales)} in revenue.
+                </p>
+                {data.lowStockCount > 0 && (
+                  <p>
+                    <span className="material-symbols-outlined">warning</span>{" "}
+                    {data.lowStockCount} product(s) below safety stock threshold.
+                  </p>
+                )}
+                {data.leadConversionRate > 0 && (
+                  <p>
+                    <span className="material-symbols-outlined">check_circle</span>{" "}
+                    {data.leadConversionRate}% lead-to-win conversion rate.
+                  </p>
+                )}
+                {data.quoteConversionRate > 0 && (
+                  <p>
+                    <span className="material-symbols-outlined">check_circle</span>{" "}
+                    {data.quoteConversionRate}% quote acceptance rate.
+                  </p>
+                )}
+              </div>
+            </aside>
+          </section>
 
-export default AdminAnalytics;
+          {/* Performance log */}
+          <section className="admin-table-card">
+            <div className="admin-card-header">
+              <h2>Top Products by Revenue</h2>
+            </div>
+            {performanceRows.length === 0 ? (
+              <p style={{ padding: "16px", color: "#94a3b8" }}>
+                No order data yet. Create orders to see product performance.
+              </p>
+            ) : (
+              <div className="admin-premium-table-wrap">
+                <table className="admin-premium-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Units Sold</th>
+                      <th>Revenue</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {performanceRows.map((row) => (
+                      <tr key={row.id}>
+                        <td>{row.name}</td>
+                        <td>{row.unitsSold}</td>
+                        <td style={{ fontWeight: 500 }}>{money(row.revenue)}</td>
+                        <td>
+                          <span className={`status-pill ${STATUS_CLASS[row.status] || "status-review"}`}>
+                            {row.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </>
+      )}
+    </AdminShell>
+  );
+}

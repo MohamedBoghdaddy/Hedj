@@ -169,14 +169,7 @@ export default function VirtualShowroom() {
                   <div className="vs-space-image">
                     <img src={space.image} alt={space.title} />
                     <div className="vs-space-overlay">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          showMessage(`${space.title} walkthrough coming soon.`)
-                        }
-                      >
-                        Walkthrough
-                      </button>
+                      <span className="vs-space-label">3D View</span>
                     </div>
                   </div>
 

@@ -170,7 +170,14 @@ export const saveImageAssetMetadata = async ({
     .single();
 
   if (error) {
-    console.warn(`Could not save image_assets metadata: ${error.message}`);
+    // image_assets table likely not created yet.
+    // Run the schema.sql in Supabase Dashboard → SQL Editor to fix this.
+    // The upload itself succeeded — imageUrl is valid. imageAssetId will use the storage path fallback.
+    if (process.env.NODE_ENV === "production") {
+      console.error(`[image_assets] Insert failed in production — run schema.sql in Supabase: ${error.message}`);
+    } else {
+      console.warn(`[image_assets] Insert failed (table may not exist — run schema.sql): ${error.message}`);
+    }
     return null;
   }
 
