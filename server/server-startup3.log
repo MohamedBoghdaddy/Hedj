@@ -403,3 +403,18 @@ Server running on port 4000
 [0mGET /api/users/filter?role=customer [36m304[0m 359.814 ms - -[0m
 [0mGET /api/users/filter?role=employee [36m304[0m 360.479 ms - -[0m
 [0mGET /api/users/filter?role=admin [36m304[0m 362.364 ms - -[0m
+[0mGET / [32m200[0m 6.177 ms - 95[0m
+[0mPOST /api/users/login [32m200[0m 262.894 ms - 824[0m
+[0mGET /api/admin/emails/outbox [32m200[0m 441.266 ms - 68[0m
+[0mPOST /api/users/login [32m200[0m 274.638 ms - 824[0m
+[0mGET /api/admin/products?limit=1 [32m200[0m 462.067 ms - 691[0m
+[0mPOST /api/admin/products/6a0d9dec1d4a63e22d7354fc/image [32m200[0m 1574.948 ms - 849[0m
+[0mPOST /api/users/me/profile-photo [32m200[0m 715.153 ms - 849[0m
+[0mGET /api/admin/employees?limit=1 [32m200[0m 366.600 ms - 9740[0m
+[0mPOST /api/admin/employees/6a0d9d5526acbde7ed72d0f3/profile-photo [32m200[0m 1559.359 ms - 856[0m
+[0mPOST /api/admin/products/6a0d9dec1d4a63e22d7354fc/image [33m415[0m 730.754 ms - 134[0m
+[0mPOST /api/users/login [32m200[0m 239.815 ms - 784[0m
+Supabase Auth invite failed for qa.invite.1779282641181@hedj.test: Email address "qa.invite.1779282641181@hedj.test" is invalid. Falling back to email outbox.
+[0mPOST /api/admin/employees/invite [32m201[0m 1794.779 ms - 559[0m
+[0mPOST /api/admin/employees/6a0db2d125cf2b8f638caf41/send-invite [33m422[0m 752.732 ms - 262[0m
+[0mGET /api/admin/emails/outbox [32m200[0m 294.464 ms - 1274[0m

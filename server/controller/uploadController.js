@@ -293,38 +293,31 @@ export const sendEmployeeInvite = async (req, res) => {
       );
 
       if (authError) {
-        // Supabase Auth failed — store error, return honest response
-        employee.invitationEmailStatus = "failed";
+        // Supabase Auth failed — fall through to email outbox fallback.
+        console.warn(`Supabase Auth invite failed for ${employee.email}: ${authError.message}. Falling back to email outbox.`);
+        // intentional fall-through (no return)
+      } else {
+        // Supabase Auth invite sent successfully — store supabase user id and return.
+        employee.invitationEmailStatus = "sent";
         employee.invitedAt = new Date();
+        if (authData?.user?.id) {
+          employee.supabaseAuthUserId = authData.user.id;
+        }
         await employee.save();
-        return res.status(422).json({
-          success: false,
-          status: "failed",
-          message: `Supabase Auth invite failed: ${authError.message}`,
-          employee: { _id: employee._id, email: employee.email, invitationEmailStatus: "failed" },
+
+        return res.status(200).json({
+          success: true,
+          status: "sent",
+          message: "Invitation email sent via Supabase Auth.",
+          inviteMethod: "supabase_auth",
+          employee: {
+            _id: employee._id,
+            email: employee.email,
+            invitationEmailStatus: "sent",
+            supabaseAuthUserId: employee.supabaseAuthUserId || null,
+          },
         });
       }
-
-      // Supabase Auth invite sent — store supabase user id
-      employee.invitationEmailStatus = "sent";
-      employee.invitedAt = new Date();
-      if (authData?.user?.id) {
-        employee.supabaseAuthUserId = authData.user.id;
-      }
-      await employee.save();
-
-      return res.status(200).json({
-        success: true,
-        status: "sent",
-        message: "Invitation email sent via Supabase Auth.",
-        inviteMethod: "supabase_auth",
-        employee: {
-          _id: employee._id,
-          email: employee.email,
-          invitationEmailStatus: "sent",
-          supabaseAuthUserId: employee.supabaseAuthUserId || null,
-        },
-      });
     }
   }
 
