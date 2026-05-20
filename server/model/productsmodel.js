@@ -20,6 +20,12 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true, min: 0 },
     discountPrice: { type: Number, default: null }, // Optional discounted price
     sku: { type: String, trim: true, uppercase: true },
+    material: { type: String, trim: true },
+    color: { type: String, trim: true },
+    room: { type: String, trim: true },
+    useCase: { type: String, trim: true },
+    dimensions: { type: String, trim: true },
+    tags: { type: [String], default: [] },
     images: { type: [String], default: [] },
     stock: { type: Number, required: true, min: 0 }, // Available quantity
     lowStockThreshold: { type: Number, default: 5, min: 0 },
@@ -54,6 +60,9 @@ const productSchema = new mongoose.Schema(
 productSchema.index({ slug: 1 }, { unique: true, sparse: true });
 productSchema.index({ sku: 1 }, { unique: true, sparse: true });
 productSchema.index({ status: 1, collection: 1 });
+productSchema.index({ status: 1, category: 1 });
+productSchema.index({ status: 1, material: 1 });
+productSchema.index({ status: 1, color: 1 });
 
 // Pre-save middleware to calculate average rating dynamically
 productSchema.pre("save", function (next) {

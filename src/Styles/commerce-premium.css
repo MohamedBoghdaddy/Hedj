@@ -1081,13 +1081,34 @@
   box-shadow: 0 12px 26px rgba(15, 23, 42, 0.15);
 }
 
+.contact-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .contact-success {
   color: var(--commerce-gold);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   font-size: 14px;
   margin-top: 24px;
+}
+
+.contact-error {
+  color: var(--commerce-error);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+  margin-top: 24px;
+}
+
+.contact-error a {
+  color: inherit;
+  font-weight: 800;
 }
 
 .contact-side {
@@ -1209,6 +1230,330 @@
   box-shadow: 0 14px 28px rgba(15, 23, 42, 0.2);
 }
 
+.support-page,
+.trade-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 72px 24px 0;
+}
+
+.support-hero,
+.trade-hero {
+  max-width: 840px;
+  padding: 48px 0 24px;
+}
+
+.trade-hero {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.support-kicker {
+  margin: 0 0 14px;
+  color: var(--commerce-gold);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.support-hero h1,
+.trade-hero h1,
+.trade-login-copy h1 {
+  margin: 0 0 18px;
+  color: var(--commerce-text);
+  font-family: "Noto Serif", serif;
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.support-hero p,
+.trade-hero p,
+.trade-login-copy p,
+.trade-application-copy p,
+.support-section-header p,
+.trade-login-card p {
+  color: var(--commerce-muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.support-section {
+  padding: 48px 0;
+}
+
+.support-section-header {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.support-section-header.compact {
+  margin-bottom: 24px;
+}
+
+.support-section-header h2,
+.support-shortcuts-card h2,
+.trade-login-card h2,
+.trade-application-copy h2 {
+  margin: 0 0 10px;
+  color: var(--commerce-text);
+  font-family: "Noto Serif", serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+}
+
+.support-section-header p,
+.trade-login-card p,
+.trade-application-copy p {
+  margin: 0;
+}
+
+.support-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.support-option-card,
+.support-faq-card,
+.support-form-card,
+.support-shortcuts-card,
+.trade-login-card {
+  background: var(--commerce-card);
+  border: 1px solid #e5e2dd;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.support-option-card {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.support-option-card > .material-symbols-outlined {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--commerce-low);
+  color: var(--commerce-navy);
+  border-radius: 999px;
+}
+
+.support-option-card h3,
+.support-faq-card h3 {
+  margin: 0;
+  color: var(--commerce-text);
+  font-family: "Noto Serif", serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.support-option-card p,
+.support-faq-card p {
+  margin: 0;
+  color: var(--commerce-muted);
+  line-height: 1.6;
+}
+
+.support-option-card button {
+  width: fit-content;
+  min-height: 44px;
+  margin-top: auto;
+  border: 0;
+  background: transparent;
+  color: var(--commerce-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.support-option-card button:hover {
+  color: var(--commerce-gold);
+}
+
+.support-two-column,
+.trade-login-layout,
+.trade-application-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.support-form-card,
+.trade-login-card,
+.support-shortcuts-card {
+  padding: 32px;
+}
+
+.support-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.support-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.support-field-error {
+  margin: 0;
+  color: var(--commerce-error);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.support-form-message {
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.support-form-message p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.support-form-message a {
+  color: inherit;
+  font-weight: 800;
+}
+
+.support-form-message.success {
+  background: #edf7ed;
+  color: #1f6f3a;
+}
+
+.support-form-message.error {
+  background: #fff1f1;
+  color: var(--commerce-error);
+}
+
+.support-shortcuts-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.support-shortcuts-card a,
+.trade-login-links a {
+  color: var(--commerce-text);
+  text-decoration: none;
+}
+
+.support-shortcuts-card a {
+  min-height: 68px;
+  border: 1px solid var(--commerce-border);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.support-shortcuts-card a:hover {
+  border-color: var(--commerce-primary);
+  background: var(--commerce-low);
+}
+
+.support-shortcuts-card strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.support-shortcuts-card span:last-child {
+  color: var(--commerce-muted);
+  line-height: 1.45;
+}
+
+.support-faq-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.support-faq-card {
+  padding: 24px;
+}
+
+.trade-login-layout {
+  min-height: 680px;
+  padding: 48px 0;
+}
+
+.trade-login-copy {
+  background: var(--commerce-low);
+  border-radius: 8px;
+  padding: clamp(32px, 6vw, 64px);
+}
+
+.trade-benefit-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.trade-benefit-item {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--commerce-text);
+  font-weight: 700;
+}
+
+.trade-benefit-item .material-symbols-outlined {
+  color: var(--commerce-gold);
+}
+
+.trade-login-card {
+  width: 100%;
+}
+
+.trade-login-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.trade-login-links a {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trade-login-links a:hover {
+  color: var(--commerce-gold);
+}
+
+.trade-application-layout {
+  padding: 48px 0 0;
+}
+
+.trade-application-copy {
+  position: static;
+}
+
 @media (min-width: 768px) {
   .commerce-nav-links {
     display: flex;
@@ -1216,7 +1561,8 @@
 
   .product-tab-content,
   .checkout-form-grid,
-  .contact-form-row {
+  .contact-form-row,
+  .support-form-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1225,7 +1571,9 @@
   }
 
   .install-options,
-  .related-grid {
+  .related-grid,
+  .support-card-grid,
+  .support-faq-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1257,11 +1605,30 @@
   .contact-layout {
     grid-template-columns: 7fr 5fr;
   }
+
+  .support-two-column,
+  .trade-login-layout,
+  .trade-application-layout {
+    grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr);
+  }
+
+  .trade-login-card,
+  .support-shortcuts-card,
+  .trade-application-copy {
+    position: sticky;
+    top: 112px;
+  }
+
+  .support-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
   .commerce-container,
-  .contact-layout {
+  .contact-layout,
+  .support-page,
+  .trade-page {
     padding: 48px 18px;
   }
 
@@ -1302,7 +1669,11 @@
   .commerce-cart-card,
   .commerce-summary-card,
   .contact-form-card,
-  .success-modal {
+  .success-modal,
+  .support-form-card,
+  .support-shortcuts-card,
+  .trade-login-card,
+  .trade-login-copy {
     padding: 24px;
   }
 

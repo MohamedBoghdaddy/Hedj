@@ -11,10 +11,16 @@ const EMPTY_FORM = {
   category: "",
   collection: "",
   sku: "",
+  material: "",
+  color: "",
+  room: "",
+  dimensions: "",
+  tags: "",
   price: "",
   discountPrice: "",
   stock: "",
   status: "active",
+  featured: false,
   images: [],
 };
 
@@ -110,10 +116,16 @@ export default function AdminProducts() {
       category: product.category || "",
       collection: product.collection || "",
       sku: product.sku || "",
+      material: product.material || "",
+      color: product.color || "",
+      room: product.room || product.useCase || "",
+      dimensions: product.dimensions || "",
+      tags: Array.isArray(product.tags) ? product.tags.join(", ") : product.tags || "",
       price: formNumberValue(product.price),
       discountPrice: formNumberValue(product.discountPrice),
       stock: formNumberValue(product.stock),
       status: product.status || "active",
+      featured: Boolean(product.featured || product.isFeatured),
       images: product.images || [],
     });
     setSelected(product);
@@ -127,7 +139,12 @@ export default function AdminProducts() {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    const nextValue = NUMERIC_FORM_FIELDS.has(name) ? cleanNumericInput(value) : value;
+    const nextValue =
+      e.target.type === "checkbox"
+        ? e.target.checked
+        : NUMERIC_FORM_FIELDS.has(name)
+          ? cleanNumericInput(value)
+          : value;
     setForm((prev) => ({ ...prev, [name]: nextValue }));
   };
 
@@ -181,10 +198,20 @@ export default function AdminProducts() {
         category,
         collection: form.collection.trim() || category,
         sku: form.sku.trim(),
+        material: form.material.trim(),
+        color: form.color.trim(),
+        room: form.room.trim(),
+        useCase: form.room.trim(),
+        dimensions: form.dimensions.trim(),
+        tags: form.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean),
         price,
         discountPrice,
         stock,
         status: form.status || "active",
+        featured: Boolean(form.featured),
       };
 
       let savedProduct;
@@ -419,6 +446,22 @@ export default function AdminProducts() {
                   <input id="prod-sku" name="sku" value={form.sku} onChange={handleFormChange} />
                 </div>
                 <div className="admin-field">
+                  <label htmlFor="prod-material">Material</label>
+                  <input id="prod-material" name="material" value={form.material} onChange={handleFormChange} placeholder="Marble, walnut, linen" />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="prod-color">Color</label>
+                  <input id="prod-color" name="color" value={form.color} onChange={handleFormChange} placeholder="Black, oak, ivory" />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="prod-room">Room / Use Case</label>
+                  <input id="prod-room" name="room" value={form.room} onChange={handleFormChange} placeholder="Living room, dining, office" />
+                </div>
+                <div className="admin-field">
+                  <label htmlFor="prod-dimensions">Dimensions</label>
+                  <input id="prod-dimensions" name="dimensions" value={form.dimensions} onChange={handleFormChange} placeholder="220 x 80 x 74 cm" />
+                </div>
+                <div className="admin-field">
                   <label htmlFor="prod-price">Price ($) *</label>
                   <input id="prod-price" name="price" type="number" min="0" step="0.01" value={form.price} onChange={handleFormChange} required />
                 </div>
@@ -439,11 +482,29 @@ export default function AdminProducts() {
                     <option value="inactive">Inactive</option>
                   </select>
                 </div>
+                <div className="admin-field">
+                  <label htmlFor="prod-featured">Featured</label>
+                  <label className="admin-checkbox-row" htmlFor="prod-featured">
+                    <input
+                      id="prod-featured"
+                      name="featured"
+                      type="checkbox"
+                      checked={form.featured}
+                      onChange={handleFormChange}
+                    />
+                    <span>Prioritize in customer listings</span>
+                  </label>
+                </div>
               </div>
 
               <div className="admin-field">
                 <label htmlFor="prod-desc">Description *</label>
                 <textarea id="prod-desc" name="description" rows={4} value={form.description} onChange={handleFormChange} required />
+              </div>
+
+              <div className="admin-field">
+                <label htmlFor="prod-tags">Tags</label>
+                <input id="prod-tags" name="tags" value={form.tags} onChange={handleFormChange} placeholder="sofa, storage, sculptural" />
               </div>
 
               <div className="admin-modal-footer">

@@ -11,6 +11,9 @@ import Wishlist from "./Components/Products/wishlist";
 import PremiumProductDetail from "./Pages/ProductDetail";
 import CartCheckout from "./Pages/CartCheckout";
 import PremiumContact from "./Pages/Contact";
+import SupportPortal from "./Pages/SupportPortal";
+import TradeLogin from "./Pages/TradeLogin";
+import TradeProgram from "./Pages/TradeProgram";
 
 // Auth
 import Signup from "./Components/Loginsystem/Signup";
@@ -159,6 +162,10 @@ const App = () => {
         <Route path="/checkout" element={<CartCheckout />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/contact" element={<PremiumContact />} />
+        <Route path="/support" element={<SupportPortal />} />
+        <Route path="/client-support" element={<SupportPortal />} />
+        <Route path="/trade-login" element={<TradeLogin />} />
+        <Route path="/trade-program" element={<TradeProgram />} />
         <Route path="/virtual-showroom" element={<VirtualShowroom />} />
 
         {/* Static / legal pages */}

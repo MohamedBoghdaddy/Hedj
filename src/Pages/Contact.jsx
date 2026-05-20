@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
+import catalogPdf from "../Assets/collection/HEDJ-Company Profile-2024 Q01.pdf";
+import { supportApi } from "../services/api";
 import "../Styles/commerce-premium.css";
 
 const heroImage =
@@ -12,8 +14,27 @@ const showroomImage =
 const mapImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuATlgo0_32EtW6LwofAuS4kIq_gskGIkNAc39XsSOWFM1O3saq40XNgeJ5RBvK_MjJakXdeuXeJUwyVZAlJU7jKBOjLx_i0HIEoJpXVKCnj_iF2n8JxH3gwOpgXKOOx8w3JZlkT3tw-frUPWxTsJYqPmwRMV4gQUSolLJUSvIFFQeUpuQ8hEyFDs1zCrcMDpmi-SeGleGB-llApEGSJZzHwVTGmEdPwOCnivadKuqVu8BTwoJ3Ir2pPGhP5C07WR06qgRbGL5q04RB7";
 
+const SUPPORT_EMAIL = "support@hedjcommerce.com"; // TODO: replace with the final public support inbox.
+
+const topicToSupportType = {
+  "Product Inquiry": "Product Inquiry",
+  "Custom Furniture": "Product Inquiry",
+  "Interior Consultation": "Other",
+  "Partnership Request": "Other",
+  "Media & Press": "Other",
+};
+
+const buildContactMailto = ({ name, email, topic, message }) => {
+  const subject = encodeURIComponent(`Hedj inquiry: ${topic || "Contact"}`);
+  const body = encodeURIComponent(
+    [`Name: ${name}`, `Email: ${email}`, `Topic: ${topic}`, "", message].join("\n"),
+  );
+  return `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
+};
+
 const Contact = () => {
-  const [sent, setSent] = useState(false);
+  const [submitState, setSubmitState] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   return (
     <PublicCommerceShell active="Contact">
@@ -37,26 +58,68 @@ const Contact = () => {
           <div className="contact-form-card">
             <form
               className="contact-form"
-              onSubmit={(event) => {
+              onSubmit={async (event) => {
                 event.preventDefault();
-                setSent(true);
+                const formData = new FormData(event.currentTarget);
+                const payload = {
+                  name: String(formData.get("name") || "").trim(),
+                  email: String(formData.get("email") || "").trim(),
+                  topic: String(formData.get("topic") || "Product Inquiry").trim(),
+                  message: String(formData.get("message") || "").trim(),
+                };
+
+                setSubmitting(true);
+                setSubmitState(null);
+                try {
+                  const response = await supportApi.createInquiry({
+                    name: payload.name,
+                    email: payload.email,
+                    type: topicToSupportType[payload.topic] || "Other",
+                    message: payload.message,
+                    source: "contact_page",
+                    metadata: { topic: payload.topic },
+                  });
+                  setSubmitState({
+                    tone: "success",
+                    message: response?.inquiry?.ticketNumber
+                      ? `Inquiry saved. Reference ${response.inquiry.ticketNumber} has been created.`
+                      : "Inquiry saved. An interior consultant will review it shortly.",
+                  });
+                  event.currentTarget.reset();
+                } catch (error) {
+                  setSubmitState({
+                    tone: "error",
+                    message:
+                      error?.message ||
+                      "We could not save your inquiry right now. Please use the email fallback.",
+                    mailto: buildContactMailto(payload),
+                  });
+                } finally {
+                  setSubmitting(false);
+                }
               }}
             >
               <div className="contact-form-row">
                 <div className="commerce-field">
                   <label htmlFor="contact-name">Full Name</label>
-                  <input id="contact-name" placeholder="John Doe" type="text" required />
+                  <input id="contact-name" name="name" placeholder="John Doe" type="text" required />
                 </div>
 
                 <div className="commerce-field">
                   <label htmlFor="contact-email">Email Address</label>
-                  <input id="contact-email" placeholder="hello@example.com" type="email" required />
+                  <input
+                    id="contact-email"
+                    name="email"
+                    placeholder="hello@example.com"
+                    type="email"
+                    required
+                  />
                 </div>
               </div>
 
               <div className="commerce-field">
                 <label htmlFor="contact-topic">Topic of Interest</label>
-                <select id="contact-topic" defaultValue="Product Inquiry">
+                <select id="contact-topic" name="topic" defaultValue="Product Inquiry">
                   <option>Product Inquiry</option>
                   <option>Custom Furniture</option>
                   <option>Interior Consultation</option>
@@ -69,6 +132,7 @@ const Contact = () => {
                 <label htmlFor="contact-message">Your Message</label>
                 <textarea
                   id="contact-message"
+                  name="message"
                   placeholder="Tell us about your project..."
                   rows="4"
                   required
@@ -76,15 +140,22 @@ const Contact = () => {
               </div>
 
               <div>
-                <button className="contact-submit" type="submit">
-                  Send Inquiry
+                <button className="contact-submit" type="submit" disabled={submitting}>
+                  {submitting ? "Sending..." : "Send Inquiry"}
                 </button>
 
-                {sent && (
-                  <p className="contact-success">
-                    <span className="material-symbols-outlined">verified_user</span>
-                    Thank you. An interior consultant will reach out within 24 hours.
-                  </p>
+                {submitState && (
+                  <div
+                    className={
+                      submitState.tone === "success" ? "contact-success" : "contact-error"
+                    }
+                  >
+                    <span className="material-symbols-outlined">
+                      {submitState.tone === "success" ? "verified_user" : "error"}
+                    </span>
+                    <span>{submitState.message}</span>
+                    {submitState.mailto && <a href={submitState.mailto}>Email us instead</a>}
+                  </div>
                 )}
               </div>
             </form>
@@ -136,15 +207,15 @@ const Contact = () => {
                 <span className="material-symbols-outlined">arrow_forward</span>
               </Link>
 
-              <Link className="contact-link" to="/trade">
+              <Link className="contact-link" to="/trade-login">
                 <span>Trade Program Login</span>
                 <span className="material-symbols-outlined">arrow_forward</span>
               </Link>
 
-              <Link className="contact-link" to="/catalog">
+              <a className="contact-link" href={catalogPdf} download>
                 <span>Download Catalog 2024</span>
                 <span className="material-symbols-outlined">download</span>
-              </Link>
+              </a>
             </div>
           </aside>
         </section>

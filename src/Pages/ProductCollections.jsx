@@ -3,140 +3,155 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { PublicCommerceShell } from "../Components/PublicCommerceShell";
 import { ShopContext } from "../context/productContext";
 import { commerceApi } from "../services/api";
+import {
+  formatProductPrice,
+  normalizeProductList,
+  slugify,
+} from "../utils/productUtils";
 import "../Styles/commerce-premium.css";
 import "../Styles/product-collections-premium.css";
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 const categoryMeta = {
   products: {
     label: "Products",
     heading: "The Collections",
     description:
-      "Discover our curated selection of high-performance furniture and product design, where artisanal craftsmanship meets state-of-the-art innovation. Each piece is a testament to timeless aesthetics and functional excellence.",
-    ids: null,
+      "Discover a living catalogue of Hedj furniture, materials, and architectural pieces drawn from the current product database.",
   },
   collections: {
     label: "Collections",
     heading: "Curated Collections",
     description:
       "Explore Hedj pieces by room and ritual, from architectural kitchens to softer finishing objects.",
-    ids: null,
   },
   kitchens: {
     label: "Kitchens",
     heading: "Kitchen Collections",
     description:
       "Sculptural cabinetry, worktops, tables, and lighting for the kitchen as the architectural heart of the home.",
-    ids: [1, 2, 5, 8, 9],
   },
   bedrooms: {
     label: "Bedrooms",
     heading: "Bedroom Collections",
     description:
       "Considered furniture for rest and renewal, from platform beds to hand-finished storage and soft textiles.",
-    ids: [7, 10, 11, 12, 18],
   },
   outdoor: {
     label: "Outdoor",
     heading: "Outdoor Collections",
     description:
       "Weather-conscious furniture for terraces, gardens, and courtyards with the same rigor as our interiors.",
-    ids: [13, 14, 15],
   },
   complements: {
     label: "Complements",
     heading: "Complements Collection",
     description:
       "Decorative objects, textiles, and lighting selected for artisanal quality and quiet sculptural presence.",
-    ids: [4, 8, 16, 17, 18],
   },
 };
 
-const allProducts = [
-  { id: 1, name: "Monolith Island System", price: 18400, label: "New Arrival", category: "Kitchen", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDLqr4iFhQDw4oQ6PXhM-lWDMfLkLRIrZiGhQRQtn_vpYhZoldyAch_oRJWGXrhLDg8nGt5vXk89oCU6Gv4io2qP89C8i_URayMjSrH-4Gxdy39g3LyUYUWhQMysqzxnhQDUJXS-LOkRy4L1qIeFvytLe9x0nuqXWazRKZe2LhlAhgez9JeQ7dGhQ1ZoB1-FwyMPc4LJ03IxYnJWfBnpEz5Ul9YXf12HbFR6icIASkkebHRXVr6COHvRVTwont6DXb8YM9qINyBtDpc" },
-  { id: 2, name: "Nordic Oak Cabinetry", price: 12500, category: "Storage", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA_w7rTKQ_FyVLGfKTnwAf_aiHuj64bdakO-svdmKlvuTJMbN10Vp1GDimLOplR1fxTnpPCW2ccvibTNpcCtAtH3rUF1mytkjIXarPqzXS3qzVfDegKhOmV_vdyPCRDMbXOj0hJnLskMnFDtIE0fSBWyjggq8DB49QRBj0VxK1hALnRD_Mi7x-KfYmovj86U5qwPZEmoqRLWtJAna_C6zA_Whb20g1IBEN7nNagqgmphWgYIWJGmTgobDoPS0jXtqWzp22-8tWxXmGk" },
-  { id: 3, name: "Sven Modular Sofa", price: 4500, label: "Limited Edition", category: "Seating", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNdMbQkrcgVQdg41-_-__-CpTHtSUAkTRNE876CdMBvT1T4GhHJ8405g0EY02fTmcFW1Etykg2ZkZ-aI9vKYeHu-lB3BP_sS7cNn8wzpXDCnhJ69EFKGo3hdYa_qiPxVLdjTURRJ3iCZQexlou9UFbBnZSX57Ozx_TkdRx41kbl_Zdo2Q6NZu5Rqy_RHnWJi9-b5yvenrd9LZnFd0o17_TLbUTbIZMvWrnyLhoUYlVXpUiCrfiE5szR9LUTgXFIONBuq6dndrSE_XK" },
-  { id: 4, name: "Atlas Brass Floor Lamp", price: 2100, category: "Lighting", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAcF64dD4xzKIG8bePS1spDmXgqDuMKj2slWZDQ5p-5-KBF8-vK9vHeBN4ik4wTvpCeRF0-WNsdXAWhAW6YBstBQHuz5K0u8zixnEDt_9kdvIgRsBgIP7bcyR_UBJNQFtHnrEofLQUHQjfdUOcUrNeoxbFdCJHULEfgSYxEqA10IyLO-UvZ5LyXZQxvxzW4cq24rzCbKajn67W8HCn4YMFiSGbNX2tpCxU4442ZUbGkrjIqdowM2VuoR3Ok3HQ0ALYbpBhW_AL7shqU" },
-  { id: 5, name: "Travertine Dining Table", price: 9200, category: "Tables", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB3rNyH47ju6HEJXpaJyztrvk1GuSIQY_aLlVUAQ1O2VypnX5dq3DiLX2JFFWHnY6xdM-teBECLbRUVq5uHxzrjSmLt82nMsGoau7gOWRTb-KXb5dYutWqpEpsxYsdBEfXb6Pc3F6TqGE6e7opexk9L7rnrL6g4MwIb68GNTLyi7eJvZCLSPkvnNKVyMjbRE6uZq1Xl1xKUapVgfmi5rD4KysKjVytHNuMrShVbcVReNoFx2nJHa6CKcZOXQY7Fm56XnZslY8Ym_Nms" },
-  { id: 6, name: "Aero Task Chair", price: 3850, category: "Office", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAO97pjMDCcZHkZLDkTJStXN_VkalJ9XVqhG0Z-zDM5EGv0fVYu8UiO-hgR9eby2IJqnW1rri-Q_3r__ah3j7xiPGGTMF3Hu40zxqrmU5S1ao7gLSNuWtAhYZJPVZW4hUHQInc3B_UatQdZEJ0Mrj1t-M1JK9bemegL-hlkLqNxjjGajozfufK1giZPZMEvjPDb232yty5cVv-oZ8dSuqyh96ehFgRc7jxrBlqhJ1IJO6MC3HJjohgdr1c1_Hk8RhaoZjjHrnZll3JK" },
-  { id: 7, name: "Elowen Velvet Armchair", price: 2800, label: "Best Seller", category: "Seating", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNdMbQkrcgVQdg41-_-__-CpTHtSUAkTRNE876CdMBvT1T4GhHJ8405g0EY02fTmcFW1Etykg2ZkZ-aI9vKYeHu-lB3BP_sS7cNn8wzpXDCnhJ69EFKGo3hdYa_qiPxVLdjTURRJ3iCZQexlou9UFbBnZSX57Ozx_TkdRx41kbl_Zdo2Q6NZu5Rqy_RHnWJi9-b5yvenrd9LZnFd0o17_TLbUTbIZMvWrnyLhoUYlVXpUiCrfiE5szR9LUTgXFIONBuq6dndrSE_XK" },
-  { id: 8, name: "Lumiere Sconce Duo", price: 850, category: "Lighting", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAcF64dD4xzKIG8bePS1spDmXgqDuMKj2slWZDQ5p-5-KBF8-vK9vHeBN4ik4wTvpCeRF0-WNsdXAWhAW6YBstBQHuz5K0u8zixnEDt_9kdvIgRsBgIP7bcyR_UBJNQFtHnrEofLQUHQjfdUOcUrNeoxbFdCJHULEfgSYxEqA10IyLO-UvZ5LyXZQxvxzW4cq24rzCbKajn67W8HCn4YMFiSGbNX2tpCxU4442ZUbGkrjIqdowM2VuoR3Ok3HQ0ALYbpBhW_AL7shqU" },
-  { id: 9, name: "Marais Oak Dining Table", price: 3200, category: "Tables", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB3rNyH47ju6HEJXpaJyztrvk1GuSIQY_aLlVUAQ1O2VypnX5dq3DiLX2JFFWHnY6xdM-teBECLbRUVq5uHxzrjSmLt82nMsGoau7gOWRTb-KXb5dYutWqpEpsxYsdBEfXb6Pc3F6TqGE6e7opexk9L7rnrL6g4MwIb68GNTLyi7eJvZCLSPkvnNKVyMjbRE6uZq1Xl1xKUapVgfmi5rD4KysKjVytHNuMrShVbcVReNoFx2nJHa6CKcZOXQY7Fm56XnZslY8Ym_Nms" },
-  { id: 10, name: "Copenhagen Platform Bed", price: 6400, label: "New Arrival", category: "Bedroom", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDLqr4iFhQDw4oQ6PXhM-lWDMfLkLRIrZiGhQRQtn_vpYhZoldyAch_oRJWGXrhLDg8nGt5vXk89oCU6Gv4io2qP89C8i_URayMjSrH-4Gxdy39g3LyUYUWhQMysqzxnhQDUJXS-LOkRy4L1qIeFvytLe9x0nuqXWazRKZe2LhlAhgez9JeQ7dGhQ1ZoB1-FwyMPc4LJ03IxYnJWfBnpEz5Ul9YXf12HbFR6icIASkkebHRXVr6COHvRVTwont6DXb8YM9qINyBtDpc" },
-  { id: 11, name: "Zen Linen Dresser", price: 3200, category: "Bedroom", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA_w7rTKQ_FyVLGfKTnwAf_aiHuj64bdakO-svdmKlvuTJMbN10Vp1GDimLOplR1fxTnpPCW2ccvibTNpcCtAtH3rUF1mytkjIXarPqzXS3qzVfDegKhOmV_vdyPCRDMbXOj0hJnLskMnFDtIE0fSBWyjggq8DB49QRBj0VxK1hALnRD_Mi7x-KfYmovj86U5qwPZEmoqRLWtJAna_C6zA_Whb20g1IBEN7nNagqgmphWgYIWJGmTgobDoPS0jXtqWzp22-8tWxXmGk" },
-  { id: 12, name: "Belgian Oak Wardrobe", price: 8100, category: "Storage", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA_w7rTKQ_FyVLGfKTnwAf_aiHuj64bdakO-svdmKlvuTJMbN10Vp1GDimLOplR1fxTnpPCW2ccvibTNpcCtAtH3rUF1mytkjIXarPqzXS3qzVfDegKhOmV_vdyPCRDMbXOj0hJnLskMnFDtIE0fSBWyjggq8DB49QRBj0VxK1hALnRD_Mi7x-KfYmovj86U5qwPZEmoqRLWtJAna_C6zA_Whb20g1IBEN7nNagqgmphWgYIWJGmTgobDoPS0jXtqWzp22-8tWxXmGk" },
-  { id: 13, name: "Teak Lounge Chair", price: 2600, category: "Outdoor", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNdMbQkrcgVQdg41-_-__-CpTHtSUAkTRNE876CdMBvT1T4GhHJ8405g0EY02fTmcFW1Etykg2ZkZ-aI9vKYeHu-lB3BP_sS7cNn8wzpXDCnhJ69EFKGo3hdYa_qiPxVLdjTURRJ3iCZQexlou9UFbBnZSX57Ozx_TkdRx41kbl_Zdo2Q6NZu5Rqy_RHnWJi9-b5yvenrd9LZnFd0o17_TLbUTbIZMvWrnyLhoUYlVXpUiCrfiE5szR9LUTgXFIONBuq6dndrSE_XK" },
-  { id: 14, name: "Weather Oak Dining Set", price: 7800, label: "Collection", category: "Outdoor", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB3rNyH47ju6HEJXpaJyztrvk1GuSIQY_aLlVUAQ1O2VypnX5dq3DiLX2JFFWHnY6xdM-teBECLbRUVq5uHxzrjSmLt82nMsGoau7gOWRTb-KXb5dYutWqpEpsxYsdBEfXb6Pc3F6TqGE6e7opexk9L7rnrL6g4MwIb68GNTLyi7eJvZCLSPkvnNKVyMjbRE6uZq1Xl1xKUapVgfmi5rD4KysKjVytHNuMrShVbcVReNoFx2nJHa6CKcZOXQY7Fm56XnZslY8Ym_Nms" },
-  { id: 15, name: "Slate Stone Planter Set", price: 890, category: "Outdoor", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAcF64dD4xzKIG8bePS1spDmXgqDuMKj2slWZDQ5p-5-KBF8-vK9vHeBN4ik4wTvpCeRF0-WNsdXAWhAW6YBstBQHuz5K0u8zixnEDt_9kdvIgRsBgIP7bcyR_UBJNQFtHnrEofLQUHQjfdUOcUrNeoxbFdCJHULEfgSYxEqA10IyLO-UvZ5LyXZQxvxzW4cq24rzCbKajn67W8HCn4YMFiSGbNX2tpCxU4442ZUbGkrjIqdowM2VuoR3Ok3HQ0ALYbpBhW_AL7shqU" },
-  { id: 16, name: "Wabi-Sabi Ceramic Vase", price: 480, label: "Artisan", category: "Decor", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA_w7rTKQ_FyVLGfKTnwAf_aiHuj64bdakO-svdmKlvuTJMbN10Vp1GDimLOplR1fxTnpPCW2ccvibTNpcCtAtH3rUF1mytkjIXarPqzXS3qzVfDegKhOmV_vdyPCRDMbXOj0hJnLskMnFDtIE0fSBWyjggq8DB49QRBj0VxK1hALnRD_Mi7x-KfYmovj86U5qwPZEmoqRLWtJAna_C6zA_Whb20g1IBEN7nNagqgmphWgYIWJGmTgobDoPS0jXtqWzp22-8tWxXmGk" },
-  { id: 17, name: "Onyx Travertine Bookends", price: 320, category: "Decor", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB3rNyH47ju6HEJXpaJyztrvk1GuSIQY_aLlVUAQ1O2VypnX5dq3DiLX2JFFWHnY6xdM-teBECLbRUVq5uHxzrjSmLt82nMsGoau7gOWRTb-KXb5dYutWqpEpsxYsdBEfXb6Pc3F6TqGE6e7opexk9L7rnrL6g4MwIb68GNTLyi7eJvZCLSPkvnNKVyMjbRE6uZq1Xl1xKUapVgfmi5rD4KysKjVytHNuMrShVbcVReNoFx2nJHa6CKcZOXQY7Fm56XnZslY8Ym_Nms" },
-  { id: 18, name: "Belgian Linen Throw", price: 280, category: "Textiles", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNdMbQkrcgVQdg41-_-__-CpTHtSUAkTRNE876CdMBvT1T4GhHJ8405g0EY02fTmcFW1Etykg2ZkZ-aI9vKYeHu-lB3BP_sS7cNn8wzpXDCnhJ69EFKGo3hdYa_qiPxVLdjTURRJ3iCZQexlou9UFbBnZSX57Ozx_TkdRx41kbl_Zdo2Q6NZu5Rqy_RHnWJi9-b5yvenrd9LZnFd0o17_TLbUTbIZMvWrnyLhoUYlVXpUiCrfiE5szR9LUTgXFIONBuq6dndrSE_XK" },
+const priceRanges = [
+  { label: "Under 5,000", min: "", max: "5000" },
+  { label: "5,000-10,000", min: "5000", max: "10000" },
+  { label: "10,000-20,000", min: "10000", max: "20000" },
+  { label: "Above 20,000", min: "20000", max: "" },
 ];
 
-function formatPrice(price) {
-  return `$${price.toLocaleString()}`;
-}
+const filterKeys = [
+  "search",
+  "category",
+  "collection",
+  "minPrice",
+  "maxPrice",
+  "stock",
+  "material",
+  "color",
+  "room",
+  "sort",
+];
 
-function slugify(value) {
-  return String(value)
-    .toLowerCase()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+const uniqueOptions = (products, field) =>
+  [...new Set(products.map((product) => product[field]).filter(Boolean))]
+    .sort((a, b) => String(a).localeCompare(String(b)));
 
-function normalizeProduct(product) {
-  const slug = product.slug || slugify(product.name || product._id || product.id);
-  const image =
-    product.imageUrl ||
-    product.image ||
-    product.img ||
-    product.images?.[0] ||
-    product.galleryImages?.[0]?.url ||
-    "";
-  return {
-    ...product,
-    id: product._id || product.id,
-    slug,
-    price: Number(product.price || 0),
-    category: product.category || product.collection || "Product",
-    collection: product.collection || product.category || "",
-    image,
-  };
-}
+const stockLabel = (value) => {
+  if (value === "in") return "In Stock";
+  if (value === "out") return "Out of Stock";
+  if (value === "low") return "Low Stock";
+  return "";
+};
 
 export default function ProductCollections() {
   const { pathname } = useLocation();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const shop = useContext(ShopContext);
-  const [sort, setSort] = useState("newest");
-  const [viewMode, setViewMode] = useState("grid");
-  const [page, setPage] = useState(1);
-  const [wishlistMessage, setWishlistMessage] = useState("");
-  const [serverProducts, setServerProducts] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [productError, setProductError] = useState("");
-  const typeFilter = searchParams.get("type");
+  const [viewMode, setViewMode] = useState("grid");
+  const [page, setPage] = useState(1);
+  const [message, setMessage] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   const routeCollection = pathname.match(/^\/collections\/([^/?]+)/)?.[1];
   const isCollectionsRoute = pathname.startsWith("/collections");
   const meta =
     categoryMeta[routeCollection] ||
     (isCollectionsRoute ? categoryMeta.collections : categoryMeta.products);
 
+  const filters = useMemo(() => {
+    const value = (key) => searchParams.get(key) || "";
+    const routeValue = routeCollection ? categoryMeta[routeCollection]?.label || routeCollection : "";
+    return {
+      search: value("search"),
+      category: value("category"),
+      collection: value("collection") || routeValue,
+      minPrice: value("minPrice"),
+      maxPrice: value("maxPrice"),
+      stock: value("stock"),
+      material: value("material"),
+      color: value("color"),
+      room: value("room"),
+      sort: value("sort") || "newest",
+    };
+  }, [routeCollection, searchParams]);
+
+  const apiFilters = useMemo(() => {
+    const next = {
+      search: filters.search,
+      category: filters.category,
+      collection: filters.collection,
+      minPrice: filters.minPrice,
+      maxPrice: filters.maxPrice,
+      material: filters.material,
+      color: filters.color,
+      room: filters.room,
+      sort: filters.sort,
+    };
+
+    if (filters.stock === "in") next.inStock = "true";
+    if (filters.stock === "out") next.inStock = "false";
+    return next;
+  }, [filters]);
+
   useEffect(() => {
     let alive = true;
     setLoadingProducts(true);
-    commerceApi
-      .getProducts()
-      .then((products) => {
+
+    Promise.all([commerceApi.getProducts(), commerceApi.getProducts(apiFilters)])
+      .then(([facetProducts, filteredProducts]) => {
         if (!alive) return;
-        setServerProducts(products.map(normalizeProduct));
+        setAllProducts(normalizeProductList(facetProducts));
+        setProducts(normalizeProductList(filteredProducts));
         setProductError("");
       })
       .catch((error) => {
         if (!alive) return;
-        setProductError(error.message || "Products could not be loaded from MongoDB.");
+        setProducts([]);
+        setProductError(error.message || "Products could not be loaded from the backend.");
       })
       .finally(() => {
         if (alive) setLoadingProducts(false);
@@ -145,86 +160,179 @@ export default function ProductCollections() {
     return () => {
       alive = false;
     };
-  }, []);
-
-  const sortedProducts = useMemo(() => {
-    const usingServer = serverProducts.length > 0;
-    const sourceProducts = usingServer ? serverProducts : allProducts;
-    const allowedIds = !usingServer && meta.ids ? new Set(meta.ids) : null;
-    const result = sourceProducts.filter((product) => {
-      const collectionBucket = slugify(product.collection || "");
-      const categoryBucket = slugify(product.category || "");
-      if (allowedIds && !allowedIds.has(product.id)) return false;
-      if (usingServer && routeCollection) {
-        const route = slugify(routeCollection);
-        const routeSingular = route.replace(/s$/, "");
-        if (route === "complements") {
-          return ["complements", "decor", "lighting", "textiles"].includes(collectionBucket) ||
-                 ["complements", "decor", "lighting", "textiles"].includes(categoryBucket);
-        }
-        return collectionBucket === route || collectionBucket === routeSingular ||
-               categoryBucket === route || categoryBucket === routeSingular;
-      }
-      if (routeCollection === "complements" && typeFilter === "day") {
-        return ["Decor", "Lighting", "Complements"].includes(product.category);
-      }
-      if (routeCollection === "complements" && typeFilter === "night") {
-        return ["Textiles", "Lighting", "Complements"].includes(product.category);
-      }
-      return true;
-    });
-
-    if (sort === "price-low") result.sort((a, b) => a.price - b.price);
-    if (sort === "price-high") result.sort((a, b) => b.price - a.price);
-    return result;
-  }, [meta.ids, routeCollection, serverProducts, sort, typeFilter]);
-
-  const totalPages = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
-  const visibleProducts = sortedProducts.slice(0, page * ITEMS_PER_PAGE);
+  }, [apiFilters]);
 
   useEffect(() => {
     setPage(1);
-  }, [pathname, typeFilter]);
+  }, [pathname, searchParams]);
 
-  const handleSort = (value) => {
-    setSort(value);
-    setPage(1);
+  const filteredProducts = useMemo(() => {
+    let result = [...products];
+
+    if (filters.stock === "low") {
+      result = result.filter(
+        (product) =>
+          Number(product.stock) > 0 &&
+          Number(product.stock) <= Number(product.lowStockThreshold || 5)
+      );
+    }
+
+    if (filters.sort === "name_asc") {
+      result.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (filters.sort === "price_asc") result.sort((a, b) => a.price - b.price);
+    if (filters.sort === "price_desc") result.sort((a, b) => b.price - a.price);
+    if (filters.sort === "featured") {
+      result.sort((a, b) => Number(b.featured) - Number(a.featured));
+    }
+
+    return result;
+  }, [filters.sort, filters.stock, products]);
+
+  const options = useMemo(
+    () => ({
+      category: uniqueOptions(allProducts, "category"),
+      collection: uniqueOptions(allProducts, "collection"),
+      material: uniqueOptions(allProducts, "material"),
+      color: uniqueOptions(allProducts, "color"),
+      room: uniqueOptions(allProducts, "room"),
+    }),
+    [allProducts]
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+  const visibleProducts = filteredProducts.slice(0, page * ITEMS_PER_PAGE);
+
+  const setFilter = (key, value) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set(key, value);
+    else next.delete(key);
+    if (key !== "sort" && next.get("page")) next.delete("page");
+    setSearchParams(next, { replace: true });
   };
 
-  const showMessage = (message) => {
-    setWishlistMessage(message);
-    setTimeout(() => setWishlistMessage(""), 2500);
+  const resetFilters = () => {
+    setSearchParams(new URLSearchParams(), { replace: true });
+    setFiltersOpen(false);
+  };
+
+  const applyPricePreset = (range) => {
+    const next = new URLSearchParams(searchParams);
+    if (range.min) next.set("minPrice", range.min);
+    else next.delete("minPrice");
+    if (range.max) next.set("maxPrice", range.max);
+    else next.delete("maxPrice");
+    setSearchParams(next, { replace: true });
+  };
+
+  const showMessage = (nextMessage) => {
+    setMessage(nextMessage);
+    setTimeout(() => setMessage(""), 2500);
   };
 
   const handleWishlist = (product) => {
-    shop?.addToWishlist?.({
-      id: product.id,
-      slug: slugify(product.name),
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      img: product.image,
-    });
+    shop?.addToWishlist?.(product);
     showMessage(`${product.name} added to wishlist.`);
   };
 
   const handleAddToCart = async (product) => {
-    await shop?.addToCart?.({
-      id: product.id,
-      slug: slugify(product.name),
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      img: product.image,
-      quantity: 1,
-    });
+    await shop?.addToCart?.({ ...product, quantity: 1 });
     showMessage(`${product.name} added to cart.`);
   };
 
-  const goToPage = (p) => {
-    setPage(Math.min(Math.max(p, 1), totalPages));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const activeChips = filterKeys
+    .filter((key) => key !== "sort")
+    .map((key) => {
+      const value = filters[key];
+      if (!value) return null;
+      if (key === "stock") return { key, label: stockLabel(value) };
+      if (key === "minPrice" || key === "maxPrice") return null;
+      return { key, label: `${key[0].toUpperCase()}${key.slice(1)}: ${value}` };
+    })
+    .filter(Boolean);
+
+  if (filters.minPrice || filters.maxPrice) {
+    activeChips.push({
+      key: "price",
+      label: `Price: ${filters.minPrice || "0"}-${filters.maxPrice || "any"}`,
+    });
+  }
+
+  const removeChip = (chip) => {
+    if (chip.key === "price") {
+      const next = new URLSearchParams(searchParams);
+      next.delete("minPrice");
+      next.delete("maxPrice");
+      setSearchParams(next, { replace: true });
+      return;
+    }
+    setFilter(chip.key, "");
   };
+
+  const filterPanel = (
+    <div className="products-filter-panel">
+      <div className="products-filter-heading">
+        <h2>Filters</h2>
+        <button type="button" onClick={resetFilters}>Reset</button>
+      </div>
+
+      <label className="products-filter-field">
+        <span>Search</span>
+        <input
+          type="search"
+          value={filters.search}
+          onChange={(event) => setFilter("search", event.target.value)}
+          placeholder="Name, material, collection"
+        />
+      </label>
+
+      <FilterSelect label="Category" value={filters.category} options={options.category} onChange={(value) => setFilter("category", value)} />
+      {!routeCollection && (
+        <FilterSelect label="Collection" value={filters.collection} options={options.collection} onChange={(value) => setFilter("collection", value)} />
+      )}
+      <FilterSelect label="Material" value={filters.material} options={options.material} onChange={(value) => setFilter("material", value)} />
+      <FilterSelect label="Color" value={filters.color} options={options.color} onChange={(value) => setFilter("color", value)} />
+      <FilterSelect label="Room / Use" value={filters.room} options={options.room} onChange={(value) => setFilter("room", value)} />
+
+      <div className="products-filter-field">
+        <span>Price</span>
+        <div className="products-price-inputs">
+          <input
+            type="number"
+            min="0"
+            placeholder="Min"
+            value={filters.minPrice}
+            onChange={(event) => setFilter("minPrice", event.target.value)}
+          />
+          <input
+            type="number"
+            min="0"
+            placeholder="Max"
+            value={filters.maxPrice}
+            onChange={(event) => setFilter("maxPrice", event.target.value)}
+          />
+        </div>
+        <div className="products-price-presets">
+          {priceRanges.map((range) => (
+            <button key={range.label} type="button" onClick={() => applyPricePreset(range)}>
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <FilterSelect
+        label="Availability"
+        value={filters.stock}
+        options={[
+          ["in", "In stock"],
+          ["out", "Out of stock"],
+          ["low", "Low stock"],
+        ]}
+        onChange={(value) => setFilter("stock", value)}
+      />
+    </div>
+  );
 
   return (
     <PublicCommerceShell active={isCollectionsRoute ? "Collections" : "Products"}>
@@ -252,184 +360,176 @@ export default function ProductCollections() {
           <p>{meta.description}</p>
         </section>
 
-        {wishlistMessage && (
-          <div className="products-toast" role="status">
-            {wishlistMessage}
-          </div>
-        )}
-
-        {loadingProducts && (
-          <div className="products-toast" role="status">
-            Loading products from MongoDB...
-          </div>
-        )}
-        {!loadingProducts && productError && serverProducts.length === 0 && (
-          <div className="products-toast" role="status">
-            {productError}
-          </div>
-        )}
+        {message && <div className="products-toast" role="status">{message}</div>}
 
         <section className="products-toolbar">
           <div className="products-toolbar-left">
             <button
               className="products-filter-button"
               type="button"
-              onClick={() =>
-                showMessage("Use the Collections menu and sort control to refine products.")
-              }
+              onClick={() => setFiltersOpen(true)}
             >
               <span className="material-symbols-outlined">filter_list</span>
-              Filter
+              Filters
             </button>
             <div className="products-toolbar-divider" />
             <label className="products-sort">
               <span>Sort By</span>
-              <select value={sort} onChange={(e) => handleSort(e.target.value)}>
-                <option value="newest">Newest Arrivals</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+              <select value={filters.sort} onChange={(event) => setFilter("sort", event.target.value)}>
+                <option value="newest">Newest</option>
+                <option value="featured">Featured first</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="name_asc">Name: A to Z</option>
               </select>
             </label>
           </div>
 
           <div className="products-toolbar-right">
             <div className="products-view-toggle">
-              <button
-                type="button"
-                className={viewMode === "grid" ? "active" : ""}
-                onClick={() => setViewMode("grid")}
-                aria-label="Grid view"
-              >
+              <button type="button" className={viewMode === "grid" ? "active" : ""} onClick={() => setViewMode("grid")} aria-label="Grid view">
                 <span className="material-symbols-outlined">grid_view</span>
               </button>
-              <button
-                type="button"
-                className={viewMode === "list" ? "active" : ""}
-                onClick={() => setViewMode("list")}
-                aria-label="List view"
-              >
+              <button type="button" className={viewMode === "list" ? "active" : ""} onClick={() => setViewMode("list")} aria-label="List view">
                 <span className="material-symbols-outlined">view_list</span>
               </button>
             </div>
             <p>
               Showing <strong>{visibleProducts.length}</strong> of{" "}
-              <strong>{sortedProducts.length}</strong> products
+              <strong>{filteredProducts.length}</strong> products
             </p>
           </div>
         </section>
 
-        <section
-          className={
-            viewMode === "list"
-              ? "products-grid products-grid-list"
-              : "products-grid"
-          }
-        >
-          {visibleProducts.map((product) => (
-            <article className="collection-product-card" key={product.id}>
-              <div className="collection-product-image">
-                <img src={product.image} alt={product.name} />
-                {product.label && (
-                  <span
-                    className={
-                      product.label === "Limited Edition" || product.label === "Artisan"
-                        ? "collection-product-label soft"
-                        : "collection-product-label"
-                    }
-                  >
-                    {product.label}
-                  </span>
-                )}
-                <div className="collection-product-actions">
-                  <Link
-                    to={`/products/${product.slug || slugify(product.name)}`}
-                    className="collection-quick-view"
-                  >
-                    Quick View
-                  </Link>
-                  <button
-                    type="button"
-                    className="collection-add-to-cart"
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    <span className="material-symbols-outlined">shopping_bag</span>
-                    Add to Cart
-                  </button>
-                  <button
-                    type="button"
-                    className="collection-wishlist"
-                    onClick={() => handleWishlist(product)}
-                  >
-                    <span className="material-symbols-outlined">favorite</span>
-                    Add to Wishlist
-                  </button>
-                </div>
-              </div>
-              <div className="collection-product-info">
-                <span>{product.category}</span>
-                <h3>{product.name}</h3>
-                <p>{formatPrice(product.price)}</p>
-              </div>
-            </article>
-          ))}
-        </section>
-
-        {totalPages > 1 && (
-          <section className="products-pagination">
-            <div className="products-pagination-line" />
-
-            {page < totalPages && (
-              <button
-                type="button"
-                className="products-load-more"
-                onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-              >
-                <span>Load More Products</span>
+        {activeChips.length > 0 && (
+          <div className="products-active-chips" aria-label="Active filters">
+            {activeChips.map((chip) => (
+              <button key={`${chip.key}-${chip.label}`} type="button" onClick={() => removeChip(chip)}>
+                {chip.label}
+                <span className="material-symbols-outlined">close</span>
               </button>
+            ))}
+            <button type="button" className="products-reset-chip" onClick={resetFilters}>
+              Reset Filters
+            </button>
+          </div>
+        )}
+
+        <div className="products-shop-layout">
+          <aside className="products-filter-sidebar">{filterPanel}</aside>
+
+          <section className="products-results">
+            {loadingProducts && <p className="products-state">Loading products from the backend...</p>}
+            {!loadingProducts && productError && <p className="products-state products-state-error">{productError}</p>}
+            {!loadingProducts && !productError && filteredProducts.length === 0 && (
+              <div className="products-empty-state">
+                <span className="material-symbols-outlined">search_off</span>
+                <h2>No products match your filters.</h2>
+                <p>Try clearing one or two filters to widen the catalogue.</p>
+                <button type="button" onClick={resetFilters}>Reset Filters</button>
+              </div>
             )}
 
-            <div className="products-page-numbers">
-              <button
-                type="button"
-                aria-label="Previous page"
-                disabled={page === 1}
-                onClick={() => goToPage(page - 1)}
-                style={{ opacity: page === 1 ? 0.35 : 1 }}
-              >
-                <span className="material-symbols-outlined">arrow_back</span>
-              </button>
+            {!loadingProducts && !productError && filteredProducts.length > 0 && (
+              <div className={viewMode === "list" ? "products-grid products-grid-list" : "products-grid"}>
+                {visibleProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onWishlist={handleWishlist}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => goToPage(p)}
-                  aria-label={`Show through page ${p}`}
-                  aria-current={p === page ? "page" : undefined}
-                  style={{
-                    fontWeight: p === page ? 700 : 400,
-                    color: p === page ? "#000000" : "#76777d",
-                    borderBottom: p === page ? "1px solid #000000" : "none",
-                    padding: "4px 2px",
-                  }}
-                >
-                  {p}
-                </button>
-              ))}
-
-              <button
-                type="button"
-                aria-label="Next page"
-                disabled={page === totalPages}
-                onClick={() => goToPage(page + 1)}
-                style={{ opacity: page === totalPages ? 0.35 : 1 }}
-              >
-                <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
-            </div>
+        {page < totalPages && !loadingProducts && filteredProducts.length > visibleProducts.length && (
+          <section className="products-pagination">
+            <div className="products-pagination-line" />
+            <button
+              type="button"
+              className="products-load-more"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+            >
+              <span>Load More Products</span>
+            </button>
           </section>
         )}
       </main>
+
+      {filtersOpen && (
+        <div className="products-filter-drawer" role="dialog" aria-modal="true">
+          <div className="products-filter-drawer-panel">
+            <div className="products-filter-drawer-top">
+              <strong>Refine Products</strong>
+              <button type="button" onClick={() => setFiltersOpen(false)} aria-label="Close filters">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            {filterPanel}
+            <button type="button" className="products-apply-filters" onClick={() => setFiltersOpen(false)}>
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      )}
     </PublicCommerceShell>
   );
 }
+
+const FilterSelect = ({ label, value, options, onChange }) => (
+  <label className="products-filter-field">
+    <span>{label}</span>
+    <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <option value="">All</option>
+      {options.map((option) => {
+        const optionValue = Array.isArray(option) ? option[0] : option;
+        const optionLabel = Array.isArray(option) ? option[1] : option;
+        return (
+          <option key={optionValue} value={optionValue}>
+            {optionLabel}
+          </option>
+        );
+      })}
+    </select>
+  </label>
+);
+
+const ProductCard = ({ product, onAddToCart, onWishlist }) => {
+  const stockText =
+    product.stock > 0
+      ? product.stock <= Number(product.lowStockThreshold || 5)
+        ? "Low stock"
+        : "In stock"
+      : "Out of stock";
+
+  return (
+    <article className="collection-product-card">
+      <div className="collection-product-image">
+        <img src={product.image} alt={product.name} />
+        {product.featured && <span className="collection-product-label">Featured</span>}
+        <div className="collection-product-actions">
+          <Link to={`/products/${product.slug || slugify(product.name)}`} className="collection-quick-view">
+            View Details
+          </Link>
+          <button type="button" className="collection-add-to-cart" onClick={() => onAddToCart(product)}>
+            <span className="material-symbols-outlined">shopping_bag</span>
+            Add to Cart
+          </button>
+          <button type="button" className="collection-wishlist" onClick={() => onWishlist(product)}>
+            <span className="material-symbols-outlined">favorite</span>
+            Add to Wishlist
+          </button>
+        </div>
+      </div>
+      <div className="collection-product-info">
+        <span>{product.collection || product.category || "Uncategorized"}</span>
+        <h3>{product.name}</h3>
+        <p>{formatProductPrice(product.price)}</p>
+        <small className={product.stock > 0 ? "stock-ok" : "stock-out"}>{stockText}</small>
+      </div>
+    </article>
+  );
+};

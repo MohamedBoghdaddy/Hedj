@@ -1320,6 +1320,23 @@
   font: inherit;
 }
 
+.admin-checkbox-row {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--admin-premium-text);
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.admin-checkbox-row input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--admin-premium-amber);
+}
+
 .admin-field-full {
   grid-column: 1 / -1;
 }
@@ -1708,4 +1725,3 @@
     width: 100%;
   }
 }
-

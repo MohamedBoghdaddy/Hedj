@@ -29,6 +29,7 @@ import customerRoutes from "./routes/customerRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import leaveRoutes from "./routes/leaveRoutes.js";
 import importExportRoutes from "./routes/importExportRoutes.js";
+import supportRoutes from "./routes/supportRoutes.js";
 
 dotenv.config();
 
@@ -292,6 +293,7 @@ const configureApp = ({ mongoConnected, sessionStore }) => {
   app.use("/api/analytics",       analyticsRoutes);
   app.use("/api/orders",          requireMongoConnection, orderRoutes);
   app.use("/api/customer",        requireMongoConnection, customerRoutes);
+  app.use("/api/support",         requireMongoConnection, supportRoutes);
   app.use("/api/employees",       requireMongoConnection, employeeRoutes);
   app.use("/api/products",        requireMongoConnection, productRoutes);
   app.use("/api/users",           userRoutes);

@@ -259,21 +259,14 @@ const createOrderFromQuote = (quoteId) => {
 };
 
 export const commerceApi = {
-  getProducts: (filters = {}) =>
-    withFallback(
-      "/api/products",
-      {},
-      () => {
-        // Demo fallback: only used in development when the backend is unreachable
-        if (process.env.NODE_ENV === "production") return [];
-        const products = readStore().products;
-        if (!filters.collection) return products;
-        return products.filter(
-          (product) => product.collection.toLowerCase() === filters.collection.toLowerCase()
-        );
-      },
-      (payload) => unwrapList(payload, "products")
-    ),
+  getProducts: (filters = {}) => {
+    const params = new URLSearchParams(
+      Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== undefined && v !== ""))
+    ).toString();
+    return request(`/api/products${params ? `?${params}` : ""}`).then((payload) =>
+      unwrapList(payload, "products")
+    );
+  },
 
   getAdminProducts: (filters = {}) => {
     const params = new URLSearchParams(
@@ -609,6 +602,11 @@ export const customerApi = {
   addToWishlist: (productId) => request(`/api/customer/wishlist/${productId}`, { method: "POST" }),
   removeFromWishlist: (productId) => request(`/api/customer/wishlist/${productId}`, { method: "DELETE" }),
   clearWishlist: () => request("/api/customer/wishlist", { method: "DELETE" }),
+};
+
+export const supportApi = {
+  createInquiry: (payload) =>
+    request("/api/support", { method: "POST", body: payload }),
 };
 
 export const erpApi = {

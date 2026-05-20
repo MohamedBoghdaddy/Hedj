@@ -72,7 +72,7 @@ router.post("/seed/reset", (req, res) => {
 
 router.get("/products", async (req, res) => {
   if (isDbConnected()) {
-    const products = await listPublicProducts({ collection: req.query.collection });
+    const products = await listPublicProducts(req.query);
     return res.json({ count: products.length, data: products, products });
   }
 
