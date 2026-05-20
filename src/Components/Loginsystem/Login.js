@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useLogin } from "../../hooks/useLogin";
 import { useAuthContext } from "../../context/AuthContext";
+import { getDashboardRoute } from "../../utils/permissions";
 import "../../Styles/auth-premium.css";
 
 const loginVisual =
@@ -25,13 +26,8 @@ const Login = () => {
   } = useLogin();
 
   useEffect(() => {
-    if (state.isAuthenticated && !state.loading) {
-      const role = String(state.user?.role || state.user?.userType || "").toLowerCase();
-      if (role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+    if (state.isAuthenticated && !state.loading && state.user) {
+      navigate(getDashboardRoute(state.user), { replace: true });
     }
   }, [state.isAuthenticated, state.loading, state.user, navigate]);
 

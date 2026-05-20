@@ -601,17 +601,18 @@ export default function AdminAttendance() {
             </div>
             <form onSubmit={handleSave} className="admin-modal-form">
               {modal === "add" && (
-                <div className="admin-form-group">
-                  <label htmlFor="att-employeeId">Employee ID *</label>
-                  <input
-                    id="att-employeeId"
-                    className="admin-input"
-                    value={form.employeeId}
-                    onChange={(e) => setForm((f) => ({ ...f, employeeId: e.target.value }))}
-                    placeholder="MongoDB ObjectId of employee"
-                    required
-                  />
-                </div>
+                <EmployeePicker
+                  employees={employees}
+                  selectedEmployeeId={form.employeeId}
+                  search={employeeSearch}
+                  onSearchChange={setEmployeeSearch}
+                  onSelect={(emp) => {
+                    setForm((f) => ({ ...f, employeeId: getEmployeeId(emp) }));
+                    setEmployeeSearch(getEmployeeName(emp));
+                  }}
+                  loading={employeesLoading}
+                  error={employeesError}
+                />
               )}
               <div className="admin-form-group">
                 <label htmlFor="att-date">Date *</label>

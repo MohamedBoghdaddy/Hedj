@@ -2,12 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../context/AuthContext";
-import { can, isAdmin } from "../utils/permissions";
+import { can, isAdmin, getDashboardRoute } from "../utils/permissions";
 import "../Styles/admin-premium.css";
 
-// Sidebar nav definition — each item declares the required permission.
-const NAV_ITEMS = [
-  { label: "Overview",         icon: "dashboard",       href: "/admin/dashboard",    permission: null },
+// Admin/manager items — require viewAll-level permissions
+const ADMIN_NAV_ITEMS = [
   { label: "Orders",           icon: "shopping_cart",   href: "/admin/orders",       permission: "orders.viewAll" },
   { label: "Products",         icon: "chair",           href: "/admin/products",     permission: "products.view" },
   { label: "Customers",        icon: "groups",          href: "/admin/customers",    permission: "customers.view" },
@@ -23,6 +22,12 @@ const NAV_ITEMS = [
   { label: "Settings",         icon: "settings",        href: "/admin/settings",     requireAdmin: true },
 ];
 
+// Employee self-service items — visible when user only has viewOwn (not viewAll)
+const EMPLOYEE_NAV_ITEMS = [
+  { label: "My Attendance",    icon: "event_available", href: "/employee/attendance",     permission: "attendance.viewOwn",  excludeIfHas: "attendance.viewAll" },
+  { label: "My Leave",         icon: "beach_access",    href: "/employee/leave-requests", permission: "leave.viewOwn",       excludeIfHas: "leave.viewAll" },
+];
+
 const ROLE_LABELS = {
   super_admin: "Super Admin", admin: "Admin", manager: "Manager",
   HR: "HR", accountant: "Accountant", operations: "Operations",
@@ -31,13 +36,25 @@ const ROLE_LABELS = {
 
 /** Shared nav content used by both the desktop sidebar and mobile drawer */
 const AdminNav = ({ active, user, onNavigate }) => {
-  const visibleItems = NAV_ITEMS.filter(item =>
+  const overviewHref = getDashboardRoute(user);
+
+  const visibleAdminItems = ADMIN_NAV_ITEMS.filter(item =>
     item.requireAdmin ? isAdmin(user) : (item.permission ? can(user, item.permission) : true)
   );
 
+  const visibleEmployeeItems = EMPLOYEE_NAV_ITEMS.filter(item =>
+    can(user, item.permission) && !can(user, item.excludeIfHas)
+  );
+
+  const allItems = [
+    { label: "Overview", icon: "dashboard", href: overviewHref, permission: null },
+    ...visibleAdminItems,
+    ...visibleEmployeeItems,
+  ];
+
   return (
     <nav className="admin-premium-nav" aria-label="Admin navigation">
-      {visibleItems.map(({ label, icon, href }) => (
+      {allItems.map(({ label, icon, href }) => (
         <NavLink
           key={label}
           to={href}

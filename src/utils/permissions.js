@@ -143,6 +143,25 @@ export const isStaff = (user) => {
 export const isCustomer = (user) => getRole(user) === "customer";
 
 /**
+ * Returns true if the user is a pure employee (self-service only, no admin access).
+ * employee role → /employee/dashboard
+ * All other staff (manager, HR, accountant, operations, designer) → /admin/dashboard
+ */
+export const isEmployee = (user) => getRole(user) === "employee";
+
+/**
+ * Returns the correct dashboard route for a user based on role.
+ * Use this after login and in route guards — never hard-code "/dashboard".
+ */
+export const getDashboardRoute = (user) => {
+  const role = getRole(user);
+  if (role === "admin" || role === "super_admin") return "/admin/dashboard";
+  if (role === "employee") return "/employee/dashboard";
+  if (isStaff(user)) return "/admin/dashboard"; // manager, HR, accountant, operations, designer
+  return "/dashboard";
+};
+
+/**
  * Navbar/sidebar filter helper.
  * Returns true if the given nav item should be visible for this user.
  *

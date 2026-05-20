@@ -498,3 +498,8 @@
   .how-steps { grid-template-columns: 1fr; }
   .stats-band-inner { grid-template-columns: repeat(2, 1fr); }
 }
+
+@media (max-width: 480px) {
+  .stats-band-inner { grid-template-columns: 1fr; }
+  .hero-image-wrap { height: 280px; }
+}

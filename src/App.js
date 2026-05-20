@@ -3,7 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuthContext } from "./context/AuthContext";
 import { AdminShell } from "./Components/AdminShell";
-import { isStaff, isAdmin } from "./utils/permissions";
+import { isStaff, isAdmin, isEmployee } from "./utils/permissions";
 
 // Public pages
 import Home from "./Components/Homepage/Home";
@@ -41,6 +41,11 @@ import AdminERPApprovals from "./Pages/AdminERPApprovals";
 import AdminAttendance from "./Pages/AdminAttendance";
 import AdminLeave from "./Pages/AdminLeave";
 
+// Employee self-service pages
+import EmployeeDashboard from "./Pages/EmployeeDashboard";
+import EmployeeAttendance from "./Pages/EmployeeAttendance";
+import EmployeeLeave from "./Pages/EmployeeLeaveRequests";
+
 // Public / customer pages
 import ProductCollections from "./Pages/ProductCollections";
 import VirtualShowroom from "./Pages/VirtualShowroom";
@@ -50,8 +55,8 @@ import AcceptInvite from "./Pages/AcceptInvite";
 
 /**
  * StaffRoute: accessible by admin, super_admin, manager, HR, accountant,
- * operations, designer, and employee roles.
- * Customers and unauthenticated users are redirected.
+ * operations, and designer roles. Pure employees are redirected to /employee/dashboard.
+ * Customers and unauthenticated users are redirected elsewhere.
  */
 const StaffRoute = ({ children }) => {
   const { state } = useAuthContext();
@@ -65,6 +70,32 @@ const StaffRoute = ({ children }) => {
 
   if (!isStaff(state.user)) {
     // Customers go to their own dashboard
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (isEmployee(state.user)) {
+    // Pure employee role belongs in the employee portal, not the admin shell
+    return <Navigate to="/employee/dashboard" replace />;
+  }
+
+  return children;
+};
+
+/**
+ * EmployeeRoute: accessible by any staff role (employees see their own portal;
+ * admins can also visit for preview/debugging).
+ */
+const EmployeeRoute = ({ children }) => {
+  const { state } = useAuthContext();
+  const location = useLocation();
+
+  if (state.loading) return null;
+
+  if (!state.isAuthenticated || !state.user) {
+    return <Navigate to="/Login" state={{ from: location }} replace />;
+  }
+
+  if (!isStaff(state.user)) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -254,6 +285,14 @@ const App = () => {
         <Route path="/admin/erp/workflow"   element={staffStandalonePage(<AdminERPWorkflows />)} />
         <Route path="/admin/erp/workflows"  element={<Navigate to="/admin/erp/workflow" replace />} />
         <Route path="/admin/erp/approvals"  element={staffStandalonePage(<AdminERPApprovals />)} />
+
+        {/* ── Employee Self-Service Portal ── */}
+        <Route path="/employee" element={<Navigate to="/employee/dashboard" replace />} />
+        <Route path="/employee/dashboard"       element={<EmployeeRoute><EmployeeDashboard /></EmployeeRoute>} />
+        <Route path="/employee/attendance"      element={<EmployeeRoute><EmployeeAttendance /></EmployeeRoute>} />
+        <Route path="/employee/leave-requests"  element={<EmployeeRoute><EmployeeLeave /></EmployeeRoute>} />
+        {/* Legacy leave alias */}
+        <Route path="/employee/leave"           element={<Navigate to="/employee/leave-requests" replace />} />
 
         {/* Legacy admin paths */}
         <Route path="/Setting"   element={<Navigate to="/admin/settings"   replace />} />

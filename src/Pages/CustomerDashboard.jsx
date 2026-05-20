@@ -5,6 +5,7 @@ import { ShopContext } from "../context/productContext";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../context/AuthContext";
 import { commerceApi, customerApi, storageApi } from "../services/api";
+import { isStaff, getDashboardRoute } from "../utils/permissions";
 import "../Styles/customer-dashboard-premium.css";
 
 // ─── Constants (non-Mongo UI data — no backend model needed) ─────────────────
@@ -421,6 +422,13 @@ export default function CustomerDashboard() {
   const [addAddressOpen, setAddAddressOpen] = useState(false);
   const [addressForm, setAddressForm] = useState({ label: "Home", line1: "", city: "", country: "UK" });
   const user = useMemo(() => state.user || getStoredUser(), [state.user]);
+
+  // Redirect staff/admin away — this page is for customers only
+  useEffect(() => {
+    if (!state.loading && state.isAuthenticated && state.user && isStaff(state.user)) {
+      navigate(getDashboardRoute(state.user), { replace: true });
+    }
+  }, [state.loading, state.isAuthenticated, state.user, navigate]);
 
   const loadMyOrders = useCallback(async () => {
     setOrdersLoading(true);

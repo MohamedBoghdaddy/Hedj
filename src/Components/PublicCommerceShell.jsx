@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useContext, useRef, useState, useEffect } from "react";
 import { ShopContext } from "../context/productContext";
 import { useAuthContext } from "../context/AuthContext";
+import { getDashboardRoute } from "../utils/permissions";
 import "../Styles/commerce-premium.css";
 
 const collectionLinks = [
@@ -28,6 +29,7 @@ export const PublicNavbar = ({ active = "" }) => {
     : 0;
 
   const [collOpen, setCollOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropRef = useRef(null);
   const closeTimer = useRef(null);
 
@@ -39,6 +41,12 @@ export const PublicNavbar = ({ active = "" }) => {
     closeTimer.current = setTimeout(() => setCollOpen(false), 150);
   };
 
+  // Close all menus on route change
+  useEffect(() => {
+    setCollOpen(false);
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
   useEffect(() => {
     const onMouseDown = (e) => {
       if (dropRef.current && !dropRef.current.contains(e.target)) {
@@ -46,7 +54,10 @@ export const PublicNavbar = ({ active = "" }) => {
       }
     };
     const onKeyDown = (e) => {
-      if (e.key === "Escape") setCollOpen(false);
+      if (e.key === "Escape") {
+        setCollOpen(false);
+        setMobileMenuOpen(false);
+      }
     };
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("keydown", onKeyDown);
@@ -56,116 +67,172 @@ export const PublicNavbar = ({ active = "" }) => {
     };
   }, []);
 
+  // Prevent body scroll when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
   const isCollectionsActive =
     location.pathname.startsWith("/collections") || active === "Collections";
 
-  const role = state.user?.role;
   const accountTo = state.isAuthenticated
-    ? role === "admin" || role === "employee"
-      ? "/admin/dashboard"
-      : "/dashboard"
+    ? getDashboardRoute(state.user)
     : "/login";
 
-  return (
-    <header className="commerce-navbar">
-      <div className="commerce-navbar-inner">
-        <Link className="commerce-logo" to="/">
-          Hedj Commerce
-        </Link>
+  const closeMobile = () => setMobileMenuOpen(false);
 
-        <nav className="commerce-nav-links" aria-label="Primary commerce navigation">
-          {/* Collections dropdown */}
-          <div
-            ref={dropRef}
-            className="commerce-nav-dropdown"
-            onMouseEnter={openDrop}
-            onMouseLeave={closeDrop}
-          >
+  return (
+    <>
+      <header className="commerce-navbar">
+        <div className="commerce-navbar-inner">
+          <Link className="commerce-logo" to="/">
+            Hedj Commerce
+          </Link>
+
+          {/* Desktop nav — hidden below 768px via CSS */}
+          <nav className="commerce-nav-links" aria-label="Primary commerce navigation">
+            <div
+              ref={dropRef}
+              className="commerce-nav-dropdown"
+              onMouseEnter={openDrop}
+              onMouseLeave={closeDrop}
+            >
+              <button
+                type="button"
+                className={`commerce-nav-dropdown-trigger${isCollectionsActive ? " active" : ""}`}
+                onClick={() => setCollOpen((p) => !p)}
+                aria-expanded={collOpen}
+                aria-haspopup="listbox"
+              >
+                Collections
+                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
+                  {collOpen ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+
+              {collOpen && (
+                <div className="commerce-dropdown-panel" role="listbox">
+                  {collectionLinks.map((cl) => (
+                    <NavLink
+                      key={cl.to}
+                      to={cl.to}
+                      className={({ isActive }) => (isActive ? "active" : "")}
+                      role="option"
+                      onClick={() => setCollOpen(false)}
+                    >
+                      {cl.label}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <NavLink
+              className={({ isActive }) =>
+                isActive || active === "Products" ? "active" : ""
+              }
+              to="/products"
+            >
+              Products
+            </NavLink>
+
+            <NavLink
+              className={({ isActive }) =>
+                isActive || active === "Virtual Showroom" ? "active" : ""
+              }
+              to="/virtual-showroom"
+            >
+              Virtual Showroom
+            </NavLink>
+
+            <NavLink
+              className={({ isActive }) =>
+                isActive || active === "Contact" ? "active" : ""
+              }
+              to="/contact"
+            >
+              Contact
+            </NavLink>
+          </nav>
+
+          <div className="commerce-nav-actions">
+            <Link aria-label="Wishlist" className="commerce-icon-link" to="/wishlist">
+              <span className="material-symbols-outlined">favorite</span>
+              {wishlistCount > 0 && (
+                <span className="commerce-cart-count">{wishlistCount}</span>
+              )}
+            </Link>
+            <Link
+              aria-label="Cart"
+              className="commerce-icon-link commerce-cart-link"
+              to="/cart"
+            >
+              <span className="material-symbols-outlined">shopping_bag</span>
+              {cartCount > 0 && (
+                <span className="commerce-cart-count">{cartCount}</span>
+              )}
+            </Link>
+            <Link
+              aria-label={state.isAuthenticated ? "Dashboard" : "Sign In"}
+              className="commerce-icon-link"
+              to={accountTo}
+            >
+              <span className="material-symbols-outlined">account_circle</span>
+            </Link>
+
+            {/* Hamburger — visible only on mobile (<768px) */}
             <button
               type="button"
-              className={`commerce-nav-dropdown-trigger${isCollectionsActive ? " active" : ""}`}
-              onClick={() => setCollOpen((p) => !p)}
-              aria-expanded={collOpen}
-              aria-haspopup="listbox"
+              className="commerce-mobile-menu-btn"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
             >
-              Collections
-              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>
-                {collOpen ? "expand_less" : "expand_more"}
+              <span className="material-symbols-outlined">
+                {mobileMenuOpen ? "close" : "menu"}
               </span>
             </button>
-
-            {collOpen && (
-              <div className="commerce-dropdown-panel" role="listbox">
-                {collectionLinks.map((cl) => (
-                  <NavLink
-                    key={cl.to}
-                    to={cl.to}
-                    className={({ isActive }) => (isActive ? "active" : "")}
-                    role="option"
-                    onClick={() => setCollOpen(false)}
-                  >
-                    {cl.label}
-                  </NavLink>
-                ))}
-              </div>
-            )}
           </div>
+        </div>
+      </header>
 
-          <NavLink
-            className={({ isActive }) =>
-              isActive || active === "Products" ? "active" : ""
-            }
-            to="/products"
-          >
-            Products
-          </NavLink>
+      {/* Mobile overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="commerce-mobile-overlay"
+          role="button"
+          tabIndex={-1}
+          aria-label="Close menu"
+          onClick={closeMobile}
+          onKeyDown={(e) => e.key === "Enter" && closeMobile()}
+        />
+      )}
 
-          <NavLink
-            className={({ isActive }) =>
-              isActive || active === "Virtual Showroom" ? "active" : ""
-            }
-            to="/virtual-showroom"
-          >
-            Virtual Showroom
-          </NavLink>
-
-          <NavLink
-            className={({ isActive }) =>
-              isActive || active === "Contact" ? "active" : ""
-            }
-            to="/contact"
-          >
-            Contact
-          </NavLink>
-        </nav>
-
-        <div className="commerce-nav-actions">
-          <Link aria-label="Wishlist" className="commerce-icon-link" to="/wishlist">
-            <span className="material-symbols-outlined">favorite</span>
-            {wishlistCount > 0 && (
-              <span className="commerce-cart-count">{wishlistCount}</span>
-            )}
-          </Link>
-          <Link
-            aria-label="Cart"
-            className="commerce-icon-link commerce-cart-link"
-            to="/cart"
-          >
-            <span className="material-symbols-outlined">shopping_bag</span>
-            {cartCount > 0 && (
-              <span className="commerce-cart-count">{cartCount}</span>
-            )}
-          </Link>
-          <Link
-            aria-label={state.isAuthenticated ? "Dashboard" : "Sign In"}
-            className="commerce-icon-link"
-            to={accountTo}
-          >
-            <span className="material-symbols-outlined">account_circle</span>
+      {/* Mobile slide-down drawer */}
+      <nav
+        className={`commerce-mobile-drawer${mobileMenuOpen ? " open" : ""}`}
+        aria-label="Mobile navigation"
+        aria-hidden={!mobileMenuOpen}
+      >
+        <div className="commerce-mobile-nav">
+          <p className="commerce-mobile-nav-section">Collections</p>
+          {collectionLinks.map((cl) => (
+            <Link key={cl.to} to={cl.to} onClick={closeMobile}>
+              {cl.label}
+            </Link>
+          ))}
+          <p className="commerce-mobile-nav-section">Discover</p>
+          <Link to="/products" onClick={closeMobile}>All Products</Link>
+          <Link to="/virtual-showroom" onClick={closeMobile}>Virtual Showroom</Link>
+          <Link to="/contact" onClick={closeMobile}>Contact</Link>
+          <p className="commerce-mobile-nav-section">Account</p>
+          <Link to={accountTo} onClick={closeMobile}>
+            {state.isAuthenticated ? "My Account" : "Sign In"}
           </Link>
         </div>
-      </div>
-    </header>
+      </nav>
+    </>
   );
 };
 

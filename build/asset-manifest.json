@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.9b6c1653.css",
-    "main.js": "/static/js/main.9efa1438.js",
+    "main.css": "/static/css/main.ff69d94d.css",
+    "main.js": "/static/js/main.8b2fbc97.js",
     "static/js/453.69f3745b.chunk.js": "/static/js/453.69f3745b.chunk.js",
     "static/media/HEDJ-Company Profile-2024 Q01.pdf": "/static/media/HEDJ-Company Profile-2024 Q01.1fc7d86f2b33835fee8e.pdf",
     "index.html": "/index.html",
-    "main.9b6c1653.css.map": "/static/css/main.9b6c1653.css.map",
-    "main.9efa1438.js.map": "/static/js/main.9efa1438.js.map",
+    "main.ff69d94d.css.map": "/static/css/main.ff69d94d.css.map",
+    "main.8b2fbc97.js.map": "/static/js/main.8b2fbc97.js.map",
     "453.69f3745b.chunk.js.map": "/static/js/453.69f3745b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9b6c1653.css",
-    "static/js/main.9efa1438.js"
+    "static/css/main.ff69d94d.css",
+    "static/js/main.8b2fbc97.js"
   ]
 }

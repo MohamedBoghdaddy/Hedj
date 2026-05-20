@@ -279,6 +279,14 @@
   color: #45464d;
 }
 
+/* Tablet: 2-col grid, no sidebar (sidebar wraps above) */
+@media (min-width: 640px) and (max-width: 899px) {
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Desktop: sidebar + 3-col grid */
 @media (min-width: 900px) {
   .catalog-layout {
     grid-template-columns: 260px 1fr;
@@ -298,6 +306,13 @@
   }
 }
 
+/* Large desktop: 4-col grid */
+@media (min-width: 1400px) {
+  .catalog-grid:not(.list) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 640px) {
   .catalog-container {
     padding: 48px 18px;
@@ -305,5 +320,13 @@
 
   .catalog-hero {
     margin-bottom: 36px;
+  }
+
+  .catalog-hero h1 {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+
+  .catalog-toolbar {
+    gap: 10px;
   }
 }
